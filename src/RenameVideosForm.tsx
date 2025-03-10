@@ -1,8 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
+import { form_dropdown_message } from "./lib/constants";
 
-const FileUploadForm = () => {
+const apiLink = "http://localhost:5000/test";
+
+const RenameVideosForm = () => {
     const [text, setText] = useState("");
     const [files, setFiles] = useState<File[]>([]);
 
@@ -16,7 +19,7 @@ const FileUploadForm = () => {
         files.forEach((file) => formData.append("file", file));
 
         try {
-            const response = await axios.post("http://localhost:5000/upload", formData, {
+            const response = await axios.post(apiLink, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             console.log(response.data);
@@ -36,7 +39,7 @@ const FileUploadForm = () => {
             />
             <div {...getRootProps()} className="border-dashed border-2 p-6 text-center cursor-pointer">
                 <input {...getInputProps()} />
-                <p>Drag & drop files here, or click to select files</p>
+                <p>{form_dropdown_message}</p>
             </div>
             <ul className="mt-2">
                 {files.map((file) => (
@@ -50,4 +53,4 @@ const FileUploadForm = () => {
     );
 };
 
-export default FileUploadForm;
+export default RenameVideosForm;

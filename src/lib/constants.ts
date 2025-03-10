@@ -1,0 +1,1 @@
+export const form_dropdown_message = 'Drag & drop files here, or click to select files';
