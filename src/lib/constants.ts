@@ -1,1 +1,3 @@
-export const form_dropdown_message = 'Drag & drop files here, or click to select files';
+export const formDropdownMessage = 'Drop or click to select files';
+
+export const inputSeasonMessage = 'Enter season number'
