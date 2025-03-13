@@ -6,9 +6,9 @@ export const postForm = async (apiLink: string, formData: FormData) => {
             const response = await axios.post(apiLink, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            return response.data;
+            return response?.data;
         } catch (error) {
-            console.error("Error uploading:", error);
+            return error;
         }
 };
 

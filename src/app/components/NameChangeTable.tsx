@@ -26,7 +26,7 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                 {
                     changes.map((choice) => {
                         return (
-                            <tr>
+                            <tr key={choice.output}>
                                 <TableCell>
                                     {removePathFromFilePath(choice.input)}
                                 </TableCell>
