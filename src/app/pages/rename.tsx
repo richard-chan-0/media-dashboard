@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RenameVideosForm from "../form/RenameVideosForm";
+import RenameComicsForm from "../form/RenameComicsForm";
 import NameChangeTable from "../components/NameChangeTable";
 import { postJson, processNameChangeToApiRequest } from "../lib/api";
 
@@ -11,6 +12,8 @@ const getRenameForm = (mediaType: string, setNameChanges: CallableFunction) => {
     switch (mediaType) {
         case "videos":
             return <RenameVideosForm setNameChanges={setNameChanges} />
+        case "comics":
+            return <RenameComicsForm setNameChanges={setNameChanges} />
 
         default:
             return <></>;

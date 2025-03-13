@@ -4,6 +4,8 @@ import { useDropzone } from "react-dropzone";
 import { formDropdownMessage, inputSeasonMessage } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
+import Exception from "../lib/Exception";
+import NameChangeListPreview from "../lib/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -13,9 +15,13 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [seasonNumber, setSeasonNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
+    const [error, setError] = useState("");
 
     const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => setEpisodeFiles(acceptedFiles),
+        onDrop: (acceptedFiles) => {
+            setEpisodeFiles(acceptedFiles);
+            setError("");
+        },
     });
 
     const handleSubmit = async () => {
@@ -24,8 +30,12 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
             formData.append("season_number", seasonNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
             const response = await postForm(`${apiLink}/rename/videos`, formData)
-            const processedResponse = processApiResponseToNameChange(response);
-            setNameChanges(processedResponse);
+            if (response instanceof Error) {
+                setError(response.message)
+            } else {
+                const processedResponse = processApiResponseToNameChange(response);
+                setNameChanges(processedResponse);
+            }
             setSeasonNumber("");
             setEpisodeFiles([]);
         }
@@ -44,14 +54,11 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
-            <ul className="mt-2">
-                {episodeFiles.map((file) => (
-                    <li key={file.name} className="text-white">{file.name}</li>
-                ))}
-            </ul>
+            <NameChangeListPreview files={episodeFiles} />
             <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 mt-4 w-full rounded-b-lg" disabled={episodeFiles.length == 0}>
                 Submit Files!
             </button>
+            <Exception error={error} />
         </div>
     );
 };
