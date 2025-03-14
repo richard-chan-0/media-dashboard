@@ -9,9 +9,10 @@ import NameChangeListPreview from "../lib/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
+    setRenameMessage: CallableFunction
 }
 
-const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
+const RenameVideosForm = ({ setNameChanges, setRenameMessage }: RenameVideosFormProps) => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [seasonNumber, setSeasonNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -21,6 +22,8 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
         onDrop: (acceptedFiles) => {
             setEpisodeFiles(acceptedFiles);
             setError("");
+            setNameChanges({ changes: [] })
+            setRenameMessage("");
         },
     });
 
@@ -30,8 +33,8 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
             formData.append("season_number", seasonNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
             const response = await postForm(`${apiLink}/rename/videos`, formData)
-            if (response instanceof Error) {
-                setError(response.message)
+            if (response?.error) {
+                setError(response.error)
             } else {
                 const processedResponse = processApiResponseToNameChange(response);
                 setNameChanges(processedResponse);

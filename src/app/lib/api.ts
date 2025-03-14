@@ -1,14 +1,17 @@
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { ApiNameChangeResponse, NameChanges } from "./types";
 
-export const postForm = async (apiLink: string, formData: FormData) => {
+export const postForm = async (apiLink: string, formData: FormData)  => {
     try {
             const response = await axios.post(apiLink, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             return response?.data;
         } catch (error) {
-            return error;
+            if(error instanceof AxiosError){
+                return error?.response?.data;
+            }
+            console.log(error);
         }
 };
 
@@ -19,7 +22,10 @@ export const postJson = async (apiLink: string, formJson: object) => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error uploading:", error);
+            if(error instanceof AxiosError){
+                return error?.response?.data;
+            }
+            console.log(error);
         }
 }
 

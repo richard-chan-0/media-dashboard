@@ -15,28 +15,32 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
     return (
         <div className="text-white flex justify-center text-center">
             <table>
-                <tr>
-                    <TableCell isHeader={true}>
-                        Before
-                    </TableCell>
-                    <TableCell isHeader={true}>
-                        After
-                    </TableCell>
-                </tr>
-                {
-                    changes.map((choice) => {
-                        return (
-                            <tr key={choice.output}>
-                                <TableCell>
-                                    {removePathFromFilePath(choice.input)}
-                                </TableCell>
-                                <TableCell>
-                                    {removePathFromFilePath(choice.output)}
-                                </TableCell>
-                            </tr>
-                        )
-                    })
-                }
+                <thead>
+                    <tr>
+                        <TableCell isHeader={true}>
+                            Before
+                        </TableCell>
+                        <TableCell isHeader={true}>
+                            After
+                        </TableCell>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        changes.map((choice) => {
+                            return (
+                                <tr key={choice.output}>
+                                    <TableCell>
+                                        {removePathFromFilePath(choice.input)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {removePathFromFilePath(choice.output)}
+                                    </TableCell>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
             </table>
         </div>
     )

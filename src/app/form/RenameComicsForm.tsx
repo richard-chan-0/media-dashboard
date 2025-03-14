@@ -9,9 +9,10 @@ import NameChangeListPreview from "../lib/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
+    setRenameMessage: CallableFunction
 }
 
-const RenameComicsForm = ({ setNameChanges }: RenameVideosFormProps) => {
+const RenameComicsForm = ({ setNameChanges, setRenameMessage }: RenameVideosFormProps) => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [storyName, setStoryName] = useState("");
     const [startVolume, setStartVolume] = useState("");
@@ -22,12 +23,19 @@ const RenameComicsForm = ({ setNameChanges }: RenameVideosFormProps) => {
         onDrop: (acceptedFiles) => {
             setVolumeFiles(acceptedFiles)
             setError("");
+            setNameChanges({ changes: [] })
+            setRenameMessage("");
         },
     });
 
     const handleSubmit = async () => {
         if (!apiLink) {
-            return;
+            setError("can't find api link");
+            return
+        }
+        if (!storyName) {
+            setError("story title is required")
+            return
         }
 
         const formData = new FormData();
@@ -35,15 +43,14 @@ const RenameComicsForm = ({ setNameChanges }: RenameVideosFormProps) => {
         formData.append("start_number", startVolume);
         volumeFiles.forEach((file) => formData.append("files", file));
         const response = await postForm(`${apiLink}/rename/comics`, formData)
-        if (response instanceof Error) {
-            setError(response.message)
+        if (response?.error) {
+            setError(response.error)
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             setNameChanges(processedResponse);
         }
         setStoryName("");
         setVolumeFiles([]);
-        setStoryName("");
     };
 
     return (
