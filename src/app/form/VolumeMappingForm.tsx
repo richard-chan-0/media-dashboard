@@ -63,7 +63,7 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
                 value={endChapter}
                 setValue={setEndChapter}
             />
-            <button type="submit" className="text-sm w-fit flex justify-center bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white rounded-lg items-center">Add Volume Mapping</button>
+            <button type="submit" className="text-sm w-fit flex justify-center bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white rounded-lg items-center">Add/Update Volume Mapping</button>
         </form>
     )
 }

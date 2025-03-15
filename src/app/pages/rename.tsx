@@ -40,7 +40,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     };
 
     return (
-        <div>
+        <div className="flex justify-center">
             {getRenameForm(mediaType, setNameChanges, setRenameMessage)}
             <NameChangeTable nameChanges={nameChanges} />
             {nameChanges?.changes.length > 0 && (

@@ -7,10 +7,17 @@ import Exception from "../lib/components/Exception";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
 
+type VolumeMapping = {
+    [key: string]: {
+        startChapter: number;
+        endChapter: number;
+    };
+};
+
 const CreateVolumesForm = () => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [storyName, setStoryName] = useState("");
-    const [volumesMapping, setVolumesMapping] = useState({});
+    const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
     const [error, setError] = useState("");
     const [createVolumesMessage, setCreateVolumesMessage] = useState("");
@@ -22,6 +29,17 @@ const CreateVolumesForm = () => {
             setError("");
         },
     });
+
+    const getVolumesMappingToApiField = () => {
+        const mappings = Object.entries(volumesMapping).map((entry) => ({
+            "volume": entry[0],
+            "startChapter": entry[1]["startChapter"],
+            "endChapter": entry[1]["endChapter"]
+        }))
+        return {
+            "volumes": mappings
+        }
+    }
 
     const handleSubmit = async () => {
         if (!apiLink) {
@@ -35,7 +53,7 @@ const CreateVolumesForm = () => {
 
         const formData = new FormData();
         formData.append("story title", storyName);
-        formData.append("volume mapping", JSON.stringify(volumesMapping));
+        formData.append("volume mapping", JSON.stringify(getVolumesMappingToApiField()));
         volumeFiles.forEach((file) => formData.append("files", file));
         const response = await postForm(`${apiLink}/manage/volumes`, formData)
         setCreateVolumesMessage(response?.error ? response.error : response);

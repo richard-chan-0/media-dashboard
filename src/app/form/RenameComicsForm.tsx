@@ -54,7 +54,7 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage }: RenameVideosForm
     };
 
     return (
-        <div className={`p-4 max-w-full border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
+        <div className={`p-4 w-3xl border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
             <input
                 type="text"
                 value={storyName}
