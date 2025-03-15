@@ -1,30 +1,25 @@
 import { useState } from "react";
 import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage } from "../lib/constants";
+import { formDropdownMessage, inputStoryNameMessage } from "../lib/constants";
 import theme from "../lib/theme";
-import { processApiResponseToNameChange } from "../lib/api";
 import Exception from "../lib/Exception";
 import FileListUploadPreview from "../lib/NameChangeList";
+import VolumeMappingForm from "./VolumeMappingForm";
 
-type RenameVideosFormProps = {
-    setNameChanges: CallableFunction
-    setRenameMessage: CallableFunction
-}
-
-const RenameComicsForm = ({ setNameChanges, setRenameMessage }: RenameVideosFormProps) => {
+const CreateVolumesForm = () => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [storyName, setStoryName] = useState("");
-    const [startVolume, setStartVolume] = useState("");
+    const [volumesMapping, setVolumesMapping] = useState({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
     const [error, setError] = useState("");
+    const [createVolumesMessage, setCreateVolumesMessage] = useState("");
+
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
             setVolumeFiles(acceptedFiles)
             setError("");
-            setNameChanges({ changes: [] })
-            setRenameMessage("");
         },
     });
 
@@ -39,47 +34,45 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage }: RenameVideosForm
         }
 
         const formData = new FormData();
-        formData.append("comic_name", storyName);
-        formData.append("start_number", startVolume);
+        formData.append("story title", storyName);
+        formData.append("volume mapping", JSON.stringify(volumesMapping));
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${apiLink}/rename/comics`, formData)
-        if (response?.error) {
-            setError(response.error)
-        } else {
-            const processedResponse = processApiResponseToNameChange(response);
-            setNameChanges(processedResponse);
-        }
+        const response = await postForm(`${apiLink}/manage/volumes`, formData)
+        setCreateVolumesMessage(response?.error ? response.error : response);
         setStoryName("");
         setVolumeFiles([]);
+        setVolumesMapping({})
     };
 
     return (
-        <div className={`p-4 max-w-full border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
+        <div className={`p-4 gap-2 max-w-3xl border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor} justify-center flex flex-col`}>
             <input
                 type="text"
                 value={storyName}
                 onChange={(e) => setStoryName(e.target.value)}
                 placeholder={inputStoryNameMessage}
-                className={`border p-2 w-full mb-4 rounded-t-lg ${theme.appSecondaryColor}`}
+                className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
             />
-            <input
-                type="number"
-                value={startVolume}
-                onChange={(e) => setStartVolume(e.target.value)}
-                placeholder={inputStartVolumeMessage}
-                className={`border p-2 w-full mb-4 ${theme.appSecondaryColor}`}
-            />
+            <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
+            {
+                Object.keys(volumesMapping).length > 0 && <pre className="text-sm border p-4 bg-black text-green-400 border-blue-200 rounded-lg">{JSON.stringify(volumesMapping, null, 2)}</pre>
+            }
             <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
             <FileListUploadPreview files={volumeFiles} />
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 mt-4 w-full rounded-b-lg" disabled={volumeFiles.length == 0}>
+            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg" disabled={volumeFiles.length == 0}>
                 Submit Files!
             </button>
             <Exception error={error} />
+            {createVolumesMessage && (
+                <div className="flex justify-center">
+                    {createVolumesMessage}
+                </div>
+            )}
         </div>
     );
 };
 
-export default RenameComicsForm;
+export default CreateVolumesForm;

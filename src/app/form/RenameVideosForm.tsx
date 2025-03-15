@@ -5,7 +5,7 @@ import { formDropdownMessage, inputSeasonMessage } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import Exception from "../lib/Exception";
-import NameChangeListPreview from "../lib/NameChangeList";
+import FileListUploadPreview from "../lib/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -45,7 +45,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage }: RenameVideosForm
     };
 
     return (
-        <div className={`p-4 max-w-lg mx-auto border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
+        <div className={`p-4 max-w-full border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
             <input
                 type="number"
                 value={seasonNumber}
@@ -57,7 +57,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage }: RenameVideosForm
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
-            <NameChangeListPreview files={episodeFiles} />
+            <FileListUploadPreview files={episodeFiles} />
             <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 mt-4 w-full rounded-b-lg" disabled={episodeFiles.length == 0}>
                 Submit Files!
             </button>
