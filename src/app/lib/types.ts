@@ -1,3 +1,5 @@
+import { AxiosError } from "axios"
+
 export type NameChange = {
     input: string
     output: string
@@ -14,5 +16,10 @@ export type ApiNameChange = {
 
 export type ApiNameChangeResponse = {
     changes: ApiNameChange[]
+}
+
+
+export type MediaUtiliityApiResponse = {
+    error?: AxiosError
 }
 

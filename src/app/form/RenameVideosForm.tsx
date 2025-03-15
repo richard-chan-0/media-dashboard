@@ -4,14 +4,15 @@ import { useDropzone } from "react-dropzone";
 import { formDropdownMessage, inputSeasonMessage } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
-import Exception from "../lib/Exception";
-import NameChangeListPreview from "../lib/NameChangeList";
+import Exception from "../lib/components/Exception";
+import FileListUploadPreview from "../lib/components/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
+    setRenameMessage: CallableFunction
 }
 
-const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
+const RenameVideosForm = ({ setNameChanges, setRenameMessage }: RenameVideosFormProps) => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [seasonNumber, setSeasonNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -21,6 +22,8 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
         onDrop: (acceptedFiles) => {
             setEpisodeFiles(acceptedFiles);
             setError("");
+            setNameChanges({ changes: [] })
+            setRenameMessage("");
         },
     });
 
@@ -30,8 +33,8 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
             formData.append("season_number", seasonNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
             const response = await postForm(`${apiLink}/rename/videos`, formData)
-            if (response instanceof Error) {
-                setError(response.message)
+            if (response?.error) {
+                setError(response.error)
             } else {
                 const processedResponse = processApiResponseToNameChange(response);
                 setNameChanges(processedResponse);
@@ -42,7 +45,7 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
     };
 
     return (
-        <div className={`p-4 max-w-lg mx-auto border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
+        <div className={`p-4 w-3xl border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor}`}>
             <input
                 type="number"
                 value={seasonNumber}
@@ -54,7 +57,7 @@ const RenameVideosForm = ({ setNameChanges }: RenameVideosFormProps) => {
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
-            <NameChangeListPreview files={episodeFiles} />
+            <FileListUploadPreview files={episodeFiles} />
             <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 mt-4 w-full rounded-b-lg" disabled={episodeFiles.length == 0}>
                 Submit Files!
             </button>

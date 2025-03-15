@@ -1,8 +1,8 @@
-type NameChangeListPreviewProps = {
+type FileListUploadPreviewProps = {
     files: File[]
 }
 
-const NameChangeListPreview = ({ files }: NameChangeListPreviewProps) => {
+const FileListUploadPreview = ({ files }: FileListUploadPreviewProps) => {
     return (
         <ul className={`${files.length > 0 ? "mt-2" : ""}`}>
             {files.map((file) => (
@@ -12,4 +12,4 @@ const NameChangeListPreview = ({ files }: NameChangeListPreviewProps) => {
     )
 }
 
-export default NameChangeListPreview;
+export default FileListUploadPreview;
