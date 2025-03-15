@@ -25,7 +25,7 @@ const VolumeMappingFormInput = ({ label, value, setValue }: VolumeMappingFormInp
 }
 
 type VolumeMappingFormProps = {
-    setVolumesMapping: React.Dispatch<React.SetStateAction<object>>
+    setVolumesMapping: CallableFunction
 }
 const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappingFormProps) => {
     const [volumeNumber, setVolumeNumber] = useState("");
@@ -34,7 +34,7 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault(); // Prevents form from reloading the page
-        setVolumeMapping((prev) => ({
+        setVolumeMapping((prev: object) => ({
             ...prev,
             [volumeNumber]: {
                 startChapter,

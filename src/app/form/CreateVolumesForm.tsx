@@ -7,7 +7,7 @@ import Exception from "../lib/components/Exception";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
 
-type VolumeMapping = {
+export type VolumeMapping = {
     [key: string]: {
         startChapter: number;
         endChapter: number;
