@@ -15,7 +15,7 @@ export type VolumeMapping = {
 };
 
 const CreateVolumesForm = () => {
-    const apiLink = import.meta.env.VITE_API_LINK
+    const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
     const [storyName, setStoryName] = useState("");
     const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);

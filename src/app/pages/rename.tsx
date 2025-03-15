@@ -30,7 +30,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     }, [mediaType])
 
     const handleSubmit = async () => {
-        const apiLink = import.meta.env.VITE_API_LINK
+        const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
         if (apiLink) {
             const nameChangeRequest = processNameChangeToApiRequest(nameChanges);
             const response = await postJson(`${apiLink}/rename/process`, nameChangeRequest)

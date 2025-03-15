@@ -1,9 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import NavLink from "./lib/components/NavLink";
-import Home from "./pages/home";
-import RenamePage from "./pages/rename";
+import pages from "./pages/pages";
 import theme from "./lib/theme";
-import ManagePage from "./pages/manage";
 
 function App() {
   return (
@@ -13,15 +11,17 @@ function App() {
         <NavLink to="/rename/videos">Rename Videos</NavLink>
         <NavLink to="/rename/comics">Rename Comics</NavLink>
         <NavLink to="/volumes">Create Volumes</NavLink>
+        <NavLink to="/ffmpeg">Reset Default Streams</NavLink>
       </nav>
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/rename/videos" element={<RenamePage mediaType="videos" />} />
-        <Route path="/rename/comics" element={<RenamePage mediaType="comics" />} />
-        <Route path="/volumes" element={<ManagePage />} />
+        <Route path="/" element={<pages.Home />} />
+        <Route path="/rename/videos" element={<pages.RenamePage mediaType="videos" />} />
+        <Route path="/rename/comics" element={<pages.RenamePage mediaType="comics" />} />
+        <Route path="/volumes" element={<pages.ManagePage />} />
+        <Route path="/ffmpeg" element={<pages.FfmpegPage />} />
       </Routes>
-    </div>
+    </div >
   );
 }
 
