@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import NavLink from "./lib/NavLink";
+import NavLink from "./lib/components/NavLink";
 import Home from "./pages/home";
 import RenamePage from "./pages/rename";
 import theme from "./lib/theme";

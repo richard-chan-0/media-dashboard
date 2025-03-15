@@ -1,6 +1,6 @@
-import { NameChanges } from "../lib/types";
-import { removePathFromFilePath } from "../lib/utilities";
-import TableCell from "../lib/TableCell";
+import { NameChanges } from "../types";
+import { removePathFromFilePath } from "../utilities";
+import TableCell from "./TableCell";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import RenameVideosForm from "../form/RenameVideosForm";
 import RenameComicsForm from "../form/RenameComicsForm";
-import NameChangeTable from "../components/NameChangeTable";
+import NameChangeTable from "../lib/components/NameChangeTable";
 import { postJson, processNameChangeToApiRequest } from "../lib/api";
 
 type RenamePageProps = {

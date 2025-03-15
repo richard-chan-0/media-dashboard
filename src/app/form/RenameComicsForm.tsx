@@ -4,8 +4,8 @@ import { useDropzone } from "react-dropzone";
 import { formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
-import Exception from "../lib/Exception";
-import FileListUploadPreview from "../lib/NameChangeList";
+import Exception from "../lib/components/Exception";
+import FileListUploadPreview from "../lib/components/NameChangeList";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction

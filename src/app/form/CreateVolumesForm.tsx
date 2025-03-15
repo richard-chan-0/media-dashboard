@@ -3,8 +3,8 @@ import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
 import { formDropdownMessage, inputStoryNameMessage } from "../lib/constants";
 import theme from "../lib/theme";
-import Exception from "../lib/Exception";
-import FileListUploadPreview from "../lib/NameChangeList";
+import Exception from "../lib/components/Exception";
+import FileListUploadPreview from "../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
 
 const CreateVolumesForm = () => {
