@@ -1,6 +1,6 @@
 import { postForm } from "../lib/api";
 import { ffmpegLink } from "../lib/constants";
-import { FormEvent, useState } from "react";
+import { FormEvent } from "react";
 import theme from "../lib/theme";
 import FormContainer from "./FormContainer";
 import SubmitButton from "../lib/components/SubmitButton";
@@ -8,22 +8,22 @@ import SubmitButton from "../lib/components/SubmitButton";
 type ResetDefaultsFormProps = {
     setError: CallableFunction
     setStreams: CallableFunction
+    setPathToFiles: CallableFunction
+    pathToFiles: string
 }
 
-const ResetDefaultsForm = ({ setError, setStreams }: ResetDefaultsFormProps) => {
-    const [pathToFiles, setPathToFiles] = useState("");
+const ResetDefaultsForm = ({ setError, setStreams, pathToFiles, setPathToFiles }: ResetDefaultsFormProps) => {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (ffmpegLink) {
             const formData = new FormData();
             formData.append("path", pathToFiles);
-            const response = await postForm(`${ffmpegLink}/default_reset/streams`, formData)
+            const response = await postForm(`${ffmpegLink}/default_reset/read`, formData)
             if (response?.error) {
                 setError(response?.error);
             } else {
                 setStreams(response);
-                setPathToFiles("");
                 setError("");
             }
         }

@@ -1,8 +1,10 @@
+import { Stream } from "../../form/PickStreamsForm"
+
 type StreamSelectProps = {
     select: string
     label: string
     setSelect: CallableFunction
-    selections: object[]
+    selections: Stream[]
     createVal: CallableFunction
     isCenterAlign?: boolean
 }
@@ -19,7 +21,7 @@ const StreamSelect = ({ label, select, setSelect, selections, createVal, isCente
                 <option value="" disabled>Select an option</option>
                 {selections.map((option) => {
                     const optionVal = createVal(option);
-                    return < option key={optionVal} value={optionVal} > {optionVal}</option>
+                    return < option key={option.stream_number} value={option.stream_number} > {optionVal}</option>
                 })}
             </select>
         </div>
