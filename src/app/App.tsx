@@ -5,8 +5,8 @@ import theme from "./lib/theme";
 
 function App() {
   return (
-    <div className="">
-      <nav className={`flex flex-wrap p-4 ${theme.appColor}`}>
+    <div>
+      <nav className={`flex flex-wrap gap-1 p-2 ${theme.appColor}`}>
         <NavLink to="/">Home</NavLink>
         <NavLink to="/rename/videos">Rename Videos</NavLink>
         <NavLink to="/rename/comics">Rename Comics</NavLink>
