@@ -9,7 +9,9 @@ export const postForm = async (apiLink: string, formData: FormData)  => {
             return response?.data;
         } catch (error) {
             if(error instanceof AxiosError){
-                return error?.response?.data;
+                const isWithError = !!error?.response?.data?.error
+                const errorData = error?.response?.data
+                return isWithError ? errorData: {"error": errorData};
             }
             console.log(error);
         }

@@ -9,8 +9,8 @@ type VolumeMappingFormInputProps = {
 
 const VolumeMappingFormInput = ({ label, value, setValue }: VolumeMappingFormInputProps) => {
     return (
-        <div className="flex flex-col w-fit ">
-            <label className="w-fit">
+        <div className="flex flex-col w-1/5">
+            <label className="text-center">
                 {label}
             </label>
             <input
@@ -47,7 +47,7 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex md:flex-row flex-col justify-center md:gap-6 gap-2 items-center mt-2 mb-2">
+        <form onSubmit={handleSubmit} className="flex justify-center md:gap-3 gap-2 items-center w-full">
             < VolumeMappingFormInput
                 label={"Enter volume number"}
                 value={volumeNumber}
@@ -63,7 +63,7 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
                 value={endChapter}
                 setValue={setEndChapter}
             />
-            <button type="submit" className="text-sm w-fit flex justify-center bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white rounded-lg items-center">Add/Update Volume Mapping</button>
+            <button type="submit" className="text-sm p-1 w-1/4 bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white rounded-lg items-center">Add/Update Volume Mapping</button>
         </form>
     )
 }
