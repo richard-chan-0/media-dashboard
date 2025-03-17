@@ -31,8 +31,8 @@ const ResetDefaultsForm = ({ setError, setStreams, pathToFiles, setPathToFiles }
 
 
     return (
-        <FormContainer size={0}>
-            <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+        <FormContainer size={0} >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <label>Get Streams</label>
                 <input
                     type="text"

@@ -1,10 +1,11 @@
 import CreateVolumesForm from "../form/CreateVolumesForm";
+import FormPage from "./formPage";
 
 const ManagePage = () => {
     return (
-        <div className="flex justify-center">
+        <FormPage>
             < CreateVolumesForm />
-        </div>
+        </FormPage>
     )
 };
 

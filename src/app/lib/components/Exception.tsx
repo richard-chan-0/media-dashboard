@@ -8,7 +8,7 @@ const Exception = ({ error }: ExceptionProps) => {
     }
 
     return (
-        <div className="w-lg pt-2 text-red-300 text-center">
+        <div className="w-full bg-red-300 p-2 text-red-600 text-center opacity-80">
             Exception: {error}
         </div>
     )

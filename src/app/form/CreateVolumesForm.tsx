@@ -6,6 +6,7 @@ import theme from "../lib/theme";
 import Exception from "../lib/components/Exception";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
+import FormContainer from "./FormContainer";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -63,33 +64,39 @@ const CreateVolumesForm = () => {
     };
 
     return (
-        <div className={`p-4 gap-2 max-w-3xl border border-blue-400 rounded-lg shadow-blue-200 shadow-md m-4 ${theme.appColor} justify-center flex flex-col`}>
-            <input
-                type="text"
-                value={storyName}
-                onChange={(e) => setStoryName(e.target.value)}
-                placeholder={inputStoryNameMessage}
-                className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
-            />
-            <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
-            {
-                Object.keys(volumesMapping).length > 0 && <pre className="text-sm border p-4 bg-black text-green-400 border-blue-200 rounded-lg">{JSON.stringify(volumesMapping, null, 2)}</pre>
-            }
-            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
-                <input {...getInputProps()} />
-                <p>{formDropdownMessage}</p>
-            </div>
-            <FileListUploadPreview files={volumeFiles} />
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg" disabled={volumeFiles.length == 0}>
-                Submit Files!
-            </button>
+        <>
             <Exception error={error} />
-            {createVolumesMessage && (
-                <div className="flex justify-center">
-                    {createVolumesMessage}
-                </div>
-            )}
-        </div>
+            <div className="flex gap-4">
+                <FormContainer size={4} containerStyle="flex flex-col gap-2" formTitle="Create Volume Mapping">
+                    <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
+                    {
+                        Object.keys(volumesMapping).length > 0 && <pre className="text-sm border p-4 bg-black text-green-400 border-blue-200 rounded-lg opacity-90">{JSON.stringify(volumesMapping, null, 2)}</pre>
+                    }
+                </FormContainer>
+                <FormContainer size={2} formTitle="Create Volumes" containerStyle="flex flex-col gap-2">
+                    <input
+                        type="text"
+                        value={storyName}
+                        onChange={(e) => setStoryName(e.target.value)}
+                        placeholder={inputStoryNameMessage}
+                        className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
+                    />
+                    <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
+                        <input {...getInputProps()} />
+                        <p>{formDropdownMessage}</p>
+                    </div>
+                    <FileListUploadPreview files={volumeFiles} />
+                    <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg" disabled={volumeFiles.length == 0}>
+                        Submit Files!
+                    </button>
+                    {createVolumesMessage && (
+                        <div className="flex justify-center">
+                            {createVolumesMessage}
+                        </div>
+                    )}
+                </FormContainer>
+            </div>
+        </>
     );
 };
 
