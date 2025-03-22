@@ -7,6 +7,7 @@ import Exception from "../lib/components/Exception";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
 import FormContainer from "./FormContainer";
+import FormInput from "../lib/components/FormInput";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -66,7 +67,7 @@ const CreateVolumesForm = () => {
     return (
         <>
             <Exception error={error} />
-            <div className="flex gap-4">
+            <div className="flex md:flex-row flex-col gap-4 items-center md:justify-center md:items-start">
                 <FormContainer size={4} containerStyle="flex flex-col gap-2" formTitle="Create Volume Mapping">
                     <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
                     {
@@ -74,14 +75,13 @@ const CreateVolumesForm = () => {
                     }
                 </FormContainer>
                 <FormContainer size={2} formTitle="Create Volumes" containerStyle="flex flex-col gap-2">
-                    <input
+                    <FormInput
                         type="text"
-                        value={storyName}
-                        onChange={(e) => setStoryName(e.target.value)}
+                        inputValue={storyName}
+                        setInputValue={setStoryName}
                         placeholder={inputStoryNameMessage}
-                        className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
                     />
-                    <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
+                    <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 text-center cursor-pointer`}>
                         <input {...getInputProps()} />
                         <p>{formDropdownMessage}</p>
                     </div>

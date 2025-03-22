@@ -1,9 +1,9 @@
 import { postForm } from "../lib/api";
 import { ffmpegLink } from "../lib/constants";
 import { FormEvent } from "react";
-import theme from "../lib/theme";
 import FormContainer from "./FormContainer";
 import SubmitButton from "../lib/components/SubmitButton";
+import FormInput from "../lib/components/FormInput";
 
 type ResetDefaultsFormProps = {
     setError: CallableFunction
@@ -34,13 +34,12 @@ const ResetDefaultsForm = ({ setError, setStreams, pathToFiles, setPathToFiles }
         <FormContainer size={0} >
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <label>Get Streams</label>
-                <input
+                <FormInput
                     type="text"
-                    value={pathToFiles}
-                    onChange={(e) => setPathToFiles(e.target.value)}
+                    inputValue={pathToFiles}
+                    setInputValue={setPathToFiles}
                     placeholder="Enter path to files"
                     required
-                    className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
                 />
                 <SubmitButton label={"Get Streams"} />
             </form>

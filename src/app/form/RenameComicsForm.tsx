@@ -6,6 +6,7 @@ import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
+import FormInput from "../lib/components/FormInput";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -55,19 +56,17 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: Rename
 
     return (
         <FormContainer formTitle="Rename Comics" size={3} containerStyle="flex flex-col gap-2">
-            <input
+            <FormInput
                 type="text"
-                value={storyName}
-                onChange={(e) => setStoryName(e.target.value)}
+                inputValue={storyName}
+                setInputValue={setStoryName}
                 placeholder={inputStoryNameMessage}
-                className={`border p-2 w-full rounded-t-lg ${theme.appSecondaryColor}`}
             />
-            <input
+            <FormInput
                 type="number"
-                value={startVolume}
-                onChange={(e) => setStartVolume(e.target.value)}
+                inputValue={startVolume}
+                setInputValue={setStartVolume}
                 placeholder={inputStartVolumeMessage}
-                className={`border p-2 w-full ${theme.appSecondaryColor}`}
             />
             <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
                 <input {...getInputProps()} />

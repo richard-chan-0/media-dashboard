@@ -8,7 +8,7 @@ type FormPageProps = {
 
 const FormPage = ({ children, error }: FormPageProps) => {
     return (
-        <div className="flex flex-col items-center m-4">
+        <div className="flex flex-col items-center m-4 gap-4">
             {error && <Exception error={error} />}
             {children}
         </div>
