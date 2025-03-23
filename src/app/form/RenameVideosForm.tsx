@@ -6,6 +6,7 @@ import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
+import FormInput from "../lib/components/FormInput";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -46,12 +47,11 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError }: Rename
 
     return (
         <FormContainer formTitle="Rename Videos" size={3} containerStyle="flex flex-col gap-2">
-            <input
+            <FormInput
                 type="number"
-                value={seasonNumber}
-                onChange={(e) => setSeasonNumber(e.target.value)}
+                inputValue={seasonNumber}
+                setInputValue={setSeasonNumber}
                 placeholder={inputSeasonMessage}
-                className={`border w-full rounded-t-lg ${theme.appSecondaryColor}`}
             />
             <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
                 <input {...getInputProps()} />
