@@ -1,10 +1,10 @@
-FROM node:23
+FROM node:18
+
+RUN npm install -g pnpm
 
 WORKDIR /app
 
 COPY package.json ./
-
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
 
 RUN pnpm install
 

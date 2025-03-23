@@ -45,6 +45,7 @@ const PickStreamsForm = ({ streams, setError, pathToFiles, setPathToFiles, setMe
         } else {
             setError("");
             setMessage(response);
+            setPathToFiles("");
         }
     }
 
