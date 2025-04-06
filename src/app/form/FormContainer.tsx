@@ -7,16 +7,18 @@ type FormContainerProps = {
     size?: number
     containerStyle?: string
     formTitle?: string
+    isBorderEnabled?: boolean
 }
 
-const FormContainer = ({ children, size, containerStyle, formTitle }: FormContainerProps) => {
+const FormContainer = ({ children, size, containerStyle, formTitle, isBorderEnabled = true }: FormContainerProps) => {
     const containerSize = getWidthSize(size);
     return (
-        <div className={`p-4 ${containerSize} border border-blue-400 rounded-2xl shadow-blue-200 shadow-md ${theme.appColor} ${containerStyle}`}>
+        <div
+            className={`p-4 ${containerSize} ${isBorderEnabled ? "border border-blue-400 rounded-2xl shadow-blue-200 shadow-md" : ""} ${theme.appColor} ${containerStyle}`}
+        >
             {formTitle &&
                 <>
                     <h1 className="text-center">{formTitle}</h1>
-                    <hr />
                 </>}
             {children}
         </div>

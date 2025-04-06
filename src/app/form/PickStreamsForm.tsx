@@ -17,35 +17,33 @@ type Streams = {
     attachment: object[],
     audio: Stream[],
     subtitle: Stream[]
+    is_mkv?: boolean
 }
 type PickStreamsFormProps = {
     streams: Streams
     setError: CallableFunction
-    pathToFiles: string
-    setPathToFiles: CallableFunction
     setMessage: CallableFunction
 }
-const PickStreamsForm = ({ streams, setError, pathToFiles, setPathToFiles, setMessage }: PickStreamsFormProps) => {
+const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps) => {
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
     const [checkedSubtitles, setCheckedSubtitles] = useState([]);
     const [defaultAudio, setDefaultAudio] = useState("");
     const [checkedAudios, setCheckedAudios] = useState([]);
-    const subtitles = streams["subtitle"].map((subtitle, index) => ({ ...subtitle, "stream_number": index }))
-    const audios = streams["audio"].map((audio, index) => ({ ...audio, stream_number: index }));
+    const subtitles = streams["subtitle"];
+    const audios = streams["audio"];
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const writeLink = streams?.is_mkv ? "/mkv/write" : "/ffmpeg/write";
         const formData = new FormData();
-        formData.append("path", pathToFiles);
         formData.append("subtitles", JSON.stringify([defaultSubtitle, ...checkedSubtitles]));
         formData.append("audios", JSON.stringify([defaultAudio, ...checkedAudios]))
-        const response = await postForm(`${ffmpegLink}/default_reset/bulk`, formData)
+        const response = await postForm(`${ffmpegLink}${writeLink}`, formData)
         if (response?.error) {
             setError(response?.error);
         } else {
             setError("");
             setMessage(response);
-            setPathToFiles("");
         }
     }
 
@@ -60,6 +58,7 @@ const PickStreamsForm = ({ streams, setError, pathToFiles, setPathToFiles, setMe
                     selections={subtitles}
                     createVal={createStreamValue}
                     isCenterAlign={true}
+                    isRequired={true}
                 />
                 <StreamSelect
                     label="Select Default Audio"
@@ -69,24 +68,29 @@ const PickStreamsForm = ({ streams, setError, pathToFiles, setPathToFiles, setMe
                     createVal={createStreamValue}
                     isCenterAlign={true}
                 />
-                <FormContainer size={3}>
-                    <StreamCheckboxList
-                        label="Check Additional Subtitles"
-                        checkedStreams={checkedSubtitles}
-                        setCheckedStreams={setCheckedSubtitles}
-                        streams={subtitles.filter((subtitle) => subtitle.stream_number.toString() !== defaultSubtitle)}
-                        createVal={createStreamValue}
-                    />
-                </FormContainer>
-                <FormContainer size={3}>
-                    <StreamCheckboxList
-                        label="Check Additional Audios"
-                        checkedStreams={checkedAudios}
-                        setCheckedStreams={setCheckedAudios}
-                        streams={audios.filter((audio) => audio.stream_number.toString() !== defaultAudio)}
-                        createVal={createStreamValue}
-                    />
-                </FormContainer>
+                {!streams?.is_mkv && <>
+                    <FormContainer size={3}>
+                        <StreamCheckboxList
+                            label="Check Additional Subtitles"
+                            checkedStreams={checkedSubtitles}
+                            setCheckedStreams={setCheckedSubtitles}
+                            streams={subtitles.filter((subtitle) => subtitle.stream_number.toString() !== defaultSubtitle)}
+                            createVal={createStreamValue}
+                        />
+                    </FormContainer>
+                    <FormContainer size={3}>
+                        <StreamCheckboxList
+                            label="Check Additional Audios"
+                            checkedStreams={checkedAudios}
+                            setCheckedStreams={setCheckedAudios}
+                            streams={audios.filter((audio) => audio.stream_number.toString() !== defaultAudio)}
+                            createVal={createStreamValue}
+                        />
+                    </FormContainer>
+                </>
+
+                }
+
 
                 <SubmitButton label={"Reset Default"} size={0} />
             </form>

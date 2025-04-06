@@ -17,6 +17,22 @@ export const postForm = async (apiLink: string, formData: FormData)  => {
         }
 };
 
+export const get = async (apiLink: string)  => {
+    try {
+            const response = await axios.get(apiLink, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            return response?.data;
+        } catch (error) {
+            if(error instanceof AxiosError){
+                const isWithError = !!error?.response?.data?.error
+                const errorData = error?.response?.data
+                return isWithError ? errorData: {"error": errorData};
+            }
+            console.log(error);
+        }
+};
+
 export const postJson = async (apiLink: string, formJson: object) => {
     try {
             const response = await axios.post(apiLink, formJson, {
