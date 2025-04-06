@@ -55,7 +55,7 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: Rename
     };
 
     return (
-        <FormContainer formTitle="Rename Comics" size={3} containerStyle="flex flex-col gap-2">
+        <FormContainer size={3} containerStyle="flex flex-col gap-2">
             <FormInput
                 type="text"
                 inputValue={storyName}

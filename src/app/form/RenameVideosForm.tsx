@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputSeasonMessage } from "../lib/constants";
+import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
@@ -12,11 +12,13 @@ type RenameVideosFormProps = {
     setNameChanges: CallableFunction
     setRenameMessage: CallableFunction
     setError: CallableFunction
+    previewFiles: string[]
 }
 
-const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError }: RenameVideosFormProps) => {
+const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewFiles }: RenameVideosFormProps) => {
     const apiLink = import.meta.env.VITE_API_LINK
     const [seasonNumber, setSeasonNumber] = useState("");
+    const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -32,6 +34,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError }: Rename
         if (apiLink) {
             const formData = new FormData();
             formData.append("season_number", seasonNumber);
+            formData.append("start_number", startNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
             const response = await postForm(`${apiLink}/rename/videos`, formData)
             if (response?.error) {
@@ -46,12 +49,18 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError }: Rename
     };
 
     return (
-        <FormContainer formTitle="Rename Videos" size={3} containerStyle="flex flex-col gap-2">
+        <FormContainer size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={false}>
             <FormInput
                 type="number"
                 inputValue={seasonNumber}
                 setInputValue={setSeasonNumber}
                 placeholder={inputSeasonMessage}
+            />
+            <FormInput
+                type="number"
+                inputValue={startNumber}
+                setInputValue={setStartNumber}
+                placeholder={inputStartEpisodeMessage}
             />
             <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
                 <input {...getInputProps()} />
@@ -60,7 +69,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError }: Rename
             {episodeFiles.length > 0 &&
                 <FileListUploadPreview files={episodeFiles} />
             }
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={episodeFiles.length == 0}>
+            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={!previewFiles && episodeFiles.length == 0}>
                 Submit Files!
             </button>
         </FormContainer>
