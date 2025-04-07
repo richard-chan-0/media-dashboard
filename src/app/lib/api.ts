@@ -1,11 +1,22 @@
-import axios, { AxiosError } from "axios"
+import axios, { AxiosError, AxiosProgressEvent, AxiosRequestConfig } from "axios"
 import { ApiNameChangeResponse, NameChanges } from "./types";
 
-export const postForm = async (apiLink: string, formData: FormData)  => {
+export const postForm = async (apiLink: string, formData: FormData, setUploadProgress?: CallableFunction)  => {
     try {
-            const response = await axios.post(apiLink, formData, {
+            const configs: AxiosRequestConfig = {
                 headers: { "Content-Type": "multipart/form-data" },
-            });
+            }
+            if(setUploadProgress){
+                configs.onUploadProgress = (progressEvent: AxiosProgressEvent) => {
+                    if (!progressEvent || !progressEvent.total){
+                        return;
+                    }
+                    const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percent);
+                };
+            }
+
+            const response = await axios.post(apiLink, formData, configs);
             return response?.data;
         } catch (error) {
             if(error instanceof AxiosError){

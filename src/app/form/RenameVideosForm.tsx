@@ -7,6 +7,7 @@ import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
 import FormInput from "../lib/components/FormInput";
+import ProgressBar from "../lib/components/ProgressBar";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -20,6 +21,8 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadPercent, setUploadPercent] = useState(0);
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
@@ -36,13 +39,16 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
             formData.append("season_number", seasonNumber);
             formData.append("start_number", startNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
-            const response = await postForm(`${apiLink}/rename/videos`, formData)
+            setIsUploading(true);
+            const response = await postForm(`${apiLink}/rename/videos`, formData, setUploadPercent)
             if (response?.error) {
                 setError(response.error)
             } else {
                 const processedResponse = processApiResponseToNameChange(response);
                 setNameChanges(processedResponse);
             }
+            setIsUploading(false);
+            setUploadPercent(0)
             setSeasonNumber("");
             setEpisodeFiles([]);
         }
@@ -69,9 +75,15 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
             {episodeFiles.length > 0 &&
                 <FileListUploadPreview files={episodeFiles} />
             }
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={!previewFiles && episodeFiles.length == 0}>
+            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (!previewFiles && episodeFiles.length == 0)}>
                 Submit Files!
             </button>
+            {uploadPercent != 100 && isUploading && (
+                <ProgressBar progressPercent={uploadPercent} progressLabel="Uploading..." />
+            )}
+            {uploadPercent == 100 && isUploading && (
+                <p> API processing ... </p>
+            )}
         </FormContainer>
     );
 };
