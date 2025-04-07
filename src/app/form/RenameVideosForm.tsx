@@ -20,6 +20,8 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadPercent, setUploadPercent] = useState(0);
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
@@ -36,13 +38,16 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
             formData.append("season_number", seasonNumber);
             formData.append("start_number", startNumber);
             episodeFiles.forEach((file) => formData.append("files", file));
-            const response = await postForm(`${apiLink}/rename/videos`, formData)
+            setIsUploading(true);
+            const response = await postForm(`${apiLink}/rename/videos`, formData, setUploadPercent)
             if (response?.error) {
                 setError(response.error)
             } else {
                 const processedResponse = processApiResponseToNameChange(response);
                 setNameChanges(processedResponse);
             }
+            setIsUploading(false);
+            setUploadPercent(0)
             setSeasonNumber("");
             setEpisodeFiles([]);
         }
@@ -69,9 +74,24 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
             {episodeFiles.length > 0 &&
                 <FileListUploadPreview files={episodeFiles} />
             }
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={!previewFiles && episodeFiles.length == 0}>
+            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (!previewFiles && episodeFiles.length == 0)}>
                 Submit Files!
             </button>
+            {uploadPercent != 100 && isUploading && (
+                <div className="mt-4">
+                    Uploading files...
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                        <div
+                            className="bg-blue-500 h-4 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadPercent}%` }}
+                        />
+                    </div>
+                    <p className="mt-2 text-sm text-gray-700">{uploadPercent}%</p>
+                </div>
+            )}
+            {uploadPercent == 100 && isUploading && (
+                <p> API processing ... </p>
+            )}
         </FormContainer>
     );
 };
