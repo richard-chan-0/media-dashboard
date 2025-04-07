@@ -7,6 +7,7 @@ import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
 import FormInput from "../lib/components/FormInput";
+import ProgressBar from "../lib/components/ProgressBar";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -78,16 +79,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
                 Submit Files!
             </button>
             {uploadPercent != 100 && isUploading && (
-                <div className="mt-4">
-                    Uploading files...
-                    <div className="w-full bg-gray-200 rounded-full h-4">
-                        <div
-                            className="bg-blue-500 h-4 rounded-full transition-all duration-300"
-                            style={{ width: `${uploadPercent}%` }}
-                        />
-                    </div>
-                    <p className="mt-2 text-sm text-gray-700">{uploadPercent}%</p>
-                </div>
+                <ProgressBar progressPercent={uploadPercent} progressLabel="Uploading..." />
             )}
             {uploadPercent == 100 && isUploading && (
                 <p> API processing ... </p>
