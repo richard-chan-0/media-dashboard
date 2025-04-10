@@ -3,23 +3,24 @@ import NameChangeTable from "../lib/components/NameChangeTable";
 import { NameChanges } from "../lib/types";
 import { postJson, processNameChangeToApiRequest } from "../lib/api";
 import SubmitButton from "../lib/components/SubmitButton";
-import StageButton from "../lib/components/StageButton";
+import StageNavButtons from "./stageNavButtons";
 
 
 type NameChangePreviewProps = {
     nameChanges: NameChanges;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
     setRenameMessage: React.Dispatch<React.SetStateAction<string>>;
+    stage: number,
     setStage: React.Dispatch<React.SetStateAction<number>>;
 }
-
-
 
 const NameChangePreview = ({
     nameChanges,
     setNameChanges,
     setRenameMessage,
-    setStage }: NameChangePreviewProps
+    stage,
+    setStage
+}: NameChangePreviewProps
 ) => {
     if (nameChanges?.changes.length === 0) {
         return <></>;
@@ -40,24 +41,14 @@ const NameChangePreview = ({
             containerStyle="flex flex-col gap-2"
             size={5}
         >
-            <div className="flex justify-between items-center mb-3">
-                <StageButton
-                    onClick={() => setStage(0)}
-                    label="Back"
-                    type="button"
-                    direction="left"
-                    buttonStyle="w-1/6 border border-gray-600 hover:bg-gray-600"
-                />
-                Name Changes Preview
-                <StageButton
-                    onClick={() => setStage(2)}
-                    label="Skip"
-                    type="button"
-                    direction="right"
-                    buttonStyle="w-1/6 border border-gray-600 hover:bg-gray-600"
-                />
-            </div>
-
+            <StageNavButtons
+                leftLabel="Back"
+                rightLabel="Skip"
+                isLeftEnabled={true}
+                isRightEnabled={true}
+                stage={stage}
+                setStage={setStage}
+            />
             <NameChangeTable nameChanges={nameChanges} />
             <div className="flex justify-center">
                 <SubmitButton

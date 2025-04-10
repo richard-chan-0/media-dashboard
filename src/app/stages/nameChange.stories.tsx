@@ -13,7 +13,6 @@ type Story = StoryObj<typeof meta>;
 
 export const VideoNameChangePreview: Story = {
     args: {
-        mediaType: 'videos',
         nameChanges: {
             changes: [
                 { input: 'video1.mp4', output: 'video1_renamed.mp4' },
@@ -23,6 +22,7 @@ export const VideoNameChangePreview: Story = {
         },
         setNameChanges: () => { },
         setRenameMessage: () => { },
+        setStage: () => { },
     },
 };
 

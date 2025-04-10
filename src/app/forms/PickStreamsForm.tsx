@@ -92,7 +92,7 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
                 }
 
 
-                <SubmitButton label={"Reset Default"} size={0} />
+                <SubmitButton label={"Reset Default"} />
             </form>
         </FormContainer>
     )

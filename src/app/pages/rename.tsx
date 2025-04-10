@@ -5,6 +5,7 @@ import RenameUploadStage from "../stages/upload";
 import { NameChanges } from "../lib/types";
 import NameChangePreview from "../stages/nameChange";
 import { get } from "../lib/api";
+import SetStreams from "../stages/setStreams";
 
 type RenamePageProps = {
     mediaType: string
@@ -22,6 +23,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     const [previewFiles, setPreviewFiles] = useState([]);
     const [error, setError] = useState("");
     const [stage, setStage] = useState(0);
+
 
     useEffect(() => {
         const fetch = async (apiLink: string) => {
@@ -66,13 +68,14 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                         nameChanges={nameChanges}
                         setNameChanges={setNameChanges}
                         setRenameMessage={setRenameMessage}
+                        stage={stage}
                         setStage={setStage}
                     />
                 )
             }
             {
                 stage == 2 && (
-                    <>to be added</>
+                    <SetStreams setError={setError} setStage={setStage} stage={stage} />
                 )
             }
             {/* <FormContainer

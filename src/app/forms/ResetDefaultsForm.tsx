@@ -26,10 +26,10 @@ const ResetDefaultsForm = ({ setError, setStreams }: ResetDefaultsFormProps) => 
 
 
     return (
-        <FormContainer size={0} >
+        <FormContainer size={0} isBorderEnabled={false} containerStyle="flex flex-col items-center w-full">
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <label>Get Streams</label>
-                <SubmitButton label={"Get Streams"} />
+                <SubmitButton label="Pull" />
             </form>
         </FormContainer>
     );
