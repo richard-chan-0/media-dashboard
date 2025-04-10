@@ -1,5 +1,5 @@
 import { BaseSyntheticEvent } from "react";
-import { Stream } from "../../form/PickStreamsForm";
+import { Stream } from "../../forms/PickStreamsForm";
 
 type StreamCheckboxListProps = {
     checkedStreams: string[]

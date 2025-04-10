@@ -8,15 +8,26 @@ import FileListUploadPreview from "../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
 import FormInput from "../lib/components/FormInput";
 import ProgressBar from "../lib/components/ProgressBar";
+import { NameChanges } from "../lib/types";
 
 type RenameVideosFormProps = {
-    setNameChanges: CallableFunction
-    setRenameMessage: CallableFunction
-    setError: CallableFunction
+    setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>
+    setRenameMessage: React.Dispatch<React.SetStateAction<string>>
+    setError: React.Dispatch<React.SetStateAction<string>>
     previewFiles: string[]
+    isBorderEnabled?: boolean
+    setStage: React.Dispatch<React.SetStateAction<number>>
 }
 
-const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewFiles }: RenameVideosFormProps) => {
+const RenameVideosForm = ({
+    setNameChanges,
+    setRenameMessage,
+    setError,
+    previewFiles,
+    isBorderEnabled,
+    setStage
+}: RenameVideosFormProps
+) => {
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -37,6 +48,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
             setError("can't find api link");
             return
         }
+
         const formData = new FormData();
         formData.append("season_number", seasonNumber);
         formData.append("start_number", startNumber);
@@ -48,16 +60,16 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             setNameChanges(processedResponse);
+            setStage(1);
         }
         setIsUploading(false);
         setUploadPercent(0)
         setSeasonNumber("");
         setEpisodeFiles([]);
-
     };
 
     return (
-        <FormContainer formTitle="test title" size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={false}>
+        <FormContainer size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={isBorderEnabled}>
             <FormInput
                 type="number"
                 inputValue={seasonNumber}
@@ -91,3 +103,5 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
 };
 
 export default RenameVideosForm;
+
+
