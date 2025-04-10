@@ -63,12 +63,16 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
             {
                 stage == 1 && (
                     <NameChangePreview
-                        mediaType={mediaType}
                         nameChanges={nameChanges}
                         setNameChanges={setNameChanges}
                         setRenameMessage={setRenameMessage}
                         setStage={setStage}
                     />
+                )
+            }
+            {
+                stage == 2 && (
+                    <>to be added</>
                 )
             }
             {/* <FormContainer

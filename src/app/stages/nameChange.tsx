@@ -7,7 +7,6 @@ import StageButton from "../lib/components/StageButton";
 
 
 type NameChangePreviewProps = {
-    mediaType: string;
     nameChanges: NameChanges;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
     setRenameMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -17,7 +16,6 @@ type NameChangePreviewProps = {
 
 
 const NameChangePreview = ({
-    mediaType,
     nameChanges,
     setNameChanges,
     setRenameMessage,
@@ -39,27 +37,39 @@ const NameChangePreview = ({
 
     return (
         <FormContainer
-            formTitle={mediaType == "videos" ? "Rename Videos" : "Rename Comics"}
-            size={6}
-            containerStyle="flex flex-col gap-2 items-center"
+            containerStyle="flex flex-col gap-2"
+            size={5}
         >
-            <NameChangeTable nameChanges={nameChanges} />
-
-            <div className="flex flex-col items-center gap-2">
-                <SubmitButton
-                    onClick={handleSubmit}
-                    label="Rename Files"
-                    size={0}
-                    type="button"
-                />
+            <div className="flex justify-between items-center mb-3">
                 <StageButton
                     onClick={() => setStage(0)}
                     label="Back"
                     type="button"
                     direction="left"
+                    buttonStyle="w-1/6 border border-gray-600 hover:bg-gray-600"
+                />
+                Name Changes Preview
+                <StageButton
+                    onClick={() => setStage(2)}
+                    label="Skip"
+                    type="button"
+                    direction="right"
+                    buttonStyle="w-1/6 border border-gray-600 hover:bg-gray-600"
                 />
             </div>
+
+            <NameChangeTable nameChanges={nameChanges} />
+            <div className="flex justify-center">
+                <SubmitButton
+                    onClick={handleSubmit}
+                    label="Rename Files"
+                    type="button"
+                    buttonStyle="w-fit"
+                />
+            </div>
+
         </FormContainer>
+
     )
 }
 

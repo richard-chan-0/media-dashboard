@@ -7,14 +7,21 @@ type StageButtonProps = {
     type?: HTMLButtonElement["type"],
     onClick?: () => void,
     direction?: "left" | "right"
+    buttonStyle?: string
 };
 
-const StageButton = ({ label, type, onClick, direction }: StageButtonProps) => {
+const StageButton = ({
+    label,
+    type,
+    onClick,
+    direction,
+    buttonStyle
+}: StageButtonProps) => {
     return (
         <button
             type={type || "button"}
             onClick={onClick}
-            className={`flex items-center w-1/4 justify-center text-white text-sm p-2 rounded-xl ${theme.buttonColor}`} >
+            className={`flex items-center text-sm ${theme.buttonFormat} ${buttonStyle}`} >
             {
                 direction == "left" && (
                     <>
