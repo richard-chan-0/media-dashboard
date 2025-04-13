@@ -9,3 +9,5 @@ export const inputStartVolumeMessage = 'Enter start volume';
 export const inputStoryNameMessage = 'Enter a story title';
 
 export const ffmpegLink = import.meta.env.VITE_FFMPEG_UTILITY_API_LINK;
+
+export const mediaLink = import.meta.env.VITE_MEDIA_API_LINK;
