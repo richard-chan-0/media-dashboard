@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage } from "../lib/constants";
+import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage, mediaLink } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
@@ -17,7 +17,6 @@ type RenameVideosFormProps = {
 }
 
 const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewFiles }: RenameVideosFormProps) => {
-    const apiLink = import.meta.env.VITE_API_LINK
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -34,24 +33,27 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
     });
 
     const handleSubmit = async () => {
-        if (apiLink) {
-            const formData = new FormData();
-            formData.append("season_number", seasonNumber);
-            formData.append("start_number", startNumber);
-            episodeFiles.forEach((file) => formData.append("files", file));
-            setIsUploading(true);
-            const response = await postForm(`${apiLink}/rename/videos`, formData, setUploadPercent)
-            if (response?.error) {
-                setError(response.error)
-            } else {
-                const processedResponse = processApiResponseToNameChange(response);
-                setNameChanges(processedResponse);
-            }
-            setIsUploading(false);
-            setUploadPercent(0)
-            setSeasonNumber("");
-            setEpisodeFiles([]);
+        if (!mediaLink) {
+            setError("can't find api link");
+            return
         }
+        const formData = new FormData();
+        formData.append("season_number", seasonNumber);
+        formData.append("start_number", startNumber);
+        episodeFiles.forEach((file) => formData.append("files", file));
+        setIsUploading(true);
+        const response = await postForm(`${mediaLink}/rename/videos`, formData, setUploadPercent)
+        if (response?.error) {
+            setError(response.error)
+        } else {
+            const processedResponse = processApiResponseToNameChange(response);
+            setNameChanges(processedResponse);
+        }
+        setIsUploading(false);
+        setUploadPercent(0)
+        setSeasonNumber("");
+        setEpisodeFiles([]);
+
     };
 
     return (

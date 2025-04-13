@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage } from "../lib/constants";
+import { formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage, mediaLink } from "../lib/constants";
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
@@ -15,7 +15,6 @@ type RenameVideosFormProps = {
 }
 
 const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: RenameVideosFormProps) => {
-    const apiLink = import.meta.env.VITE_API_LINK
     const [storyName, setStoryName] = useState("");
     const [startVolume, setStartVolume] = useState("");
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
@@ -30,7 +29,7 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: Rename
     });
 
     const handleSubmit = async () => {
-        if (!apiLink) {
+        if (!mediaLink) {
             setError("can't find api link");
             return
         }
@@ -43,7 +42,7 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: Rename
         formData.append("comic_name", storyName);
         formData.append("start_number", startVolume);
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${apiLink}/rename/comics`, formData)
+        const response = await postForm(`${mediaLink}/rename/comics`, formData)
         if (response?.error) {
             setError(response.error)
         } else {
