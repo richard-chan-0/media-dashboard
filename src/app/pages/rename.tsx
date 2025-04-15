@@ -5,6 +5,7 @@ import NameChangeTable from "../lib/components/NameChangeTable";
 import { get, postJson, processNameChangeToApiRequest } from "../lib/api";
 import FormPage from "./formPage";
 import FormContainer from "../form/FormContainer";
+import { mediaLink } from "../lib/constants";
 
 type RenamePageProps = {
     mediaType: string
@@ -65,8 +66,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                 setPreviewFiles(previews);
             }
         };
-        const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
-        fetch(apiLink);
+        fetch(mediaLink);
 
     }, []);
 
@@ -76,10 +76,9 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     }, [mediaType])
 
     const handleSubmit = async () => {
-        const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
-        if (apiLink) {
+        if (mediaLink) {
             const nameChangeRequest = processNameChangeToApiRequest(nameChanges);
-            const response = await postJson(`${apiLink}/rename/process`, nameChangeRequest)
+            const response = await postJson(`${mediaLink}/rename/process`, nameChangeRequest)
             setRenameMessage(response?.error ? response.error : response);
         }
         setNameChanges({ changes: [] });
@@ -108,7 +107,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                 }
             </div >
             <FormContainer
-                formTitle={mediaType == "videos" ? "Rename Videos}" : "Rename Comics"}
+                formTitle={mediaType == "videos" ? "Rename Videos" : "Rename Comics"}
                 size={6}
                 containerStyle="flex flex-col gap-2 items-center"
             >

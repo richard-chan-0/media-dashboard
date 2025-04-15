@@ -57,7 +57,7 @@ const RenameVideosForm = ({ setNameChanges, setRenameMessage, setError, previewF
     };
 
     return (
-        <FormContainer size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={false}>
+        <FormContainer formTitle="test title" size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={false}>
             <FormInput
                 type="number"
                 inputValue={seasonNumber}
