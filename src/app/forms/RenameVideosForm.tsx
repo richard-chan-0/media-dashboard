@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { postForm } from "../lib/api";
 import { useDropzone } from "react-dropzone";
-<<<<<<< HEAD
 import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage, mediaLink } from "../lib/constants";
-=======
-import {
-    formDropdownMessage,
-    inputSeasonMessage,
-    inputStartEpisodeMessage,
-    mediaLink
-} from "../lib/constants";
->>>>>>> aca5210 (update api constants)
 import theme from "../lib/theme";
 import { processApiResponseToNameChange } from "../lib/api";
 import FileListUploadPreview from "../lib/components/NameChangeList";
@@ -54,15 +45,10 @@ const RenameVideosForm = ({
 
     const handleSubmit = async () => {
         if (!mediaLink) {
-<<<<<<< HEAD
             setError("can't find api link");
             return
         }
 
-=======
-            setError("no media link");
-        }
->>>>>>> aca5210 (update api constants)
         const formData = new FormData();
         formData.append("season_number", seasonNumber);
         formData.append("start_number", startNumber);
@@ -80,10 +66,6 @@ const RenameVideosForm = ({
         setUploadPercent(0)
         setSeasonNumber("");
         setEpisodeFiles([]);
-<<<<<<< HEAD
-=======
-
->>>>>>> aca5210 (update api constants)
     };
 
     return (
@@ -107,7 +89,7 @@ const RenameVideosForm = ({
             {episodeFiles.length > 0 &&
                 <FileListUploadPreview files={episodeFiles} />
             }
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (!previewFiles || episodeFiles.length == 0)}>
+            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (previewFiles.length == 0 && episodeFiles.length == 0)}>
                 Submit Files!
             </button>
             {uploadPercent != 100 && isUploading && (

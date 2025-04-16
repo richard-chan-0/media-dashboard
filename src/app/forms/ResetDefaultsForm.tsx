@@ -13,15 +13,19 @@ const ResetDefaultsForm = ({ setError, setStreams }: ResetDefaultsFormProps) => 
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (ffmpegLink) {
-            const response = await get(`${ffmpegLink}/read`)
-            if (response?.error) {
-                setError(response?.error);
-            } else {
-                setStreams(response);
-                setError("");
-            }
+        if (!ffmpegLink) {
+            setError("ffmpeg api not defined")
+            return
         }
+
+        const response = await get(`${ffmpegLink}/read`)
+        if (response?.error) {
+            setError(response?.error);
+        } else {
+            setStreams(response);
+            setError("");
+        }
+
     };
 
 
@@ -29,7 +33,7 @@ const ResetDefaultsForm = ({ setError, setStreams }: ResetDefaultsFormProps) => 
         <FormContainer size={0} isBorderEnabled={false} containerStyle="flex flex-col items-center w-full">
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <label>Get Streams</label>
-                <SubmitButton label="Pull" />
+                <SubmitButton label="Pull" type="submit" />
             </form>
         </FormContainer>
     );

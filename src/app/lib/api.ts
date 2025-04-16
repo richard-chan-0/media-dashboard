@@ -55,9 +55,7 @@ export const get = async (apiLink: string)  => {
             return response?.data;
         } catch (error) {
             if(error instanceof AxiosError){
-                const isWithError = !!error?.response?.data?.error
-                const errorData = error?.response?.data
-                return isWithError ? errorData: {"error": errorData};
+                return {"error": processAxiosError(error)};
             }
             console.log(error);
         }
