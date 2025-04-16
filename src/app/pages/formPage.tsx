@@ -15,10 +15,13 @@ const FormPage = ({
     pageStyle
 }: FormPageProps) => {
     return (
-        <div className={`flex ${isColumn ? "flex-col" : ""} items-center m-4 gap-4 ${pageStyle}`}>
+        <>
             {error && <Exception error={error} />}
-            {children}
-        </div>
+            <div className={`flex ${isColumn ? "flex-col" : ""} items-center m-4 gap-4 ${pageStyle}`}>
+                {children}
+            </div>
+        </>
+
     )
 }
 

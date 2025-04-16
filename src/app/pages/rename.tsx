@@ -78,18 +78,13 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                     <SetStreams setError={setError} setStage={setStage} stage={stage} />
                 )
             }
-            {/* <FormContainer
-                formTitle={mediaType == "videos" ? "Rename Videos}" : "Rename Comics"}
-                size={6}
-                containerStyle="flex flex-col gap-2 items-center"
-            >
 
-                {renameMessage && (
-                    <div className="flex justify-center">
-                        {renameMessage}
-                    </div>
-                )}
-            </FormContainer> */}
+            {renameMessage && (
+                <div className="flex justify-center">
+                    {renameMessage}
+                </div>
+            )}
+
         </FormPage >
     );
 }

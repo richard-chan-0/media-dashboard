@@ -1,5 +1,26 @@
 import axios, { AxiosError, AxiosProgressEvent, AxiosRequestConfig } from "axios"
 import { ApiNameChangeResponse, NameChanges } from "./types";
+import { NETWORK_ERROR } from "./constants";
+
+type ApiError = {
+    code?: string
+    response?: {
+        data: {
+            error: string
+        }
+    }
+};
+
+const processAxiosError = (axiosError: ApiError) => {
+    const isWithApiError = !!axiosError?.response?.data?.error;
+    if(isWithApiError){
+        return axiosError?.response?.data;
+    }
+    if(axiosError?.code === NETWORK_ERROR){
+        return "error could not reach api";
+    }
+    return JSON.stringify(axiosError);
+};
 
 export const postForm = async (apiLink: string, formData: FormData, setUploadProgress?: CallableFunction)  => {
     try {
@@ -20,9 +41,7 @@ export const postForm = async (apiLink: string, formData: FormData, setUploadPro
             return response?.data;
         } catch (error) {
             if(error instanceof AxiosError){
-                const isWithError = !!error?.response?.data?.error
-                const errorData = error?.response?.data
-                return isWithError ? errorData: {"error": errorData};
+                return {"error": processAxiosError(error)};
             }
             console.log(error);
         }
