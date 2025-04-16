@@ -1,4 +1,4 @@
-import { Stream } from "../../form/PickStreamsForm"
+import { Stream } from "../../forms/PickStreamsForm"
 
 type StreamSelectProps = {
     select: string

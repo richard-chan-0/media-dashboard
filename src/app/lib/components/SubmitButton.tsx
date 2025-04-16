@@ -1,14 +1,18 @@
-import { getWidthSize } from "../utilities";
+import theme from "../theme";
 
 type SubmitButtonProps = {
     label: string,
-    size?: number
+    type?: HTMLButtonElement["type"],
+    onClick?: () => void
+    buttonStyle?: string
 };
 
-const SubmitButton = ({ label, size }: SubmitButtonProps) => {
-    const width = getWidthSize(size);
+const SubmitButton = ({ label, type, onClick, buttonStyle }: SubmitButtonProps) => {
     return (
-        <button type="submit" className={`bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 ${width} rounded-lg`} >
+        <button
+            type={type || "button"}
+            onClick={onClick}
+            className={`${theme.buttonColor} ${theme.buttonFormat} ${buttonStyle}`} >
             {label}
         </button>
     )

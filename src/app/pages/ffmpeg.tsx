@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ResetDefaultsForm from "../form/ResetDefaultsForm";
-import PickStreamsForm from "../form/PickStreamsForm";
+import ResetDefaultsForm from "../forms/ResetDefaultsForm";
+import PickStreamsForm from "../forms/PickStreamsForm";
 import SuccessMessage from "../lib/components/SuccessMessage";
 import FormPage from "./formPage";
 
