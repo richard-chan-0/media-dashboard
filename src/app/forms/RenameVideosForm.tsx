@@ -69,7 +69,7 @@ const RenameVideosForm = ({
     };
 
     return (
-        <FormContainer size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={isBorderEnabled}>
+        <FormContainer size={3} containerStyle="flex flex-col gap-2 items-center" isBorderEnabled={isBorderEnabled}>
             <FormInput
                 type="number"
                 inputValue={seasonNumber}
@@ -82,7 +82,7 @@ const RenameVideosForm = ({
                 setInputValue={setStartNumber}
                 placeholder={inputStartEpisodeMessage}
             />
-            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
+            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}>
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>

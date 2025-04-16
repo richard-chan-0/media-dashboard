@@ -13,7 +13,6 @@ type Story = StoryObj<typeof meta>;
 
 export const LeftButtonWithLabel: Story = {
     args: {
-        label: "Left button is shown",
         stage: 0,
         setStage: () => { },
         isLeftEnabled: true,
@@ -22,7 +21,6 @@ export const LeftButtonWithLabel: Story = {
 
 export const RightButtonWithLabel: Story = {
     args: {
-        label: "Right button is shown",
         stage: 0,
         setStage: () => { },
         isRightEnabled: true,
@@ -31,7 +29,6 @@ export const RightButtonWithLabel: Story = {
 
 export const BothButtonsWithLabel: Story = {
     args: {
-        label: "Both button is shown",
         stage: 0,
         setStage: () => { },
         isLeftEnabled: true,

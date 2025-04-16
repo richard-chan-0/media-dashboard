@@ -14,7 +14,7 @@ type ApiError = {
 const processAxiosError = (axiosError: ApiError) => {
     const isWithApiError = !!axiosError?.response?.data?.error;
     if(isWithApiError){
-        return axiosError?.response?.data;
+        return axiosError?.response?.data?.error;
     }
     if(axiosError?.code === NETWORK_ERROR){
         return "error could not reach api";
