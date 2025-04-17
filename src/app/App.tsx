@@ -11,7 +11,6 @@ function App() {
         <NavLink to="/rename/videos">Rename Videos</NavLink>
         <NavLink to="/rename/comics">Rename Comics</NavLink>
         <NavLink to="/volumes">Create Volumes</NavLink>
-        <NavLink to="/ffmpeg">Reset Default Streams</NavLink>
       </nav>
 
       <Routes>
@@ -19,7 +18,6 @@ function App() {
         <Route path="/rename/videos" element={<pages.RenamePage mediaType="videos" />} />
         <Route path="/rename/comics" element={<pages.RenamePage mediaType="comics" />} />
         <Route path="/volumes" element={<pages.ManagePage />} />
-        <Route path="/ffmpeg" element={<pages.FfmpegPage />} />
       </Routes>
     </div >
   );
