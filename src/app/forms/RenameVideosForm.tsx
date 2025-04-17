@@ -100,12 +100,7 @@ const RenameVideosForm = ({
             <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (previewFiles.length == 0 && episodeFiles.length == 0)}>
                 Upload!
             </button>
-            {uploadPercent != 100 && isUploading && (
-                <ProgressBar progressPercent={uploadPercent} progressLabel="Uploading..." />
-            )}
-            {uploadPercent == 100 && isUploading && (
-                <p> API processing ... </p>
-            )}
+            <ProgressBar isInProgress={isUploading} progressPercent={uploadPercent} progressLabel="Uploading..." />
         </FormContainer>
     );
 };
