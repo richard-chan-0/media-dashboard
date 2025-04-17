@@ -68,7 +68,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
 
     return (
         <FormContainer
-            formTitle="Upload Files"
+            formTitle="Upload Videos"
             size={3}
             containerStyle="flex flex-col gap-2 items-center"
             isBorderEnabled={true}
