@@ -16,7 +16,7 @@ const FormInput = ({ type, inputValue, setInputValue, placeholder, required }: F
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={placeholder}
             required={required}
-            className={`border p-2 w-full rounded-sm ${theme.appSecondaryColor}`}
+            className={`border p-2 w-1/2 rounded-sm ${theme.appSecondaryColor} text-sm text-center`}
         />
     )
 }

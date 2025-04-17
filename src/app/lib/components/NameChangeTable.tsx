@@ -1,3 +1,4 @@
+import theme from "../theme";
 import { NameChanges } from "../types";
 import { removePathFromFilePath } from "../utilities";
 import TableCell from "./TableCell";
@@ -14,8 +15,8 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
 
     return (
         <div className="text-white flex justify-center text-center">
-            <table>
-                <thead>
+            <table className="w-full">
+                <thead className={`${theme.textAppColor}`}>
                     <tr>
                         <TableCell isHeader={true}>
                             Before

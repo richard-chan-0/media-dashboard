@@ -5,7 +5,7 @@ import StreamSelect from "../lib/components/StreamSelect";
 import StreamCheckboxList from "../lib/components/StreamCheckbox";
 import SubmitButton from "../lib/components/SubmitButton";
 import { postForm } from "../lib/api";
-import { ffmpegLink } from "../lib/constants";
+import { ffmpegLink, no_api_error } from "../lib/constants";
 
 export type Stream = {
     is_default: string,
@@ -34,6 +34,11 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!ffmpegLink) {
+            setError(no_api_error);
+            return;
+        }
+
         const writeLink = streams?.is_mkv ? "/mkv/write" : "/ffmpeg/write";
         const formData = new FormData();
         formData.append("subtitles", JSON.stringify([defaultSubtitle, ...checkedSubtitles]));
@@ -49,7 +54,7 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
 
     const createStreamValue = (option: Stream) => `${option.language}${option.title ? `:${option.title}` : ""}`
     return (
-        <FormContainer size={4} >
+        <FormContainer isBorderEnabled={false}>
             <form onSubmit={handleSubmit} className="flex flex-col p-4 w-full gap-3 items-center">
                 <StreamSelect
                     label="Select Default Subtitle"
@@ -92,7 +97,7 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
                 }
 
 
-                <SubmitButton label={"Reset Default"} />
+                <SubmitButton label={"Reset Default"} type="submit" />
             </form>
         </FormContainer>
     )
