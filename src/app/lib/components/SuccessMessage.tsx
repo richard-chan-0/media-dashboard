@@ -8,7 +8,7 @@ const SuccessMessage = ({ message }: ExceptionProps) => {
     }
 
     return (
-        <div className="w-lg pt-2 text-green-300 text-center">
+        <div className="w-full pt-2 text-green-300 text-center text-wrap">
             Success: {message}
         </div>
     )

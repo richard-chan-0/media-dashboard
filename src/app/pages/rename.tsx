@@ -67,9 +67,9 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                     <NameChangePreview
                         nameChanges={nameChanges}
                         setNameChanges={setNameChanges}
-                        setRenameMessage={setRenameMessage}
                         stage={stage}
                         setStage={setStage}
+                        setError={setError}
                     />
                 )
             }
@@ -78,13 +78,6 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                     <SetStreams setError={setError} setStage={setStage} stage={stage} />
                 )
             }
-
-            {renameMessage && (
-                <div className="flex justify-center">
-                    {renameMessage}
-                </div>
-            )}
-
         </FormPage >
     );
 }

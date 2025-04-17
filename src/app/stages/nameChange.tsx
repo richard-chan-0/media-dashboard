@@ -4,22 +4,23 @@ import { NameChanges } from "../lib/types";
 import { postJson, processNameChangeToApiRequest } from "../lib/api";
 import SubmitButton from "../lib/components/SubmitButton";
 import StageNavButtons from "./stageNavButtons";
+import { mediaLink, no_api_error } from "../lib/constants";
 
 
 type NameChangePreviewProps = {
     nameChanges: NameChanges;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
-    setRenameMessage: React.Dispatch<React.SetStateAction<string>>;
     stage: number,
     setStage: React.Dispatch<React.SetStateAction<number>>;
+    setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const NameChangePreview = ({
     nameChanges,
     setNameChanges,
-    setRenameMessage,
     stage,
-    setStage
+    setStage,
+    setError
 }: NameChangePreviewProps
 ) => {
     if (nameChanges?.changes.length === 0) {
@@ -27,17 +28,24 @@ const NameChangePreview = ({
     }
 
     const handleSubmit = async () => {
-        const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
-        if (apiLink) {
-            const nameChangeRequest = processNameChangeToApiRequest(nameChanges);
-            const response = await postJson(`${apiLink}/rename/process`, nameChangeRequest)
-            setRenameMessage(response?.error ? response.error : response);
+        setError("");
+        if (!mediaLink) {
+            setError(no_api_error);
+            return;
         }
-        setNameChanges({ changes: [] });
+        const nameChangeRequest = processNameChangeToApiRequest(nameChanges);
+        const response = await postJson(`${mediaLink}/rename/process`, nameChangeRequest)
+        if (response?.error) {
+            setError(response.error)
+        } else {
+            setNameChanges({ changes: [] });
+            setStage(2);
+        }
     };
 
     return (
         <FormContainer
+            formTitle="Rename Files"
             containerStyle="flex flex-col gap-2"
             size={5}
         >
@@ -53,7 +61,7 @@ const NameChangePreview = ({
             <div className="flex justify-center">
                 <SubmitButton
                     onClick={handleSubmit}
-                    label="Rename Files"
+                    label="Rename!"
                     type="button"
                     buttonStyle="w-fit"
                 />

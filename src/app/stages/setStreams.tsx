@@ -16,10 +16,12 @@ const SetStreams = ({ stage, setStage, setError }: SetStreamsProps) => {
     const [streams, setStreams] = useState({ attachment: [], subtitle: [], audio: [] });
 
     return (
-        <FormContainer size={3} containerStyle="flex flex-col">
+        <FormContainer size={3} containerStyle="flex flex-col gap-4">
             <StageNavButtons
                 leftLabel="Back"
+                rightLabel="Reset"
                 isLeftEnabled={true}
+                isRightEnabled={true}
                 stage={stage}
                 setStage={setStage}
             />

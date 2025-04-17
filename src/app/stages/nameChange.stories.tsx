@@ -20,6 +20,7 @@ export const VideoNameChangePreview: Story = {
                 { input: 'video3.mp4', output: 'video3_renamed.mp4' },
             ],
         },
+        stage: 0,
         setNameChanges: () => { },
         setRenameMessage: () => { },
         setStage: () => { },

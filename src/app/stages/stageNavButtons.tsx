@@ -35,7 +35,7 @@ const StageNavButtons = ({
         <div className={`flex items-center mb-3 ${getJustify(isLeftEnabled, isRightEnabled)}`}>
             {isLeftEnabled && (
                 <StageButton
-                    onClick={() => setStage(stage - 1)}
+                    onClick={() => setStage(stage - 1 < 0 ? 0 : stage - 1)}
                     label={leftLabel}
                     type="button"
                     direction="left"
@@ -44,7 +44,7 @@ const StageNavButtons = ({
             )}
             {isRightEnabled && (
                 <StageButton
-                    onClick={() => setStage(stage + 1)}
+                    onClick={() => setStage(stage + 1 > 2 ? 0 : stage + 1)}
                     label={rightLabel}
                     type="button"
                     direction="right"

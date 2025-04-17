@@ -69,20 +69,28 @@ const RenameVideosForm = ({
     };
 
     return (
-        <FormContainer size={3} containerStyle="flex flex-col gap-2" isBorderEnabled={isBorderEnabled}>
-            <FormInput
-                type="number"
-                inputValue={seasonNumber}
-                setInputValue={setSeasonNumber}
-                placeholder={inputSeasonMessage}
-            />
-            <FormInput
-                type="number"
-                inputValue={startNumber}
-                setInputValue={setStartNumber}
-                placeholder={inputStartEpisodeMessage}
-            />
-            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}>
+        <FormContainer
+            formTitle="Upload Files"
+            size={3}
+            containerStyle="flex flex-col gap-2 items-center"
+            isBorderEnabled={isBorderEnabled}
+        >
+            <div className="flex w-full gap-4 justify-between">
+                <FormInput
+                    type="number"
+                    inputValue={seasonNumber}
+                    setInputValue={setSeasonNumber}
+                    placeholder={inputSeasonMessage}
+                />
+                <FormInput
+                    type="number"
+                    inputValue={startNumber}
+                    setInputValue={setStartNumber}
+                    placeholder={inputStartEpisodeMessage}
+                />
+            </div>
+
+            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}>
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
@@ -90,7 +98,7 @@ const RenameVideosForm = ({
                 <FileListUploadPreview files={episodeFiles} />
             }
             <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (previewFiles.length == 0 && episodeFiles.length == 0)}>
-                Submit Files!
+                Upload!
             </button>
             {uploadPercent != 100 && isUploading && (
                 <ProgressBar progressPercent={uploadPercent} progressLabel="Uploading..." />
