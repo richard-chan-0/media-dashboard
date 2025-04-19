@@ -10,11 +10,10 @@ import FormInput from "../lib/components/FormInput";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
-    setRenameMessage: CallableFunction
     setError: CallableFunction
 }
 
-const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: RenameVideosFormProps) => {
+const RenameComicsForm = ({ setNameChanges, setError }: RenameVideosFormProps) => {
     const [storyName, setStoryName] = useState("");
     const [startVolume, setStartVolume] = useState("");
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
@@ -24,7 +23,6 @@ const RenameComicsForm = ({ setNameChanges, setRenameMessage, setError }: Rename
             setVolumeFiles(acceptedFiles)
             setError("");
             setNameChanges({ changes: [] })
-            setRenameMessage("");
         },
     });
 

@@ -12,20 +12,18 @@ import { NameChanges } from "../lib/types";
 
 type RenameVideosFormProps = {
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>
-    setRenameMessage: React.Dispatch<React.SetStateAction<string>>
     setError: React.Dispatch<React.SetStateAction<string>>
     previewFiles: string[]
     isBorderEnabled?: boolean
-    setStage: React.Dispatch<React.SetStateAction<number>>
+    stageDispatcher: React.ActionDispatch<[action: string]>
 }
 
 const RenameVideosForm = ({
     setNameChanges,
-    setRenameMessage,
     setError,
     previewFiles,
     isBorderEnabled,
-    setStage
+    stageDispatcher
 }: RenameVideosFormProps
 ) => {
     const [seasonNumber, setSeasonNumber] = useState("");
@@ -39,7 +37,6 @@ const RenameVideosForm = ({
             setEpisodeFiles(acceptedFiles);
             setError("");
             setNameChanges({ changes: [] })
-            setRenameMessage("");
         },
     });
 
@@ -60,7 +57,7 @@ const RenameVideosForm = ({
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             setNameChanges(processedResponse);
-            setStage(1);
+            stageDispatcher("next");
         }
         setIsUploading(false);
         setUploadPercent(0)

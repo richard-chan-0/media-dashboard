@@ -11,15 +11,16 @@ type NameChangePreviewProps = {
     nameChanges: NameChanges;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
     stage: number,
-    setStage: React.Dispatch<React.SetStateAction<number>>;
+    stageDispatcher: React.ActionDispatch<[action: string]>;
     setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
+// TODO: remove stage from props
 const NameChangePreview = ({
     nameChanges,
     setNameChanges,
     stage,
-    setStage,
+    stageDispatcher,
     setError
 }: NameChangePreviewProps
 ) => {
@@ -39,7 +40,7 @@ const NameChangePreview = ({
             setError(response.error)
         } else {
             setNameChanges({ changes: [] });
-            setStage(2);
+            stageDispatcher("next");
         }
     };
 
@@ -55,7 +56,7 @@ const NameChangePreview = ({
                 isLeftEnabled={true}
                 isRightEnabled={true}
                 stage={stage}
-                setStage={setStage}
+                stageDispatcher={stageDispatcher}
             />
             <NameChangeTable nameChanges={nameChanges} />
             <div className="flex justify-center">

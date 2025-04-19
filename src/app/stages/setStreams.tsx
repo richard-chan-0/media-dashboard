@@ -7,11 +7,10 @@ import StageNavButtons from "./stageNavButtons";
 
 type SetStreamsProps = {
     setError: React.Dispatch<React.SetStateAction<string>>;
-    setStage: React.Dispatch<React.SetStateAction<number>>;
-    stage: number;
+    stageDispatcher: React.ActionDispatch<[action: string]>;
 }
 
-const SetStreams = ({ stage, setStage, setError }: SetStreamsProps) => {
+const SetStreams = ({ stageDispatcher, setError }: SetStreamsProps) => {
     const [message, setMessage] = useState("");
     const [streams, setStreams] = useState({ attachment: [], subtitle: [], audio: [] });
 
@@ -22,8 +21,7 @@ const SetStreams = ({ stage, setStage, setError }: SetStreamsProps) => {
                 rightLabel="Reset"
                 isLeftEnabled={true}
                 isRightEnabled={true}
-                stage={stage}
-                setStage={setStage}
+                stageDispatcher={stageDispatcher}
             />
             <ResetDefaultsForm
                 setError={setError}

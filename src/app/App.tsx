@@ -10,7 +10,7 @@ function App() {
         <NavLink to="/">Home</NavLink>
         <NavLink to="/rename/videos">Rename Videos</NavLink>
         <NavLink to="/rename/comics">Rename Comics</NavLink>
-        <NavLink to="/volumes">Create Volumes</NavLink>
+        <NavLink to="/volumes">Create Volumes</NavLink> 
       </nav>
 
       <Routes>

@@ -5,8 +5,7 @@ type StageNavButtonsProps = {
     rightLabel?: string;
     isLeftEnabled?: boolean;
     isRightEnabled?: boolean;
-    stage: number;
-    setStage: React.Dispatch<React.SetStateAction<number>>;
+    stageDispatcher: React.ActionDispatch<[action: string]>;
 }
 
 const getJustify = (isLeftEnabled: boolean, isRightEnabled: boolean) => {
@@ -27,15 +26,14 @@ const StageNavButtons = ({
     rightLabel = "",
     isLeftEnabled = false,
     isRightEnabled = false,
-    stage,
-    setStage
+    stageDispatcher
 }: StageNavButtonsProps) => {
     const stageButtonStyle = "w-1/6 border border-gray-600 hover:bg-gray-600";
     return (
         <div className={`flex items-center mb-3 ${getJustify(isLeftEnabled, isRightEnabled)}`}>
             {isLeftEnabled && (
                 <StageButton
-                    onClick={() => setStage(stage - 1 < 0 ? 0 : stage - 1)}
+                    onClick={() => stageDispatcher("prev")}
                     label={leftLabel}
                     type="button"
                     direction="left"
@@ -44,7 +42,7 @@ const StageNavButtons = ({
             )}
             {isRightEnabled && (
                 <StageButton
-                    onClick={() => setStage(stage + 1 > 2 ? 0 : stage + 1)}
+                    onClick={() => stageDispatcher("next")}
                     label={rightLabel}
                     type="button"
                     direction="right"

@@ -22,7 +22,7 @@ export const VideoUploadStageWithPreview: Story = {
         setNameChanges: () => { },
         setRenameMessage: () => { },
         setError: () => { },
-        setStage: () => { },
+        stageDispatcher: () => { },
     },
 };
 

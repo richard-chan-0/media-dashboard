@@ -7,37 +7,33 @@ type RenameUploadStageProps = {
     previewFiles: string[];
     mediaType: string;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
-    setRenameMessage: React.Dispatch<React.SetStateAction<string>>;
     setError: React.Dispatch<React.SetStateAction<string>>;
-    setStage: React.Dispatch<React.SetStateAction<number>>;
+    stageDispatcher: React.ActionDispatch<[action: string]>;
 }
 
 const getRenameForm = (
     mediaType: string,
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>,
-    setRenameMessage: React.Dispatch<React.SetStateAction<string>>,
     setError: React.Dispatch<React.SetStateAction<string>>,
     previewFiles: string[],
     isBorderEnabled: boolean,
-    setStage: React.Dispatch<React.SetStateAction<number>>
+    stageDispatcher: React.ActionDispatch<[action: string]>
 ) => {
     switch (mediaType) {
         case "videos":
             return (
                 <RenameVideosForm
                     setNameChanges={setNameChanges}
-                    setRenameMessage={setRenameMessage}
                     setError={setError}
                     previewFiles={previewFiles}
                     isBorderEnabled={isBorderEnabled}
-                    setStage={setStage}
+                    stageDispatcher={stageDispatcher}
                 />
             )
         case "comics":
             return (
                 <RenameComicsForm
                     setNameChanges={setNameChanges}
-                    setRenameMessage={setRenameMessage}
                     setError={setError}
                 />
             )
@@ -52,9 +48,8 @@ const RenameUploadStage = ({
     previewFiles,
     mediaType,
     setNameChanges,
-    setRenameMessage,
     setError,
-    setStage
+    stageDispatcher
 }: RenameUploadStageProps) => {
 
     return (
@@ -82,11 +77,10 @@ const RenameUploadStage = ({
                     getRenameForm(
                         mediaType,
                         setNameChanges,
-                        setRenameMessage,
                         setError,
                         previewFiles,
                         true,
-                        setStage
+                        stageDispatcher
                     )
                 }
             </div>

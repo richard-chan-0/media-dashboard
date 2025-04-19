@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import FormPage from "./formPage";
 import { mediaLink } from "../lib/constants";
 import RenameUploadStage from "../stages/upload";
@@ -16,13 +16,26 @@ type PreviewFile = {
     path: string;
 }
 
+const stageReducer = (stage: number, action: string) => {
+    switch (action) {
+        case "next":
+            return stage + 1 > 2 ? 2 : stage + 1;
+        case "prev":
+            return stage - 1 < 0 ? 0 : stage - 1;
+        case "reset":
+            return 0;
+        default:
+            return stage
+    }
+}
+
 
 const RenamePage = ({ mediaType }: RenamePageProps) => {
     const [nameChanges, setNameChanges] = useState<NameChanges>({ changes: [] });
-    const [renameMessage, setRenameMessage] = useState("");
+    // TODO: decouple preview files from upload stage
     const [previewFiles, setPreviewFiles] = useState([]);
     const [error, setError] = useState("");
-    const [stage, setStage] = useState(0);
+    const [stage, stageDispatcher] = useReducer(stageReducer, 0);
 
 
     useEffect(() => {
@@ -44,7 +57,6 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
 
     useEffect(() => {
         setNameChanges({ changes: [] });
-        setRenameMessage("");
     }, [mediaType])
 
 
@@ -56,9 +68,8 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                         previewFiles={previewFiles}
                         mediaType={mediaType}
                         setNameChanges={setNameChanges}
-                        setRenameMessage={setRenameMessage}
                         setError={setError}
-                        setStage={setStage}
+                        stageDispatcher={stageDispatcher}
                     />
                 )
             }
@@ -68,14 +79,14 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                         nameChanges={nameChanges}
                         setNameChanges={setNameChanges}
                         stage={stage}
-                        setStage={setStage}
+                        stageDispatcher={stageDispatcher}
                         setError={setError}
                     />
                 )
             }
             {
                 stage == 2 && (
-                    <SetStreams setError={setError} setStage={setStage} stage={stage} />
+                    <SetStreams setError={setError} stageDispatcher={stageDispatcher} stage={stage} />
                 )
             }
         </FormPage >

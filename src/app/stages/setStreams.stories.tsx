@@ -15,7 +15,7 @@ export const Default: Story = {
     args: {
         setError: () => { },
         stage: 0,
-        setStage: () => { }
+        stageDispatcher: () => { }
     },
 };
 

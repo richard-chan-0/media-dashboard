@@ -23,7 +23,7 @@ export const VideoNameChangePreview: Story = {
         stage: 0,
         setNameChanges: () => { },
         setRenameMessage: () => { },
-        setStage: () => { },
+        stageDispatcher: () => { },
     },
 };
 
