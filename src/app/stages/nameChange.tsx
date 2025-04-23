@@ -10,7 +10,6 @@ import { mediaLink, no_api_error } from "../lib/constants";
 type NameChangePreviewProps = {
     nameChanges: NameChanges;
     setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
-    stage: number,
     stageDispatcher: React.ActionDispatch<[action: string]>;
     setError: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -19,7 +18,6 @@ type NameChangePreviewProps = {
 const NameChangePreview = ({
     nameChanges,
     setNameChanges,
-    stage,
     stageDispatcher,
     setError
 }: NameChangePreviewProps
@@ -55,7 +53,6 @@ const NameChangePreview = ({
                 rightLabel="Skip"
                 isLeftEnabled={true}
                 isRightEnabled={true}
-                stage={stage}
                 stageDispatcher={stageDispatcher}
             />
             <NameChangeTable nameChanges={nameChanges} />

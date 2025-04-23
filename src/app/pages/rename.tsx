@@ -6,6 +6,7 @@ import { NameChanges } from "../lib/types";
 import NameChangePreview from "../stages/nameChange";
 import { get } from "../lib/api";
 import SetStreams from "../stages/setStreams";
+import PreviewFiles from "../forms/PreviewFiles";
 
 type RenamePageProps = {
     mediaType: string
@@ -30,13 +31,44 @@ const stageReducer = (stage: number, action: string) => {
 }
 
 
+
+
 const RenamePage = ({ mediaType }: RenamePageProps) => {
+    // TODO: create reducer for name changes, preview files, and error
     const [nameChanges, setNameChanges] = useState<NameChanges>({ changes: [] });
     // TODO: decouple preview files from upload stage
     const [previewFiles, setPreviewFiles] = useState([]);
     const [error, setError] = useState("");
     const [stage, stageDispatcher] = useReducer(stageReducer, 0);
 
+    const getStages = (stage: number) => {
+        switch (stage) {
+            case 0:
+                return (
+                    <>
+                        <PreviewFiles />
+                        <RenameUploadStage
+                            previewFiles={previewFiles}
+                            mediaType={mediaType}
+                            setNameChanges={setNameChanges}
+                            setError={setError}
+                            stageDispatcher={stageDispatcher}
+                        />
+                    </>
+                )
+            case 1:
+                return <NameChangePreview
+                    nameChanges={nameChanges}
+                    setNameChanges={setNameChanges}
+                    stageDispatcher={stageDispatcher}
+                    setError={setError}
+                />
+            case 2:
+                return <SetStreams setError={setError} stageDispatcher={stageDispatcher} />
+            default:
+                return <></>
+        }
+    }
 
     useEffect(() => {
         const fetch = async (apiLink: string) => {
@@ -63,31 +95,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     return (
         <FormPage error={error} isColumn={false} pageStyle="justify-center items-start">
             {
-                stage == 0 && (
-                    <RenameUploadStage
-                        previewFiles={previewFiles}
-                        mediaType={mediaType}
-                        setNameChanges={setNameChanges}
-                        setError={setError}
-                        stageDispatcher={stageDispatcher}
-                    />
-                )
-            }
-            {
-                stage == 1 && (
-                    <NameChangePreview
-                        nameChanges={nameChanges}
-                        setNameChanges={setNameChanges}
-                        stage={stage}
-                        stageDispatcher={stageDispatcher}
-                        setError={setError}
-                    />
-                )
-            }
-            {
-                stage == 2 && (
-                    <SetStreams setError={setError} stageDispatcher={stageDispatcher} stage={stage} />
-                )
+                getStages(stage)
             }
         </FormPage >
     );
