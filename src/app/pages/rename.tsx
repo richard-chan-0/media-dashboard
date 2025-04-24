@@ -94,7 +94,7 @@ const RenamePageWrapper = ({ mediaType }: RenamePageProps) => {
         <RenameProvider>
             <RenamePage mediaType={mediaType} />
         </RenameProvider>
-    )
-}
+    );
+};
 
 export default RenamePageWrapper;
