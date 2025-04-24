@@ -4,21 +4,16 @@ import RenameVideosForm from "./forms/RenameVideosForm";
 type RenameUploadStageProps = {
     mediaType: string;
     stageDispatcher: React.ActionDispatch<[action: string]>;
-}
+};
 
 const RenameUploadStage = ({
     mediaType,
-    stageDispatcher
+    stageDispatcher,
 }: RenameUploadStageProps) => {
-
     const getRenameForm = () => {
         switch (mediaType) {
             case "videos":
-                return (
-                    <RenameVideosForm
-                        stageDispatcher={stageDispatcher}
-                    />
-                );
+                return <RenameVideosForm stageDispatcher={stageDispatcher} />;
             case "comics":
                 return (
                     // <RenameComicsForm />
@@ -31,9 +26,7 @@ const RenameUploadStage = ({
     };
     return (
         <div className="flex flex-col items-center gap-4">
-            {
-                getRenameForm()
-            }
+            {getRenameForm()}
         </div>
     );
 };

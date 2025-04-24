@@ -4,7 +4,7 @@ import FormPage from "./formPage";
 const ManagePage = () => {
     return (
         <FormPage>
-            < CreateVolumesForm />
+            <CreateVolumesForm />
         </FormPage>
     );
 };

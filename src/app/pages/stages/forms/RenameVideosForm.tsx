@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage, mediaLink, no_api_error } from "../../../lib/constants";
+import {
+    formDropdownMessage,
+    inputSeasonMessage,
+    inputStartEpisodeMessage,
+    mediaLink,
+    no_api_error,
+} from "../../../lib/constants";
 import theme from "../../../lib/theme";
 import { processApiResponseToNameChange } from "../../../lib/api";
 import FileListUploadPreview from "../../../lib/components/NameChangeList";
@@ -10,15 +16,11 @@ import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
 import { useRename } from "../../hooks/useRename";
 
-
 type RenameVideosFormProps = {
-    stageDispatcher: React.ActionDispatch<[action: string]>
-}
+    stageDispatcher: React.ActionDispatch<[action: string]>;
+};
 
-const RenameVideosForm = ({
-    stageDispatcher
-}: RenameVideosFormProps
-) => {
+const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -46,7 +48,11 @@ const RenameVideosForm = ({
         formData.append("start_number", startNumber);
         episodeFiles.forEach((file) => formData.append("files", file));
         setIsUploading(true);
-        const response = await postForm(`${mediaLink}/rename/videos`, formData, setUploadPercent);
+        const response = await postForm(
+            `${mediaLink}/rename/videos`,
+            formData,
+            setUploadPercent,
+        );
         if (response?.error) {
             dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
@@ -82,21 +88,33 @@ const RenameVideosForm = ({
                 />
             </div>
 
-            <div {...getRootProps()} className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}>
+            <div
+                {...getRootProps()}
+                className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}
+            >
                 <input {...getInputProps()} />
                 <p>{formDropdownMessage}</p>
             </div>
-            {episodeFiles.length > 0 &&
+            {episodeFiles.length > 0 && (
                 <FileListUploadPreview files={episodeFiles} />
-            }
-            <button onClick={handleSubmit} className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg" disabled={isUploading || (!state.previewFiles && episodeFiles.length == 0)}>
+            )}
+            <button
+                onClick={handleSubmit}
+                className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
+                disabled={
+                    isUploading ||
+                    (!state.previewFiles && episodeFiles.length == 0)
+                }
+            >
                 Upload!
             </button>
-            <ProgressBar isInProgress={isUploading} progressPercent={uploadPercent} progressLabel="Uploading..." />
+            <ProgressBar
+                isInProgress={isUploading}
+                progressPercent={uploadPercent}
+                progressLabel="Uploading..."
+            />
         </FormContainer>
     );
 };
 
 export default RenameVideosForm;
-
-

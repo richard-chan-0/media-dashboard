@@ -10,13 +10,13 @@ import SetStreams from "./stages/setStreams";
 import NameChangePreview from "./stages/nameChange";
 
 type RenamePageProps = {
-    mediaType: string
+    mediaType: string;
 };
 
 type PreviewFile = {
     name: string;
     path: string;
-}
+};
 
 const stageReducer = (stage: number, action: string) => {
     switch (action) {
@@ -30,7 +30,6 @@ const stageReducer = (stage: number, action: string) => {
             return stage;
     }
 };
-
 
 const RenamePage = ({ mediaType }: RenamePageProps) => {
     const { state, dispatch } = useRename();
@@ -49,9 +48,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
                     </>
                 );
             case 1:
-                return <NameChangePreview
-                    stageDispatcher={stageDispatcher}
-                />;
+                return <NameChangePreview stageDispatcher={stageDispatcher} />;
             case 2:
                 return <SetStreams stageDispatcher={stageDispatcher} />;
             default:
@@ -68,26 +65,28 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
             if (response?.error) {
                 dispatch({ type: "SET_ERROR", payload: response.error });
             } else {
-                const previews = response.map((file: PreviewFile) => file?.name).sort();
+                const previews = response
+                    .map((file: PreviewFile) => file?.name)
+                    .sort();
                 dispatch({ type: "SET_PREVIEWS", payload: previews });
             }
         };
         fetch(mediaLink);
-
     }, [dispatch]);
 
     useEffect(() => {
         dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });
     }, [dispatch, mediaType]);
 
-
     return (
         <RenameProvider>
-            <FormPage error={state.error} isColumn={false} pageStyle="justify-center items-start">
-                {
-                    getStages(stage)
-                }
-            </FormPage >
+            <FormPage
+                error={state.error}
+                isColumn={false}
+                pageStyle="justify-center items-start"
+            >
+                {getStages(stage)}
+            </FormPage>
         </RenameProvider>
     );
 };

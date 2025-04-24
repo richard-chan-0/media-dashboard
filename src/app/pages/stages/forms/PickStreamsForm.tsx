@@ -9,21 +9,21 @@ import { ffmpegLink, no_api_error } from "../../../lib/constants";
 import { useRename } from "../../../pages/hooks/useRename";
 
 export type Stream = {
-    is_default: string,
-    language: string,
-    stream_number: number,
-    title: string
-}
+    is_default: string;
+    language: string;
+    stream_number: number;
+    title: string;
+};
 type Streams = {
-    attachment: object[],
-    audio: Stream[],
-    subtitle: Stream[]
-    is_mkv?: boolean
-}
+    attachment: object[];
+    audio: Stream[];
+    subtitle: Stream[];
+    is_mkv?: boolean;
+};
 type PickStreamsFormProps = {
-    streams: Streams
+    streams: Streams;
     setMessage: React.Dispatch<React.SetStateAction<string>>;
-}
+};
 const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
     const [checkedSubtitles, setCheckedSubtitles] = useState([]);
@@ -43,8 +43,14 @@ const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
 
         const writeLink = streams?.is_mkv ? "/mkv/write" : "/ffmpeg/write";
         const formData = new FormData();
-        formData.append("subtitles", JSON.stringify([defaultSubtitle, ...checkedSubtitles]));
-        formData.append("audios", JSON.stringify([defaultAudio, ...checkedAudios]));
+        formData.append(
+            "subtitles",
+            JSON.stringify([defaultSubtitle, ...checkedSubtitles]),
+        );
+        formData.append(
+            "audios",
+            JSON.stringify([defaultAudio, ...checkedAudios]),
+        );
         const response = await postForm(`${ffmpegLink}${writeLink}`, formData);
         if (response?.error) {
             dispatch({ type: "SET_ERROR", payload: response.error });
@@ -54,10 +60,14 @@ const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
         }
     };
 
-    const createStreamValue = (option: Stream) => `${option.language}${option.title ? `:${option.title}` : ""}`;
+    const createStreamValue = (option: Stream) =>
+        `${option.language}${option.title ? `:${option.title}` : ""}`;
     return (
         <FormContainer isBorderEnabled={false}>
-            <form onSubmit={handleSubmit} className="flex flex-col p-4 w-full gap-3 items-center">
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col p-4 w-full gap-3 items-center"
+            >
                 <StreamSelect
                     label="Select Default Subtitle"
                     select={defaultSubtitle}
@@ -75,28 +85,36 @@ const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
                     createVal={createStreamValue}
                     isCenterAlign={true}
                 />
-                {!streams?.is_mkv && <>
-                    <FormContainer size={3}>
-                        <StreamCheckboxList
-                            label="Check Additional Subtitles"
-                            checkedStreams={checkedSubtitles}
-                            setCheckedStreams={setCheckedSubtitles}
-                            streams={subtitles.filter((subtitle) => subtitle.stream_number.toString() !== defaultSubtitle)}
-                            createVal={createStreamValue}
-                        />
-                    </FormContainer>
-                    <FormContainer size={3}>
-                        <StreamCheckboxList
-                            label="Check Additional Audios"
-                            checkedStreams={checkedAudios}
-                            setCheckedStreams={setCheckedAudios}
-                            streams={audios.filter((audio) => audio.stream_number.toString() !== defaultAudio)}
-                            createVal={createStreamValue}
-                        />
-                    </FormContainer>
-                </>
-
-                }
+                {!streams?.is_mkv && (
+                    <>
+                        <FormContainer size={3}>
+                            <StreamCheckboxList
+                                label="Check Additional Subtitles"
+                                checkedStreams={checkedSubtitles}
+                                setCheckedStreams={setCheckedSubtitles}
+                                streams={subtitles.filter(
+                                    (subtitle) =>
+                                        subtitle.stream_number.toString() !==
+                                        defaultSubtitle,
+                                )}
+                                createVal={createStreamValue}
+                            />
+                        </FormContainer>
+                        <FormContainer size={3}>
+                            <StreamCheckboxList
+                                label="Check Additional Audios"
+                                checkedStreams={checkedAudios}
+                                setCheckedStreams={setCheckedAudios}
+                                streams={audios.filter(
+                                    (audio) =>
+                                        audio.stream_number.toString() !==
+                                        defaultAudio,
+                                )}
+                                createVal={createStreamValue}
+                            />
+                        </FormContainer>
+                    </>
+                )}
                 <SubmitButton label={"Reset Default"} type="submit" />
             </form>
         </FormContainer>

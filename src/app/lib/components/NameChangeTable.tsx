@@ -4,8 +4,8 @@ import { removePathFromFilePath } from "../utilities";
 import TableCell from "./TableCell";
 
 type NameChangesTableProps = {
-    nameChanges: NameChanges
-}
+    nameChanges: NameChanges;
+};
 
 const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
     const changes = nameChanges?.changes;
@@ -18,29 +18,23 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
             <table className="w-full">
                 <thead className={`${theme.textAppColor}`}>
                     <tr>
-                        <TableCell isHeader={true}>
-                            Before
-                        </TableCell>
-                        <TableCell isHeader={true}>
-                            After
-                        </TableCell>
+                        <TableCell isHeader={true}>Before</TableCell>
+                        <TableCell isHeader={true}>After</TableCell>
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                        changes.map((choice) => {
-                            return (
-                                <tr key={choice.output}>
-                                    <TableCell>
-                                        {removePathFromFilePath(choice.input)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {removePathFromFilePath(choice.output)}
-                                    </TableCell>
-                                </tr>
-                            );
-                        })
-                    }
+                    {changes.map((choice) => {
+                        return (
+                            <tr key={choice.output}>
+                                <TableCell>
+                                    {removePathFromFilePath(choice.input)}
+                                </TableCell>
+                                <TableCell>
+                                    {removePathFromFilePath(choice.output)}
+                                </TableCell>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

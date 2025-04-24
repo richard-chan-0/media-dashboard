@@ -15,12 +15,7 @@ export type Action =
     | { type: "CLEAR_NAME_CHANGES" }
     | { type: "RESET" };
 
-
 export const RenameContext = createContext<{
     state: RenameState;
     dispatch: React.Dispatch<Action>;
 } | null>(null);
-
-
-
-

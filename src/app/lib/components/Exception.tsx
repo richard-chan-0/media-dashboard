@@ -1,6 +1,6 @@
 type ExceptionProps = {
-    error: string
-}
+    error: string;
+};
 
 const Exception = ({ error }: ExceptionProps) => {
     if (!error) {

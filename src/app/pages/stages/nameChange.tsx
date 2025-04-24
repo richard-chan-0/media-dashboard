@@ -6,15 +6,11 @@ import StageNavButtons from "./stageNavButtons";
 import { mediaLink, no_api_error } from "../../lib/constants";
 import { useRename } from "../../pages/hooks/useRename";
 
-
 type NameChangePreviewProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
-}
+};
 
-const NameChangePreview = ({
-    stageDispatcher,
-}: NameChangePreviewProps
-) => {
+const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch } = useRename();
     if (state.nameChanges?.changes.length === 0) {
         return <></>;
@@ -26,8 +22,13 @@ const NameChangePreview = ({
             dispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
-        const nameChangeRequest = processNameChangeToApiRequest(state.nameChanges);
-        const response = await postJson(`${mediaLink}/rename/process`, nameChangeRequest);
+        const nameChangeRequest = processNameChangeToApiRequest(
+            state.nameChanges,
+        );
+        const response = await postJson(
+            `${mediaLink}/rename/process`,
+            nameChangeRequest,
+        );
         if (response?.error) {
             dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
@@ -59,7 +60,6 @@ const NameChangePreview = ({
                 />
             </div>
         </FormContainer>
-
     );
 };
 

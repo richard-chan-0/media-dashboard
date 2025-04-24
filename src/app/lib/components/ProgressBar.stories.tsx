@@ -1,12 +1,10 @@
-
-import type { Meta, StoryObj } from '@storybook/react';
-import ProgressBar from './ProgressBar';
-
+import type { Meta, StoryObj } from "@storybook/react";
+import ProgressBar from "./ProgressBar";
 
 const meta = {
     component: ProgressBar,
-    title: 'Progress Bar',
-    tags: ['autodocs'],
+    title: "Progress Bar",
+    tags: ["autodocs"],
 } satisfies Meta<typeof ProgressBar>;
 
 export default meta;
@@ -19,4 +17,3 @@ export const Default: Story = {
         progressPercent: 50,
     },
 };
-

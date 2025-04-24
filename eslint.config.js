@@ -5,34 +5,35 @@ import pluginReact from "eslint-plugin-react";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores([
-    "node_modules",
-    "dist",
-    "build",
-    "*.config.js",
-    "*.config.ts",
-  ]),
-  {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
-  },
-  {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    languageOptions: { globals: globals.browser },
-  },
-  tseslint.configs.recommended,
-  {
-    ...pluginReact.configs.flat.recommended,
-    settings: {
-      react: {
-        version: "detect",
-      },
+    globalIgnores([
+        "node_modules",
+        "dist",
+        "build",
+        "*.config.js",
+        "*.config.ts",
+    ]),
+    {
+        files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+        plugins: { js },
+        extends: ["js/recommended"],
     },
-    rules: {
-      ...pluginReact.configs.flat.recommended.rules,
-      "react/react-in-jsx-scope": "off",
-      semi: ["error", "always"],
+    {
+        files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+        languageOptions: { globals: globals.browser },
     },
-  },
+    tseslint.configs.recommended,
+    {
+        ...pluginReact.configs.flat.recommended,
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
+        rules: {
+            ...pluginReact.configs.flat.recommended.rules,
+            "react/react-in-jsx-scope": "off",
+            semi: ["error", "always"],
+        },
+    },
+    prettier,
 ]);

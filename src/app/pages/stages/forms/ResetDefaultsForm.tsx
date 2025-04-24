@@ -6,8 +6,8 @@ import SubmitButton from "../../../lib/components/SubmitButton";
 import { useRename } from "../../../pages/hooks/useRename";
 
 type ResetDefaultsFormProps = {
-    setStreams: CallableFunction
-}
+    setStreams: CallableFunction;
+};
 
 const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
     const { dispatch } = useRename();
@@ -26,12 +26,14 @@ const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
             setStreams(response);
             dispatch({ type: "CLEAR_ERROR" });
         }
-
     };
 
-
     return (
-        <FormContainer size={0} isBorderEnabled={false} containerStyle="flex flex-col items-center w-full">
+        <FormContainer
+            size={0}
+            isBorderEnabled={false}
+            containerStyle="flex flex-col items-center w-full"
+        >
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <label>Get Streams</label>
                 <SubmitButton label="Pull" type="submit" />

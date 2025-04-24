@@ -5,5 +5,5 @@ import ManagePage from "./manage";
 export default {
     Home,
     RenamePage,
-    ManagePage
+    ManagePage,
 };

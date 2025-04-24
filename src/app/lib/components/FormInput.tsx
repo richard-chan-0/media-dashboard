@@ -1,14 +1,20 @@
 import theme from "../theme";
 
 type FormInputProps = {
-    type: string
-    inputValue: string
-    setInputValue: CallableFunction
-    placeholder?: string
-    required?: boolean
-}
+    type: string;
+    inputValue: string;
+    setInputValue: CallableFunction;
+    placeholder?: string;
+    required?: boolean;
+};
 
-const FormInput = ({ type, inputValue, setInputValue, placeholder, required }: FormInputProps) => {
+const FormInput = ({
+    type,
+    inputValue,
+    setInputValue,
+    placeholder,
+    required,
+}: FormInputProps) => {
     return (
         <input
             type={type}
