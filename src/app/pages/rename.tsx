@@ -79,16 +79,22 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
     }, [dispatch, mediaType]);
 
     return (
-        <RenameProvider>
-            <FormPage
-                error={state.error}
-                isColumn={false}
-                pageStyle="justify-center items-start"
-            >
-                {getStages(stage)}
-            </FormPage>
-        </RenameProvider>
+        <FormPage
+            error={state.error}
+            isColumn={false}
+            pageStyle="justify-center items-start"
+        >
+            {getStages(stage)}
+        </FormPage>
     );
 };
 
-export default RenamePage;
+const RenamePageWrapper = ({ mediaType }: RenamePageProps) => {
+    return (
+        <RenameProvider>
+            <RenamePage mediaType={mediaType} />
+        </RenameProvider>
+    )
+}
+
+export default RenamePageWrapper;
