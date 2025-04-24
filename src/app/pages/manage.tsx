@@ -1,12 +1,12 @@
-import CreateVolumesForm from "../forms/CreateVolumesForm";
+import CreateVolumesForm from "./stages/forms/CreateVolumesForm";
 import FormPage from "./formPage";
 
 const ManagePage = () => {
     return (
         <FormPage>
-            < CreateVolumesForm />
+            <CreateVolumesForm />
         </FormPage>
-    )
+    );
 };
 
 export default ManagePage;

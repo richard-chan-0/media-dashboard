@@ -1,85 +1,100 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import FormPage from "./formPage";
 import { mediaLink } from "../lib/constants";
-import RenameUploadStage from "../stages/upload";
-import { NameChanges } from "../lib/types";
-import NameChangePreview from "../stages/nameChange";
 import { get } from "../lib/api";
-import SetStreams from "../stages/setStreams";
+import { useRename } from "./hooks/useRename";
+import { RenameProvider } from "./provider/RenameProvider";
+import PreviewFiles from "./stages/forms/PreviewFiles";
+import RenameUploadStage from "./stages/upload";
+import SetStreams from "./stages/setStreams";
+import NameChangePreview from "./stages/nameChange";
 
 type RenamePageProps = {
-    mediaType: string
+    mediaType: string;
 };
 
 type PreviewFile = {
     name: string;
     path: string;
-}
+};
 
+const stageReducer = (stage: number, action: string) => {
+    switch (action) {
+        case "next":
+            return stage + 1 > 2 ? 2 : stage + 1;
+        case "prev":
+            return stage - 1 < 0 ? 0 : stage - 1;
+        case "reset":
+            return 0;
+        default:
+            return stage;
+    }
+};
 
 const RenamePage = ({ mediaType }: RenamePageProps) => {
-    const [nameChanges, setNameChanges] = useState<NameChanges>({ changes: [] });
-    const [renameMessage, setRenameMessage] = useState("");
-    const [previewFiles, setPreviewFiles] = useState([]);
-    const [error, setError] = useState("");
-    const [stage, setStage] = useState(0);
+    const { state, dispatch } = useRename();
+    const [stage, stageDispatcher] = useReducer(stageReducer, 0);
 
+    const getStages = (stage: number) => {
+        switch (stage) {
+            case 0:
+                return (
+                    <>
+                        <PreviewFiles />
+                        <RenameUploadStage
+                            mediaType={mediaType}
+                            stageDispatcher={stageDispatcher}
+                        />
+                    </>
+                );
+            case 1:
+                return <NameChangePreview stageDispatcher={stageDispatcher} />;
+            case 2:
+                return <SetStreams stageDispatcher={stageDispatcher} />;
+            default:
+                return <></>;
+        }
+    };
 
     useEffect(() => {
         const fetch = async (apiLink: string) => {
             if (!apiLink) {
                 return;
             }
-            const response = await get(`${apiLink}/rename/read`)
+            const response = await get(`${apiLink}/rename/read`);
             if (response?.error) {
-                setError(response.error);
+                dispatch({ type: "SET_ERROR", payload: response.error });
             } else {
-                const previews = response.map((file: PreviewFile) => file?.name).sort();
-                setPreviewFiles(previews);
+                const previews = response
+                    .map((file: PreviewFile) => file?.name)
+                    .sort();
+                dispatch({ type: "SET_PREVIEWS", payload: previews });
             }
         };
         fetch(mediaLink);
-
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
-        setNameChanges({ changes: [] });
-        setRenameMessage("");
-    }, [mediaType])
-
+        dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });
+    }, [dispatch, mediaType]);
 
     return (
-        <FormPage error={error} isColumn={false} pageStyle="justify-center items-start">
-            {
-                stage == 0 && (
-                    <RenameUploadStage
-                        previewFiles={previewFiles}
-                        mediaType={mediaType}
-                        setNameChanges={setNameChanges}
-                        setRenameMessage={setRenameMessage}
-                        setError={setError}
-                        setStage={setStage}
-                    />
-                )
-            }
-            {
-                stage == 1 && (
-                    <NameChangePreview
-                        nameChanges={nameChanges}
-                        setNameChanges={setNameChanges}
-                        stage={stage}
-                        setStage={setStage}
-                        setError={setError}
-                    />
-                )
-            }
-            {
-                stage == 2 && (
-                    <SetStreams setError={setError} setStage={setStage} stage={stage} />
-                )
-            }
-        </FormPage >
+        <FormPage
+            error={state.error}
+            isColumn={false}
+            pageStyle="justify-center items-start"
+        >
+            {getStages(stage)}
+        </FormPage>
     );
+};
+
+const RenamePageWrapper = ({ mediaType }: RenamePageProps) => {
+    return (
+        <RenameProvider>
+            <RenamePage mediaType={mediaType} />
+        </RenameProvider>
+    )
 }
 
-export default RenamePage;
+export default RenamePageWrapper;

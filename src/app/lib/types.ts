@@ -1,25 +1,23 @@
-import { AxiosError } from "axios"
+import { AxiosError } from "axios";
 
 export type NameChange = {
-    input: string
-    output: string
-}
+    input: string;
+    output: string;
+};
 
 export type NameChanges = {
-    changes: NameChange[]
-}
+    changes: NameChange[];
+};
 
 export type ApiNameChange = {
-    new_path: string,
-    old_path: string
-}
+    new_path: string;
+    old_path: string;
+};
 
 export type ApiNameChangeResponse = {
-    changes: ApiNameChange[]
-}
-
+    changes: ApiNameChange[];
+};
 
 export type MediaUtiliityApiResponse = {
-    error?: AxiosError
-}
-
+    error?: AxiosError;
+};
