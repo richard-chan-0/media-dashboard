@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import theme from "../lib/theme";
-import { getWidthSize } from "../lib/utilities";
+import theme from "../../../lib/theme";
+import { getWidthSize } from "../../../lib/utilities";
 
 type FormContainerProps = {
     children: ReactNode
@@ -22,7 +22,7 @@ const FormContainer = ({ children, size, containerStyle, formTitle, isBorderEnab
                 </>}
             {children}
         </div>
-    )
-}
+    );
+};
 
 export default FormContainer;

@@ -12,7 +12,7 @@ const TableCell = ({ children, isHeader = false }: TableCellProps) => {
                 {children}
             </td>
         </>
-    )
-}
+    );
+};
 
 export default TableCell;

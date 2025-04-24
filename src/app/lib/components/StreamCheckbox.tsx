@@ -20,7 +20,7 @@ const StreamCheckboxList = ({
         } else {
             setCheckedStreams([...checkedStreams, checkIndex]);
         }
-    }
+    };
 
     return (
         <fieldset className="flex flex-col  gap-2">
@@ -38,11 +38,11 @@ const StreamCheckboxList = ({
                         />
                         {optionVal}
                     </label>
-                )
+                );
             })}
 
         </fieldset>
-    )
-}
+    );
+};
 
 export default StreamCheckboxList;

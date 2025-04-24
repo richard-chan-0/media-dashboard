@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { postForm } from "../lib/api";
+import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputStoryNameMessage } from "../lib/constants";
-import theme from "../lib/theme";
-import Exception from "../lib/components/Exception";
-import FileListUploadPreview from "../lib/components/NameChangeList";
+import { formDropdownMessage, inputStoryNameMessage } from "../../../lib/constants";
+import theme from "../../../lib/theme";
+import Exception from "../../../lib/components/Exception";
+import FileListUploadPreview from "../../../lib/components/NameChangeList";
 import VolumeMappingForm from "./VolumeMappingForm";
 import FormContainer from "./FormContainer";
-import FormInput from "../lib/components/FormInput";
+import FormInput from "../../../lib/components/FormInput";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -17,7 +17,7 @@ export type VolumeMapping = {
 };
 
 const CreateVolumesForm = () => {
-    const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK
+    const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK;
     const [storyName, setStoryName] = useState("");
     const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
@@ -27,7 +27,7 @@ const CreateVolumesForm = () => {
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
-            setVolumeFiles(acceptedFiles)
+            setVolumeFiles(acceptedFiles);
             setError("");
         },
     });
@@ -37,31 +37,31 @@ const CreateVolumesForm = () => {
             "volume": entry[0],
             "startChapter": entry[1]["startChapter"],
             "endChapter": entry[1]["endChapter"]
-        }))
+        }));
         return {
             "volumes": mappings
-        }
-    }
+        };
+    };
 
     const handleSubmit = async () => {
         if (!apiLink) {
             setError("can't find api link");
-            return
+            return;
         }
         if (!storyName) {
-            setError("story title is required")
-            return
+            setError("story title is required");
+            return;
         }
 
         const formData = new FormData();
         formData.append("story title", storyName);
         formData.append("volume mapping", JSON.stringify(getVolumesMappingToApiField()));
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${apiLink}/manage/volumes`, formData)
+        const response = await postForm(`${apiLink}/manage/volumes`, formData);
         setCreateVolumesMessage(response?.error ? response.error : response);
         setStoryName("");
         setVolumeFiles([]);
-        setVolumesMapping({})
+        setVolumesMapping({});
     };
 
     return (

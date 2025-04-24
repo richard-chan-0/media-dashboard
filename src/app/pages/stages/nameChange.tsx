@@ -1,43 +1,37 @@
-import FormContainer from "../forms/FormContainer";
-import NameChangeTable from "../lib/components/NameChangeTable";
-import { NameChanges } from "../lib/types";
-import { postJson, processNameChangeToApiRequest } from "../lib/api";
-import SubmitButton from "../lib/components/SubmitButton";
+import FormContainer from "./forms/FormContainer";
+import NameChangeTable from "../../lib/components/NameChangeTable";
+import { postJson, processNameChangeToApiRequest } from "../../lib/api";
+import SubmitButton from "../../lib/components/SubmitButton";
 import StageNavButtons from "./stageNavButtons";
-import { mediaLink, no_api_error } from "../lib/constants";
+import { mediaLink, no_api_error } from "../../lib/constants";
+import { useRename } from "../../pages/hooks/useRename";
 
 
 type NameChangePreviewProps = {
-    nameChanges: NameChanges;
-    setNameChanges: React.Dispatch<React.SetStateAction<NameChanges>>;
     stageDispatcher: React.ActionDispatch<[action: string]>;
-    setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-// TODO: remove stage from props
 const NameChangePreview = ({
-    nameChanges,
-    setNameChanges,
     stageDispatcher,
-    setError
 }: NameChangePreviewProps
 ) => {
-    if (nameChanges?.changes.length === 0) {
+    const { state, dispatch } = useRename();
+    if (state.nameChanges?.changes.length === 0) {
         return <></>;
     }
 
     const handleSubmit = async () => {
-        setError("");
+        dispatch({ type: "CLEAR_ERROR" });
         if (!mediaLink) {
-            setError(no_api_error);
+            dispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
-        const nameChangeRequest = processNameChangeToApiRequest(nameChanges);
-        const response = await postJson(`${mediaLink}/rename/process`, nameChangeRequest)
+        const nameChangeRequest = processNameChangeToApiRequest(state.nameChanges);
+        const response = await postJson(`${mediaLink}/rename/process`, nameChangeRequest);
         if (response?.error) {
-            setError(response.error)
+            dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            setNameChanges({ changes: [] });
+            dispatch({ type: "CLEAR_NAME_CHANGES" });
             stageDispatcher("next");
         }
     };
@@ -55,7 +49,7 @@ const NameChangePreview = ({
                 isRightEnabled={true}
                 stageDispatcher={stageDispatcher}
             />
-            <NameChangeTable nameChanges={nameChanges} />
+            <NameChangeTable nameChanges={state.nameChanges} />
             <div className="flex justify-center">
                 <SubmitButton
                     onClick={handleSubmit}
@@ -64,10 +58,9 @@ const NameChangePreview = ({
                     buttonStyle="w-fit"
                 />
             </div>
-
         </FormContainer>
 
-    )
-}
+    );
+};
 
 export default NameChangePreview;

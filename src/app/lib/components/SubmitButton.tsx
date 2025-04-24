@@ -15,7 +15,7 @@ const SubmitButton = ({ label, type, onClick, buttonStyle }: SubmitButtonProps) 
             className={`${theme.buttonColor} ${theme.buttonFormat} ${buttonStyle}`} >
             {label}
         </button>
-    )
-}
+    );
+};
 
 export default SubmitButton;

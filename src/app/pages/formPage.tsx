@@ -1,5 +1,5 @@
-import { ReactNode } from "react"
-import Exception from "../lib/components/Exception"
+import { ReactNode } from "react";
+import Exception from "../lib/components/Exception";
 
 type FormPageProps = {
     children: ReactNode
@@ -22,7 +22,7 @@ const FormPage = ({
             </div>
         </>
 
-    )
-}
+    );
+};
 
-export default FormPage
+export default FormPage;

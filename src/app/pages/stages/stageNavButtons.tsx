@@ -1,4 +1,4 @@
-import StageButton from "../lib/components/StageButton";
+import StageButton from "../../lib/components/StageButton";
 
 type StageNavButtonsProps = {
     leftLabel?: string;
@@ -19,7 +19,7 @@ const getJustify = (isLeftEnabled: boolean, isRightEnabled: boolean) => {
         return "justify-end";
     }
     return "";
-}
+};
 
 const StageNavButtons = ({
     leftLabel = "",
@@ -50,7 +50,7 @@ const StageNavButtons = ({
                 />
             )}
         </div>
-    )
-}
+    );
+};
 
 export default StageNavButtons;

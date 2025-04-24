@@ -6,7 +6,7 @@ type ProgressBarProps = {
 
 const ProgressBar = ({ progressPercent, progressLabel, isInProgress }: ProgressBarProps) => {
     if (!isInProgress) {
-        return <></>
+        return <></>;
     }
 
     return (
@@ -22,7 +22,7 @@ const ProgressBar = ({ progressPercent, progressLabel, isInProgress }: ProgressB
                 </div>
 
             </div>
-    )
-}
+    );
+};
 
 export default ProgressBar;

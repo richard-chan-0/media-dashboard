@@ -25,7 +25,7 @@ export const RightButtonWithLabel: Story = {
         stageDispatcher: () => { },
         isRightEnabled: true,
     }
-}
+};
 
 export const BothButtonsWithLabel: Story = {
     args: {
@@ -34,5 +34,5 @@ export const BothButtonsWithLabel: Story = {
         isLeftEnabled: true,
         isRightEnabled: true,
     }
-}
+};
 

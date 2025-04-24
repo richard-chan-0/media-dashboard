@@ -38,13 +38,13 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                                         {removePathFromFilePath(choice.output)}
                                     </TableCell>
                                 </tr>
-                            )
+                            );
                         })
                     }
                 </tbody>
             </table>
         </div>
-    )
+    );
 };
 
 export default NameChangeTable;

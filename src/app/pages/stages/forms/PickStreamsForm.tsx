@@ -1,11 +1,12 @@
 import { FormEvent } from "react";
 import FormContainer from "./FormContainer";
 import { useState } from "react";
-import StreamSelect from "../lib/components/StreamSelect";
-import StreamCheckboxList from "../lib/components/StreamCheckbox";
-import SubmitButton from "../lib/components/SubmitButton";
-import { postForm } from "../lib/api";
-import { ffmpegLink, no_api_error } from "../lib/constants";
+import StreamSelect from "../../../lib/components/StreamSelect";
+import StreamCheckboxList from "../../../lib/components/StreamCheckbox";
+import SubmitButton from "../../../lib/components/SubmitButton";
+import { postForm } from "../../../lib/api";
+import { ffmpegLink, no_api_error } from "../../../lib/constants";
+import { useRename } from "../../../pages/hooks/useRename";
 
 export type Stream = {
     is_default: string,
@@ -21,10 +22,9 @@ type Streams = {
 }
 type PickStreamsFormProps = {
     streams: Streams
-    setError: CallableFunction
-    setMessage: CallableFunction
+    setMessage: React.Dispatch<React.SetStateAction<string>>;
 }
-const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps) => {
+const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
     const [checkedSubtitles, setCheckedSubtitles] = useState([]);
     const [defaultAudio, setDefaultAudio] = useState("");
@@ -32,27 +32,29 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
     const subtitles = streams["subtitle"];
     const audios = streams["audio"];
 
+    const { dispatch } = useRename();
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!ffmpegLink) {
-            setError(no_api_error);
+            dispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
 
         const writeLink = streams?.is_mkv ? "/mkv/write" : "/ffmpeg/write";
         const formData = new FormData();
         formData.append("subtitles", JSON.stringify([defaultSubtitle, ...checkedSubtitles]));
-        formData.append("audios", JSON.stringify([defaultAudio, ...checkedAudios]))
-        const response = await postForm(`${ffmpegLink}${writeLink}`, formData)
+        formData.append("audios", JSON.stringify([defaultAudio, ...checkedAudios]));
+        const response = await postForm(`${ffmpegLink}${writeLink}`, formData);
         if (response?.error) {
-            setError(response?.error);
+            dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            setError("");
+            dispatch({ type: "CLEAR_ERROR" });
             setMessage(response);
         }
-    }
+    };
 
-    const createStreamValue = (option: Stream) => `${option.language}${option.title ? `:${option.title}` : ""}`
+    const createStreamValue = (option: Stream) => `${option.language}${option.title ? `:${option.title}` : ""}`;
     return (
         <FormContainer isBorderEnabled={false}>
             <form onSubmit={handleSubmit} className="flex flex-col p-4 w-full gap-3 items-center">
@@ -98,7 +100,7 @@ const PickStreamsForm = ({ streams, setError, setMessage }: PickStreamsFormProps
                 <SubmitButton label={"Reset Default"} type="submit" />
             </form>
         </FormContainer>
-    )
-}
+    );
+};
 
 export default PickStreamsForm;

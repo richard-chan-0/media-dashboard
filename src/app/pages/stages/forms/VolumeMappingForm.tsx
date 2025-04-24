@@ -21,8 +21,8 @@ const VolumeMappingFormInput = ({ label, value, setValue }: VolumeMappingFormInp
                 className={`border border-blue-200 text-center ${theme.appSecondaryColor}`}
             />
         </div>
-    )
-}
+    );
+};
 
 type VolumeMappingFormProps = {
     setVolumesMapping: CallableFunction
@@ -40,11 +40,11 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
                 startChapter,
                 endChapter
             }
-        }))
+        }));
         setVolumeNumber("");
         setStartChapter("");
         setEndChapter("");
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row md:gap-3 gap-2 items-center w-full">
@@ -65,7 +65,7 @@ const VolumeMappingForm = ({ setVolumesMapping: setVolumeMapping }: VolumeMappin
             />
             <button type="submit" className="text-xs pt-2 pb-2 w-1/4 bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white rounded-lg items-center text-wrap">Add/Update</button>
         </form>
-    )
-}
+    );
+};
 
 export default VolumeMappingForm;

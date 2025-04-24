@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { postForm } from "../lib/api";
+import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage, mediaLink } from "../lib/constants";
-import theme from "../lib/theme";
-import { processApiResponseToNameChange } from "../lib/api";
-import FileListUploadPreview from "../lib/components/NameChangeList";
+import {
+    formDropdownMessage, inputStartVolumeMessage, inputStoryNameMessage, mediaLink
+} from "../../../lib/constants";
+import theme from "../../../lib/theme";
+import { processApiResponseToNameChange } from "../../../lib/api";
+import FileListUploadPreview from "../../../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
-import FormInput from "../lib/components/FormInput";
+import FormInput from "../../../lib/components/FormInput";
 
 type RenameVideosFormProps = {
     setNameChanges: CallableFunction
@@ -20,29 +22,29 @@ const RenameComicsForm = ({ setNameChanges, setError }: RenameVideosFormProps) =
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
-            setVolumeFiles(acceptedFiles)
+            setVolumeFiles(acceptedFiles);
             setError("");
-            setNameChanges({ changes: [] })
+            setNameChanges({ changes: [] });
         },
     });
 
     const handleSubmit = async () => {
         if (!mediaLink) {
             setError("can't find api link");
-            return
+            return;
         }
         if (!storyName) {
-            setError("story title is required")
-            return
+            setError("story title is required");
+            return;
         }
 
         const formData = new FormData();
         formData.append("comic_name", storyName);
         formData.append("start_number", startVolume);
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${mediaLink}/rename/comics`, formData)
+        const response = await postForm(`${mediaLink}/rename/comics`, formData);
         if (response?.error) {
-            setError(response.error)
+            setError(response.error);
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             setNameChanges(processedResponse);

@@ -39,7 +39,7 @@ const StageButton = ({
                 )
             }
         </button>
-    )
-}
+    );
+};
 
 export default StageButton;

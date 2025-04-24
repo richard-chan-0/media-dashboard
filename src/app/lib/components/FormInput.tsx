@@ -18,7 +18,7 @@ const FormInput = ({ type, inputValue, setInputValue, placeholder, required }: F
             required={required}
             className={`border p-2 w-1/2 rounded-sm ${theme.appSecondaryColor} text-sm text-center`}
         />
-    )
-}
+    );
+};
 
 export default FormInput;

@@ -6,7 +6,7 @@ const ManagePage = () => {
         <FormPage>
             < CreateVolumesForm />
         </FormPage>
-    )
+    );
 };
 
 export default ManagePage;

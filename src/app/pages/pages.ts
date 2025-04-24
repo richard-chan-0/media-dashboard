@@ -8,4 +8,4 @@ export default {
     RenamePage,
     ManagePage,
     FfmpegPage
-}
+};

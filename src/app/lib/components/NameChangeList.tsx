@@ -9,7 +9,7 @@ const FileListUploadPreview = ({ files }: FileListUploadPreviewProps) => {
                 <li key={file.name} className="text-white">{file.name}</li>
             ))}
         </ul>
-    )
-}
+    );
+};
 
 export default FileListUploadPreview;

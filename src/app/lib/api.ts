@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosProgressEvent, AxiosRequestConfig } from "axios"
+import axios, { AxiosError, AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import { ApiNameChangeResponse, NameChanges } from "./types";
 import { NETWORK_ERROR } from "./constants";
 
@@ -26,7 +26,7 @@ export const postForm = async (apiLink: string, formData: FormData, setUploadPro
     try {
             const configs: AxiosRequestConfig = {
                 headers: { "Content-Type": "multipart/form-data" },
-            }
+            };
             if(setUploadProgress){
                 configs.onUploadProgress = (progressEvent: AxiosProgressEvent) => {
                     if (!progressEvent || !progressEvent.total){
@@ -73,42 +73,42 @@ export const postJson = async (apiLink: string, formJson: object) => {
             }
             console.log(error);
         }
-}
+};
 
 export const processApiResponseToNameChange = (response: ApiNameChangeResponse): NameChanges => {
     const fileChanges = response?.changes;
     if(!fileChanges){
         return {
             changes: []
-        }
+        };
     }
     const changes = fileChanges.map((change) => {
         return {
             input: change.old_path,
             output: change.new_path
-        }
-    })
+        };
+    });
 
     return {
         changes
-    }
-}
+    };
+};
 
 export const processNameChangeToApiRequest = (request: NameChanges) => {
     const fileChanges = request?.changes;
     if(!fileChanges){
         return {
             changes: []
-        }
+        };
     }
     const changes = fileChanges.map((change) => {
         return {
             old_path: change.input,
             new_path: change.output
-        }
-    })
+        };
+    });
 
     return {
         changes
-    }
-}
+    };
+};

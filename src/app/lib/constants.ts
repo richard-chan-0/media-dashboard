@@ -8,7 +8,7 @@ export const inputStartVolumeMessage = 'Enter start volume';
 
 export const inputStoryNameMessage = 'Enter a story title';
 
-export const no_api_error = 'no api link setup'
+export const no_api_error = 'no api link setup';
 
 export const mediaLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK;
 

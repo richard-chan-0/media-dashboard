@@ -13,7 +13,7 @@ const NavLink = ({ to, children }: NavLinkProps) => {
         >
             {children}
         </Link>
-    )
-}
+    );
+};
 
 export default NavLink;
