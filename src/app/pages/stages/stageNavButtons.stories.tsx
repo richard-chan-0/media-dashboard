@@ -13,7 +13,6 @@ type Story = StoryObj<typeof meta>;
 
 export const LeftButtonWithLabel: Story = {
     args: {
-        stage: 0,
         stageDispatcher: () => { },
         isLeftEnabled: true,
     }
@@ -21,7 +20,6 @@ export const LeftButtonWithLabel: Story = {
 
 export const RightButtonWithLabel: Story = {
     args: {
-        stage: 0,
         stageDispatcher: () => { },
         isRightEnabled: true,
     }
@@ -29,7 +27,6 @@ export const RightButtonWithLabel: Story = {
 
 export const BothButtonsWithLabel: Story = {
     args: {
-        stage: 0,
         stageDispatcher: () => { },
         isLeftEnabled: true,
         isRightEnabled: true,

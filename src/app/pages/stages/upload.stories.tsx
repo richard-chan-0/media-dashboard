@@ -13,15 +13,7 @@ type Story = StoryObj<typeof meta>;
 
 export const VideoUploadStageWithPreview: Story = {
     args: {
-        hasPreviewFiles: [
-            'video1.mp4',
-            'video2.mp4',
-            'video3.mp4',
-        ],
         mediaType: 'videos',
-        setNameChanges: () => { },
-        setRenameMessage: () => { },
-        setError: () => { },
         stageDispatcher: () => { },
     },
 };

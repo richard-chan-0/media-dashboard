@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { postForm } from "../lib/api";
+import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
-import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage, mediaLink, no_api_error } from "../lib/constants";
-import theme from "../lib/theme";
-import { processApiResponseToNameChange } from "../lib/api";
-import FileListUploadPreview from "../lib/components/NameChangeList";
+import { formDropdownMessage, inputSeasonMessage, inputStartEpisodeMessage, mediaLink, no_api_error } from "../../../lib/constants";
+import theme from "../../../lib/theme";
+import { processApiResponseToNameChange } from "../../../lib/api";
+import FileListUploadPreview from "../../../lib/components/NameChangeList";
 import FormContainer from "./FormContainer";
-import FormInput from "../lib/components/FormInput";
-import ProgressBar from "../lib/components/ProgressBar";
-import { useRename } from "../pages/context/RenameContext";
+import FormInput from "../../../lib/components/FormInput";
+import ProgressBar from "../../../lib/components/ProgressBar";
+import { useRename } from "../../hooks/useRename";
+
 
 type RenameVideosFormProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>

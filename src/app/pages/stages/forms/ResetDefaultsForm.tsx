@@ -1,9 +1,9 @@
-import { get } from "../lib/api";
-import { ffmpegLink } from "../lib/constants";
+import { get } from "../../../lib/api";
+import { ffmpegLink } from "../../../lib/constants";
 import { FormEvent } from "react";
 import FormContainer from "./FormContainer";
-import SubmitButton from "../lib/components/SubmitButton";
-import { useRename } from "../pages/hooks/useRename";
+import SubmitButton from "../../../lib/components/SubmitButton";
+import { useRename } from "../../../pages/hooks/useRename";
 
 type ResetDefaultsFormProps = {
     setStreams: CallableFunction

@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
+        isInProgress: false,
         progressLabel: "Uploading...",
         progressPercent: 50,
     },
