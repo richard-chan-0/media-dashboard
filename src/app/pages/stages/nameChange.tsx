@@ -2,9 +2,9 @@ import FormContainer from "./forms/FormContainer";
 import NameChangeTable from "../../lib/components/NameChangeTable";
 import { postJson, processNameChangeToApiRequest } from "../../lib/api";
 import SubmitButton from "../../lib/components/SubmitButton";
-import StageNavButtons from "./stageNavButtons";
+import StageNavButtons from "./StageNavButtons";
 import { mediaLink, no_api_error } from "../../lib/constants";
-import { useRename } from "../../pages/hooks/useRename";
+import { useRename } from "../hooks/useRename";
 
 type NameChangePreviewProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;

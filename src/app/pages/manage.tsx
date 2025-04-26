@@ -1,5 +1,5 @@
 import CreateVolumesForm from "./stages/forms/CreateVolumesForm";
-import FormPage from "./formPage";
+import FormPage from "./FormPage";
 
 const ManagePage = () => {
     return (

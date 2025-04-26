@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import RenameUploadStage from "./upload";
+import RenameUploadStage from "./Upload";
 
 const meta = {
     component: RenameUploadStage,
@@ -13,6 +13,6 @@ type Story = StoryObj<typeof meta>;
 export const VideoUploadStageWithPreview: Story = {
     args: {
         mediaType: "videos",
-        stageDispatcher: () => {},
+        stageDispatcher: () => { },
     },
 };
