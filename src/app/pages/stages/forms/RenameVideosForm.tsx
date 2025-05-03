@@ -43,6 +43,11 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             return;
         }
 
+        if (episodeFiles.length === 0) {
+            stageDispatcher("next");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("season_number", seasonNumber);
         formData.append("start_number", startNumber);
@@ -106,12 +111,12 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                     (!state.previewFiles && episodeFiles.length == 0)
                 }
             >
-                Upload!
+                {episodeFiles.length > 0 ? "Upload" : "Skip"}
             </button>
             <ProgressBar
                 isInProgress={isUploading}
                 progressPercent={uploadPercent}
-                progressLabel="Uploading..."
+                progressLabel={"Uploading..."}
             />
         </FormContainer>
     );

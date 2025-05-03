@@ -12,9 +12,6 @@ type NameChangePreviewProps = {
 
 const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch } = useRename();
-    if (state.nameChanges?.changes.length === 0) {
-        return <></>;
-    }
 
     const handleSubmit = async () => {
         dispatch({ type: "CLEAR_ERROR" });
@@ -37,6 +34,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         }
     };
 
+    const isNameChanges = state.nameChanges.changes.length > 0;
+
     return (
         <FormContainer
             formTitle="Rename Files"
@@ -45,20 +44,36 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         >
             <StageNavButtons
                 leftLabel="Back"
-                rightLabel="Skip"
+                rightLabel={isNameChanges ? "Skip" : "Next"}
                 isLeftEnabled={true}
                 isRightEnabled={true}
                 stageDispatcher={stageDispatcher}
             />
-            <NameChangeTable nameChanges={state.nameChanges} />
-            <div className="flex justify-center">
-                <SubmitButton
-                    onClick={handleSubmit}
-                    label="Rename!"
-                    type="button"
-                    buttonStyle="w-fit"
-                />
-            </div>
+            {
+                isNameChanges && (
+                    <>
+                        <NameChangeTable nameChanges={state.nameChanges} />
+                        <div className="flex justify-center">
+                            <SubmitButton
+                                onClick={handleSubmit}
+                                label="Rename!"
+                                type="button"
+                                buttonStyle="w-fit"
+                            />
+                        </div>
+                    </>
+                )
+            }
+            {
+                !isNameChanges && (
+                    <div className="flex justify-center">
+                        <p className="text-lg text-gray-500">
+                            No files to rename.
+                        </p>
+                    </div>
+                )
+            }
+
         </FormContainer>
     );
 };
