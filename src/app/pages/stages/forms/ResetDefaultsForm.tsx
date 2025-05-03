@@ -19,7 +19,7 @@ const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
             return;
         }
         if (mediaLink) {
-            await get(`${mediaLink}/push`);
+            await get(`${mediaLink}/rename/push`);
         }
 
         const response = await get(`${ffmpegLink}/read`);
