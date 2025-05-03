@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import NavLink from "./lib/components/NavLink";
-import pages from "./pages/pages";
+import Pages from "./pages/Pages";
 import theme from "./lib/theme";
 
 function App() {
@@ -14,16 +14,16 @@ function App() {
             </nav>
 
             <Routes>
-                <Route path="/" element={<pages.Home />} />
+                <Route path="/" element={<Pages.Home />} />
                 <Route
                     path="/rename/videos"
-                    element={<pages.RenamePage mediaType="videos" />}
+                    element={<Pages.RenamePage mediaType="videos" />}
                 />
                 <Route
                     path="/rename/comics"
-                    element={<pages.RenamePage mediaType="comics" />}
+                    element={<Pages.RenamePage mediaType="comics" />}
                 />
-                <Route path="/volumes" element={<pages.ManagePage />} />
+                <Route path="/volumes" element={<Pages.ManagePage />} />
             </Routes>
         </div>
     );

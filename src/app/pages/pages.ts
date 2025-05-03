@@ -1,6 +1,6 @@
-import Home from "./home";
-import RenamePage from "./rename";
-import ManagePage from "./manage";
+import Home from "./Home";
+import RenamePage from "./Rename";
+import ManagePage from "./Manage";
 
 export default {
     Home,

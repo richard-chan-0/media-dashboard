@@ -3,7 +3,7 @@ import PickStreamsForm from "./forms/PickStreamsForm";
 import ResetDefaultsForm from "./forms/ResetDefaultsForm";
 import SuccessMessage from "../../lib/components/SuccessMessage";
 import FormContainer from "./forms/FormContainer";
-import StageNavButtons from "./stageNavButtons";
+import StageNavButtons from "./StageNavButtons";
 
 type SetStreamsProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;

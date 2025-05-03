@@ -1,5 +1,5 @@
 import { get } from "../../../lib/api";
-import { ffmpegLink } from "../../../lib/constants";
+import { ffmpegLink, mediaLink } from "../../../lib/constants";
 import { FormEvent } from "react";
 import FormContainer from "./FormContainer";
 import SubmitButton from "../../../lib/components/SubmitButton";
@@ -17,6 +17,9 @@ const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
         if (!ffmpegLink) {
             dispatch({ type: "SET_ERROR", payload: "ffmpeg api not defined" });
             return;
+        }
+        if (mediaLink) {
+            await get(`${mediaLink}/rename/push`);
         }
 
         const response = await get(`${ffmpegLink}/read`);

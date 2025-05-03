@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import NameChangePreview from "./nameChange";
+import NameChangePreview from "./NameChange";
 
 const meta = {
     component: NameChangePreview,
@@ -12,6 +12,6 @@ type Story = StoryObj<typeof meta>;
 
 export const VideoNameChangePreview: Story = {
     args: {
-        stageDispatcher: () => {},
+        stageDispatcher: () => { },
     },
 };
