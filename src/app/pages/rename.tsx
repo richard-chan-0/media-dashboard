@@ -5,7 +5,7 @@ import { get } from "../lib/api";
 import { useRename } from "./hooks/useRename";
 import { RenameProvider } from "./provider/RenameProvider";
 import PreviewFiles from "./stages/forms/PreviewFiles";
-import RenameUploadStage from "./stages/Upload";
+import RenameUploadStage from "./stages/RenameUpload";
 import SetStreams from "./stages/SetStreams";
 import NameChangePreview from "./stages/NameChange";
 
