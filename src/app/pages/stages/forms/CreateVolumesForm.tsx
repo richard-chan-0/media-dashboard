@@ -7,7 +7,7 @@ import {
 } from "../../../lib/constants";
 import theme from "../../../lib/theme";
 import Exception from "../../../lib/components/Exception";
-import FileListUploadPreview from "../../../lib/components/NameChangeList";
+import UploadPreview from "../../../lib/components/UploadPreview";
 import VolumeMappingForm from "./VolumeMappingForm";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
@@ -45,6 +45,11 @@ const CreateVolumesForm = () => {
             volumes: mappings,
         };
     };
+
+    const handleDelete = (file_name: string) => {
+        const newFiles = volumeFiles.filter((file: File) => file.name !== file_name);
+        setVolumeFiles(newFiles);
+    }
 
     const handleSubmit = async () => {
         if (!apiLink) {
@@ -104,7 +109,7 @@ const CreateVolumesForm = () => {
                         <input {...getInputProps()} />
                         <p>{formDropdownMessage}</p>
                     </div>
-                    <FileListUploadPreview files={volumeFiles} />
+                    <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
                     <button
                         onClick={handleSubmit}
                         className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg"
