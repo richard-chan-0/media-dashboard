@@ -10,7 +10,7 @@ import {
 } from "../../../lib/constants";
 import theme from "../../../lib/theme";
 import { processApiResponseToNameChange } from "../../../lib/api";
-import FileListUploadPreview from "../../../lib/components/NameChangeList";
+import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
@@ -26,6 +26,11 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadPercent, setUploadPercent] = useState(0);
+
+    const handleDelete = (file_name: string) => {
+        const newFiles = episodeFiles.filter((file: File) => file.name !== file_name);
+        setEpisodeFiles(newFiles);
+    }
 
     const { state, dispatch } = useRename();
 
@@ -101,7 +106,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 <p>{formDropdownMessage}</p>
             </div>
             {episodeFiles.length > 0 && (
-                <FileListUploadPreview files={episodeFiles} />
+                <UploadPreview files={episodeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
                 onClick={handleSubmit}

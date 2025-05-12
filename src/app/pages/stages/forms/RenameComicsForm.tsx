@@ -10,7 +10,7 @@ import {
 } from "../../../lib/constants";
 import theme from "../../../lib/theme";
 import { processApiResponseToNameChange } from "../../../lib/api";
-import FileListUploadPreview from "../../../lib/components/NameChangeList";
+import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
@@ -35,6 +35,11 @@ const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             dispatch({ type: "CLEAR_NAME_CHANGES" });
         },
     });
+
+    const handleDelete = (file_name: string) => {
+        const newFiles = volumeFiles.filter((file: File) => file.name !== file_name);
+        setVolumeFiles(newFiles);
+    }
 
     const handleSubmit = async () => {
         if (!mediaLink) {
@@ -98,7 +103,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 <p>{formDropdownMessage}</p>
             </div>
             {volumeFiles.length > 0 && (
-                <FileListUploadPreview files={volumeFiles} />
+                <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
                 onClick={handleSubmit}
