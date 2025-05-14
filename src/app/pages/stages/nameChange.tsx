@@ -47,7 +47,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                 rightLabel={isNameChanges ? "Skip" : "Next"}
                 isLeftEnabled={true}
                 isRightEnabled={true}
-                stageDispatcher={stageDispatcher}
+                leftButtonAction={() => stageDispatcher("prev")}
+                rightButtonAction={() => stageDispatcher("next")}
             />
             {
                 isNameChanges && (

@@ -24,7 +24,8 @@ const SetStreams = ({ stageDispatcher }: SetStreamsProps) => {
                 rightLabel="Reset"
                 isLeftEnabled={true}
                 isRightEnabled={true}
-                stageDispatcher={stageDispatcher}
+                leftButtonAction={() => stageDispatcher("prev")}
+                rightButtonAction={() => stageDispatcher("reset")}
             />
             <ResetDefaultsForm setStreams={setStreams} />
             {streams && streams?.subtitle?.length > 0 && (
