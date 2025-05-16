@@ -42,14 +42,16 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         },
     });
 
+    const isSkip = state.previewFiles.length > 0 && episodeFiles.length === 0;
+    const handleSkip = () => {
+        if (state.previewFiles.length > 0 && episodeFiles.length === 0) {
+            stageDispatcher("next");
+            return;
+        }
+    }
     const handleSubmit = async () => {
         if (!mediaLink) {
             dispatch({ type: "SET_ERROR", payload: no_api_error });
-            return;
-        }
-
-        if (episodeFiles.length === 0) {
-            stageDispatcher("next");
             return;
         }
 
@@ -109,14 +111,14 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 <UploadPreview files={episodeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
-                onClick={handleSubmit}
+                onClick={isSkip ? handleSkip : handleSubmit}
                 className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
                 disabled={
                     isUploading ||
-                    (!state.previewFiles && episodeFiles.length == 0)
+                    (state.previewFiles.length == 0 && episodeFiles.length == 0)
                 }
             >
-                {episodeFiles.length > 0 ? "Upload" : "Skip"}
+                {isSkip ? "Skip" : "Upload"}
             </button>
             <ProgressBar
                 isInProgress={isUploading}
