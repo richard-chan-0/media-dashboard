@@ -1,12 +1,12 @@
 import React from 'react';
+import { XmarkSquareSolid } from "iconoir-react";
 
-type ModalProps = {
+type NameChangeModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    children: React.ReactNode;
 };
 
-const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+const NameChangeModal = ({ isOpen, onClose }: NameChangeModalProps) => {
     if (!isOpen) return null;
 
     return (
@@ -18,16 +18,16 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
                 className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative"
                 onClick={(e) => e.stopPropagation()}
             >
+                <input type='text' className='border border-amber-600' />
                 <button
                     className="absolute top-2 right-2 text-gray-500 hover:text-black"
                     onClick={onClose}
                 >
-                    &times;
+                    <XmarkSquareSolid />
                 </button>
-                {children}
             </div>
         </div>
     );
 };
 
-export default Modal;
+export default NameChangeModal;
