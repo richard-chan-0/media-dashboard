@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import theme from "../theme";
 import { NameChanges } from "../types";
 import { removePathFromFilePath } from "../utilities";
 import NameChangeModal from "./NameChangeModal/NameChangeModal";
 import TableCell from "./TableCell";
-import { EditPencil } from "iconoir-react";
+import { EditPencil, TrashSolid } from "iconoir-react";
+import { useDeleteFile } from "../../pages/hooks/useDeleteFile";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
@@ -13,11 +14,16 @@ type NameChangesTableProps = {
 const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
+    const deleteFile = useDeleteFile();
 
     const handleNameEdit = (name: string) => {
         setName(name);
         setIsOpen(true);
     }
+
+    useEffect(() => {
+        console.log("Name changes: ", nameChanges);
+    }, [nameChanges])
 
     const changes = nameChanges?.changes;
     if (!changes || changes.length == 0) {
@@ -31,6 +37,7 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                     <tr>
                         <TableCell isHeader={true}>Before</TableCell>
                         <TableCell isHeader={true}>After</TableCell>
+                        <TableCell isHeader={true}>Actions</TableCell>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,10 +47,15 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                                 <TableCell>
                                     {removePathFromFilePath(choice.input)}
                                 </TableCell>
-                                <TableCell className="flex justify-between items-center ">
+                                <TableCell>
                                     {removePathFromFilePath(choice.output)}
+                                </TableCell>
+                                <TableCell className="flex items-center gap-1">
                                     <button onClick={() => handleNameEdit(choice.output)}>
                                         <EditPencil className="hover:text-green-400" />
+                                    </button>
+                                    <button onClick={() => deleteFile(removePathFromFilePath(choice.input))}>
+                                        <TrashSolid className={theme.deleteIconColor} />
                                     </button>
                                 </TableCell>
                             </tr>

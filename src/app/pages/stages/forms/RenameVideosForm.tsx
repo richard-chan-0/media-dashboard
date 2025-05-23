@@ -45,6 +45,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     const isSkip = state.previewFiles.length > 0 && episodeFiles.length === 0;
     const handleSkip = () => {
         if (state.previewFiles.length > 0 && episodeFiles.length === 0) {
+            // TODO: call like the get version of rename/videos to get changes for already uploaded files
             stageDispatcher("next");
             return;
         }
