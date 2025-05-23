@@ -1,19 +1,18 @@
-import { ReactNode } from "react";
+import { ReactNode, TdHTMLAttributes } from "react";
 
 type TableCellProps = {
     children: ReactNode;
     isHeader?: boolean;
-};
+} & TdHTMLAttributes<HTMLTableCellElement>;
 
-const TableCell = ({ children, isHeader = false }: TableCellProps) => {
+const TableCell = ({ children, isHeader = false, className = "", ...rest }: TableCellProps) => {
     return (
-        <>
-            <td
-                className={`border p-2 ${isHeader ? "bg-blue-200" : ""} border-white`}
-            >
-                {children}
-            </td>
-        </>
+        <td
+            className={`border p-2 ${isHeader ? "bg-blue-200" : ""} border-white ${className}`}
+            {...rest}
+        >
+            {children}
+        </td>
     );
 };
 
