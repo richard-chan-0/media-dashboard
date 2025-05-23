@@ -3,6 +3,13 @@ export const removePathFromFilePath = (filePath: string) => {
     return filePath.substring(lastIndexOfSlash + 1);
 };
 
+export const splitPathFromFilePath = (filePath: string) => {
+    const lastIndexOfSlash = filePath.lastIndexOf("/");
+    const path = filePath.substring(0, lastIndexOfSlash);
+    const fileName = filePath.substring(lastIndexOfSlash + 1);
+    return { path, fileName };
+};
+
 export const getWidthSize = (size: number | undefined) => {
     if (size === undefined) {
         return "w-full";
