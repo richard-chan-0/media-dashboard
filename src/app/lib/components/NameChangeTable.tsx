@@ -2,7 +2,7 @@ import { useState } from "react";
 import theme from "../theme";
 import { NameChanges } from "../types";
 import { removePathFromFilePath } from "../utilities";
-import NameChangeModal from "./NameChangeModal";
+import NameChangeModal from "./NameChangeModal/NameChangeModal";
 import TableCell from "./TableCell";
 import { EditPencil } from "iconoir-react";
 

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import NameChangeModal from "./NameChangeModal";
 import { useState } from "react";
+import { RenameProvider } from "../../../pages/provider/RenameProvider";
 
 
 const meta = {
@@ -17,7 +18,9 @@ const meta = {
                 >
                     Open Modal
                 </button>
-                <NameChangeModal isOpen={isOpen} onClose={() => setIsOpen(false)} initialName={args.initialName} />
+                <RenameProvider>
+                    <NameChangeModal isOpen={isOpen} onClose={() => setIsOpen(false)} initialName={args.initialName} />
+                </RenameProvider>
             </>
         )
     }

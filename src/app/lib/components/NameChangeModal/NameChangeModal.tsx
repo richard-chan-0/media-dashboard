@@ -1,8 +1,8 @@
 import { XmarkSquareSolid } from "iconoir-react";
-import theme from "../theme";
+import theme from "../../theme";
 import { useEffect, useState } from "react";
-import { useRename } from "../../pages/hooks/useRename";
-import { removePathFromFilePath, splitPathFromFilePath } from "../utilities";
+import { useRename } from "../../../pages/hooks/useRename";
+import { removePathFromFilePath, splitPathFromFilePath } from "../../utilities";
 
 type NameChangeModalProps = {
     isOpen: boolean;
