@@ -44,19 +44,21 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                     {changes.map((choice) => {
                         return (
                             <tr key={choice.output}>
-                                <TableCell>
+                                <TableCell >
                                     {removePathFromFilePath(choice.input)}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell >
                                     {removePathFromFilePath(choice.output)}
                                 </TableCell>
-                                <TableCell className="flex items-center gap-1">
-                                    <button onClick={() => handleNameEdit(choice.output)}>
-                                        <EditPencil className="hover:text-green-400" />
-                                    </button>
-                                    <button onClick={() => deleteFile(removePathFromFilePath(choice.input))}>
-                                        <TrashSolid className={theme.deleteIconColor} />
-                                    </button>
+                                <TableCell>
+                                    <div className="flex items-center gap-1 justify-center">
+                                        <button onClick={() => handleNameEdit(choice.output)}>
+                                            <EditPencil className="hover:text-green-400" />
+                                        </button>
+                                        <button onClick={() => deleteFile(removePathFromFilePath(choice.input))}>
+                                            <TrashSolid className={theme.deleteIconColor} />
+                                        </button>
+                                    </div>
                                 </TableCell>
                             </tr>
                         );

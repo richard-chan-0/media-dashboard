@@ -3,7 +3,7 @@ import theme from "../theme";
 
 type UploadPreviewProps = {
     files: string[];
-    deleteFile: (file_name: string) => void;
+    deleteFile: (fileName: string) => void;
 };
 
 const UploadPreview = ({ files, deleteFile }: UploadPreviewProps) => {
