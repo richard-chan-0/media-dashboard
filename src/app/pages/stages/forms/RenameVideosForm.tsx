@@ -42,14 +42,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         },
     });
 
-    const isSkip = state.previewFiles.length > 0 && episodeFiles.length === 0;
-    const handleSkip = () => {
-        if (state.previewFiles.length > 0 && episodeFiles.length === 0) {
-            // TODO: call like the get version of rename/videos to get changes for already uploaded files
-            stageDispatcher("next");
-            return;
-        }
-    }
+    const isRetry = state.previewFiles.length > 0 && episodeFiles.length === 0;
     const handleSubmit = async () => {
         if (!mediaLink) {
             dispatch({ type: "SET_ERROR", payload: no_api_error });
@@ -112,14 +105,14 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 <UploadPreview files={episodeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
-                onClick={isSkip ? handleSkip : handleSubmit}
+                onClick={handleSubmit}
                 className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
                 disabled={
                     isUploading ||
                     (state.previewFiles.length == 0 && episodeFiles.length == 0)
                 }
             >
-                {isSkip ? "Skip" : "Upload"}
+                {isRetry ? "Retrigger" : "Upload"}
             </button>
             <ProgressBar
                 isInProgress={isUploading}
