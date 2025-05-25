@@ -4,7 +4,7 @@ import axios, {
     AxiosRequestConfig,
 } from "axios";
 import { ApiNameChangeResponse, NameChanges } from "./types";
-import { NETWORK_ERROR } from "./constants";
+import { CANCELLED_ERROR, NETWORK_ERROR } from "./constants";
 
 type ApiError = {
     code?: string;
@@ -23,6 +23,9 @@ const processAxiosError = (axiosError: ApiError) => {
     if (axiosError?.code === NETWORK_ERROR) {
         return "error could not reach api";
     }
+    if (axiosError?.code === CANCELLED_ERROR){
+        return "upload cancelled";
+    }
     return JSON.stringify(axiosError);
 };
 
@@ -30,6 +33,7 @@ export const postForm = async (
     apiLink: string,
     formData: FormData,
     setUploadProgress?: CallableFunction,
+    abortSignal?: AbortSignal
 ) => {
     try {
         const configs: AxiosRequestConfig = {
@@ -45,6 +49,9 @@ export const postForm = async (
                 );
                 setUploadProgress(percent);
             };
+        }
+        if (abortSignal) {
+            configs.signal = abortSignal;
         }
 
         const response = await axios.post(apiLink, formData, configs);

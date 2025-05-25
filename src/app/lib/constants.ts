@@ -15,3 +15,5 @@ export const mediaLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK;
 export const ffmpegLink = import.meta.env.VITE_FFMPEG_UTILITY_API_LINK;
 
 export const NETWORK_ERROR = "ERR_NETWORK";
+
+export const CANCELLED_ERROR = "ERR_CANCELED";
