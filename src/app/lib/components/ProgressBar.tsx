@@ -1,13 +1,17 @@
+import { XmarkCircleSolid } from "iconoir-react";
+
 type ProgressBarProps = {
     isInProgress: boolean;
     progressLabel: string;
     progressPercent: number;
+    abortController?: AbortController | null;
 };
 
 const ProgressBar = ({
     progressPercent,
     progressLabel,
     isInProgress,
+    abortController,
 }: ProgressBarProps) => {
     if (!isInProgress) {
         return <></>;
@@ -26,6 +30,17 @@ const ProgressBar = ({
                     style={{ width: `${progressPercent}%` }}
                 />
             </div>
+            {abortController && (
+                <button
+                    className="text-red-600 hover:text-red-500"
+                    onClick={() => {
+                        console.log("aborting upload");
+                        abortController.abort();
+                    }}
+                >
+                    <XmarkCircleSolid />
+                </button>
+            )}
         </div>
     );
 };

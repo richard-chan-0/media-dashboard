@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
 import {
@@ -26,6 +26,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadPercent, setUploadPercent] = useState(0);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const handleDelete = (file_name: string) => {
         const newFiles = episodeFiles.filter((file: File) => file.name !== file_name);
@@ -54,10 +55,12 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         formData.append("start_number", startNumber);
         episodeFiles.forEach((file) => formData.append("files", file));
         setIsUploading(true);
+        abortControllerRef.current = new AbortController();
         const response = await postForm(
             `${mediaLink}/rename/videos`,
             formData,
             setUploadPercent,
+            abortControllerRef.current.signal
         );
         if (response?.error) {
             dispatch({ type: "SET_ERROR", payload: response.error });
@@ -69,7 +72,9 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         setIsUploading(false);
         setUploadPercent(0);
         setSeasonNumber("");
+        setStartNumber("");
         setEpisodeFiles([]);
+        abortControllerRef.current = null;
     };
 
     return (
@@ -118,6 +123,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 isInProgress={isUploading}
                 progressPercent={uploadPercent}
                 progressLabel={"Uploading..."}
+                abortController={abortControllerRef.current}
             />
         </FormContainer>
     );
