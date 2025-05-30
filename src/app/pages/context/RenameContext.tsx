@@ -5,6 +5,7 @@ export type RenameState = {
     nameChanges: NameChanges;
     previewFiles: string[];
     error: string;
+    mediaType: string;
 };
 
 export type Action =
@@ -13,7 +14,8 @@ export type Action =
     | { type: "SET_ERROR"; payload: string }
     | { type: "CLEAR_ERROR" }
     | { type: "CLEAR_NAME_CHANGES" }
-    | { type: "RESET" };
+    | { type: "RESET" }
+    | { type: "SET_MEDIA_TYPE"; payload: string };
 
 export const RenameContext = createContext<{
     state: RenameState;

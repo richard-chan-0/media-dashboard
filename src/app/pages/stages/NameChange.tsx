@@ -30,11 +30,25 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             dispatch({ type: "CLEAR_NAME_CHANGES" });
-            stageDispatcher("next");
+            if (state.mediaType === "video") {
+                stageDispatcher("next");
+            }
         }
     };
 
     const isNameChanges = state.nameChanges.changes.length > 0;
+    const navProps = state.mediaType == "video" ? {
+        leftLabel: "Back",
+        rightLabel: isNameChanges ? "Skip" : "Next",
+        isLeftEnabled: true,
+        isRightEnabled: true,
+        leftButtonAction: () => stageDispatcher("prev"),
+        rightButtonAction: () => stageDispatcher("next")
+    } : {
+        leftLabel: "Back",
+        isLeftEnabled: true,
+        leftButtonAction: () => stageDispatcher("prev"),
+    }
 
     return (
         <FormContainer
@@ -43,12 +57,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             size={5}
         >
             <StageNavButtons
-                leftLabel="Back"
-                rightLabel={isNameChanges ? "Skip" : "Next"}
-                isLeftEnabled={true}
-                isRightEnabled={true}
-                leftButtonAction={() => stageDispatcher("prev")}
-                rightButtonAction={() => stageDispatcher("next")}
+                {...navProps}
             />
             {
                 isNameChanges && (

@@ -6,6 +6,7 @@ const initialState: RenameState = {
     nameChanges: { changes: [] },
     previewFiles: [],
     error: "",
+    mediaType: "",
 };
 
 function renameReducer(state: RenameState, action: Action): RenameState {
@@ -22,6 +23,8 @@ function renameReducer(state: RenameState, action: Action): RenameState {
             return { ...state, error: "" };
         case "CLEAR_NAME_CHANGES":
             return { ...state, nameChanges: { changes: [] } };
+        case "SET_MEDIA_TYPE":
+            return { ...state, mediaType: action.payload };
         default:
             return state;
     }
