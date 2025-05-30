@@ -76,6 +76,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
 
     useEffect(() => {
         dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });
+        dispatch({ type: "SET_MEDIA_TYPE", payload: mediaType });
     }, [dispatch, mediaType]);
 
     return (
