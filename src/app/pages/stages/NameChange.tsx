@@ -3,7 +3,7 @@ import NameChangeTable from "../../lib/components/NameChangeTable";
 import { postJson, processNameChangeToApiRequest } from "../../lib/api";
 import SubmitButton from "../../lib/components/SubmitButton";
 import StageNavButtons from "./StageNavButtons";
-import { mediaLink, no_api_error } from "../../lib/constants";
+import { COMICS, mediaLink, no_api_error, VIDEOS } from "../../lib/constants";
 import { useRename } from "../hooks/useRename";
 
 type NameChangePreviewProps = {
@@ -30,24 +30,24 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             dispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             dispatch({ type: "CLEAR_NAME_CHANGES" });
-            if (state.mediaType === "video") {
+            if (state.mediaType === VIDEOS) {
                 stageDispatcher("next");
             }
         }
     };
 
     const isNameChanges = state.nameChanges.changes.length > 0;
-    const navProps = state.mediaType == "video" ? {
+    const navProps = state.mediaType == COMICS ? {
+        leftLabel: "Back",
+        isLeftEnabled: true,
+        leftButtonAction: () => stageDispatcher("prev"),
+    } : {
         leftLabel: "Back",
         rightLabel: isNameChanges ? "Skip" : "Next",
         isLeftEnabled: true,
         isRightEnabled: true,
         leftButtonAction: () => stageDispatcher("prev"),
         rightButtonAction: () => stageDispatcher("next")
-    } : {
-        leftLabel: "Back",
-        isLeftEnabled: true,
-        leftButtonAction: () => stageDispatcher("prev"),
     }
 
     return (

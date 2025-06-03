@@ -1,5 +1,6 @@
 import RenameVideosForm from "./forms/RenameVideosForm";
 import RenameComicsForm from "./forms/RenameComicsForm";
+import { COMICS, VIDEOS } from "../../lib/constants";
 
 type RenameUploadStageProps = {
     mediaType: string;
@@ -12,9 +13,9 @@ const RenameUploadStage = ({
 }: RenameUploadStageProps) => {
     const getRenameForm = () => {
         switch (mediaType) {
-            case "videos":
+            case VIDEOS:
                 return <RenameVideosForm stageDispatcher={stageDispatcher} />;
-            case "comics":
+            case COMICS:
                 return <RenameComicsForm stageDispatcher={stageDispatcher} />;
 
             default:

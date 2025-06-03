@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import NavLink from "./lib/components/NavLink";
 import Pages from "./pages/Pages";
 import theme from "./lib/theme";
+import { COMICS, VIDEOS } from "./lib/constants";
 
 function App() {
     return (
@@ -17,11 +18,11 @@ function App() {
                 <Route path="/" element={<Pages.Home />} />
                 <Route
                     path="/rename/videos"
-                    element={<Pages.RenamePage mediaType="videos" />}
+                    element={<Pages.RenamePage mediaType={VIDEOS} />}
                 />
                 <Route
                     path="/rename/comics"
-                    element={<Pages.RenamePage mediaType="comics" />}
+                    element={<Pages.RenamePage mediaType={COMICS} />}
                 />
                 <Route path="/volumes" element={<Pages.ManagePage />} />
             </Routes>
