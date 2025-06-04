@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import { postForm } from "../../../lib/api";
 import { useDropzone } from "react-dropzone";
 import {
@@ -15,18 +15,19 @@ import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
 import { useRename } from "../../hooks/useRename";
+import { uploadReducer } from "../../state/uploadReducer";
 
-type RenameVideosFormProps = {
+type RenameComicsFormProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
 };
 
-const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
+const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
     const [storyName, setStoryName] = useState("");
     const [startVolume, setStartVolume] = useState("");
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
-    const [isUploading, setIsUploading] = useState(false);
-    const [uploadPercent, setUploadPercent] = useState(0);
-    const { dispatch } = useRename();
+    const [upload, uploadDispatcher] = useReducer(uploadReducer, { isUploading: false, uploadPercent: 0 });
+    const { state, dispatch } = useRename();
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
@@ -55,11 +56,13 @@ const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         formData.append("comic_name", storyName);
         formData.append("start_number", startVolume);
         volumeFiles.forEach((file) => formData.append("files", file));
-        setIsUploading(true);
+        uploadDispatcher({ type: "START_UPLOAD" });
+        abortControllerRef.current = new AbortController();
         const response = await postForm(
             `${mediaLink}/rename/comics`,
             formData,
-            setUploadPercent,
+            uploadDispatcher,
+            abortControllerRef.current.signal
         );
         if (response?.error) {
             dispatch({ type: "SET_ERROR", payload: response.error });
@@ -70,8 +73,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         }
         setStoryName("");
         setVolumeFiles([]);
-        setIsUploading(false);
-        setUploadPercent(0);
+        uploadDispatcher({ type: "RESET_UPLOAD" });
     };
 
     return (
@@ -108,14 +110,16 @@ const RenameComicsForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             <button
                 onClick={handleSubmit}
                 className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
-                disabled={volumeFiles.length == 0}
+                disabled={upload.isUploading ||
+                    (state.previewFiles.length == 0 && volumeFiles.length == 0)}
             >
                 Submit Files!
             </button>
             <ProgressBar
-                isInProgress={isUploading}
-                progressPercent={uploadPercent}
+                isInProgress={upload.isUploading}
+                progressPercent={upload.uploadPercent}
                 progressLabel="Uploading..."
+                abortController={abortControllerRef.current}
             />
         </FormContainer>
     );

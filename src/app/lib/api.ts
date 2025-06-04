@@ -5,6 +5,8 @@ import axios, {
 } from "axios";
 import { ApiNameChangeResponse, NameChanges } from "./types";
 import { CANCELLED_ERROR, NETWORK_ERROR } from "./constants";
+import React from "react";
+import { UploadAction } from "../pages/state/uploadReducer";
 
 type ApiError = {
     code?: string;
@@ -32,14 +34,14 @@ const processAxiosError = (axiosError: ApiError) => {
 export const postForm = async (
     apiLink: string,
     formData: FormData,
-    setUploadProgress?: CallableFunction,
+    uploadDispatcher?: React.Dispatch<UploadAction>,
     abortSignal?: AbortSignal
 ) => {
     try {
         const configs: AxiosRequestConfig = {
             headers: { "Content-Type": "multipart/form-data" },
         };
-        if (setUploadProgress) {
+        if (uploadDispatcher) {
             configs.onUploadProgress = (progressEvent: AxiosProgressEvent) => {
                 if (!progressEvent || !progressEvent.total) {
                     return;
@@ -47,7 +49,9 @@ export const postForm = async (
                 const percent = Math.round(
                     (progressEvent.loaded * 100) / progressEvent.total,
                 );
-                setUploadProgress(percent);
+                uploadDispatcher({
+                    type: "UPDATE_PROGRESS",
+                    payload: {uploadPercent: percent},})
             };
         }
         if (abortSignal) {
