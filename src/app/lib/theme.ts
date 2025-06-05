@@ -6,11 +6,16 @@ const buttonColor =
 const deleteIconColor =
     "hover:text-red-500 disabled:text-gray-200";
 const buttonFormat = " text-white p-2 rounded-xl justify-center";
+const shadowBorder = "shadow-blue-200 shadow-sm border border-blue-400";
+const shadowBorderHover = "hover:shadow-blue-200 hover:shadow-sm hover:border hover:border-blue-400"
+
 export default {
     appColor,
     appSecondaryColor,
     buttonColor,
     buttonFormat,
     textAppColor,
-    deleteIconColor
+    deleteIconColor,
+    shadowBorder,
+    shadowBorderHover
 };
