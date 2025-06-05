@@ -21,10 +21,6 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
         setIsOpen(true);
     }
 
-    useEffect(() => {
-        console.log("Name changes: ", nameChanges);
-    }, [nameChanges])
-
     const changes = nameChanges?.changes;
     if (!changes || changes.length == 0) {
         return <></>;

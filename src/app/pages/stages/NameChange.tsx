@@ -5,6 +5,8 @@ import SubmitButton from "../../lib/components/SubmitButton";
 import StageNavButtons from "./StageNavButtons";
 import { COMICS, mediaLink, no_api_error, VIDEOS } from "../../lib/constants";
 import { useRename } from "../hooks/useRename";
+import { useState } from "react";
+import Spinner from "../../lib/components/Spinner";
 
 type NameChangePreviewProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -12,6 +14,7 @@ type NameChangePreviewProps = {
 
 const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch } = useRename();
+    const [isSpinner, setIsSpinner] = useState(false);
 
     const handleSubmit = async () => {
         dispatch({ type: "CLEAR_ERROR" });
@@ -22,6 +25,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         const nameChangeRequest = processNameChangeToApiRequest(
             state.nameChanges,
         );
+        setIsSpinner(true);
         const response = await postJson(
             `${mediaLink}/rename/process`,
             nameChangeRequest,
@@ -34,6 +38,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                 stageDispatcher("next");
             }
         }
+        setIsSpinner(false);
     };
 
     const isNameChanges = state.nameChanges.changes.length > 0;
@@ -64,12 +69,17 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                     <>
                         <NameChangeTable nameChanges={state.nameChanges} />
                         <div className="flex justify-center">
-                            <SubmitButton
-                                onClick={handleSubmit}
-                                label="Rename!"
-                                type="button"
-                                buttonStyle="w-fit"
-                            />
+                            {
+                                isSpinner ? (
+                                    <Spinner />
+                                ) : <SubmitButton
+                                    onClick={handleSubmit}
+                                    label="Rename!"
+                                    type="button"
+                                    buttonStyle="w-fit"
+                                />
+                            }
+
                         </div>
                     </>
                 )

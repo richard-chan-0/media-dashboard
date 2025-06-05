@@ -1,4 +1,6 @@
-import { XmarkCircleSolid } from "iconoir-react";
+import { Eye, Refresh, XmarkCircleSolid } from "iconoir-react";
+import theme from "../theme";
+import Spinner from "./Spinner";
 
 type ProgressBarProps = {
     isInProgress: boolean;
@@ -18,7 +20,7 @@ const ProgressBar = ({
     }
 
     return progressPercent === 100 ? (
-        <p>continuing processing...</p>
+        <Spinner />
     ) : (
         <div
             className={`flex font-thin w-full justify-between gap-2 items-center border border-blue-200 pl-3 pt-2 pr-3 pb-2 rounded-full`}

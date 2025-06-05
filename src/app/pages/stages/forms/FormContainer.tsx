@@ -20,7 +20,7 @@ const FormContainer = ({
     const containerSize = getWidthSize(size);
     return (
         <div
-            className={`${containerSize} ${isBorderEnabled ? "border border-blue-400 rounded-2xl shadow-blue-200 shadow-md p-4" : ""} ${theme.appColor} ${containerStyle}`}
+            className={`${containerSize} ${isBorderEnabled ? `rounded-2xl p-4 ${theme.shadowBorder}` : ""} ${theme.appColor} ${containerStyle}`}
         >
             {formTitle && (
                 <>
