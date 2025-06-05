@@ -1,9 +1,7 @@
 import { FormEvent } from "react";
 import FormContainer from "./FormContainer";
 import { useState } from "react";
-import StreamSelect from "../../../lib/components/StreamSelect";
-import StreamCheckboxList from "../../../lib/components/StreamCheckbox";
-import SubmitButton from "../../../lib/components/SubmitButton";
+import { StreamSelect, StreamCheckboxList, SubmitButton } from "../../../lib/components";
 import { postForm } from "../../../lib/api";
 import { ffmpegLink, no_api_error } from "../../../lib/constants";
 import { useRename } from "../../../pages/hooks/useRename";
