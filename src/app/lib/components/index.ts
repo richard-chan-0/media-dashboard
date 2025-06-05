@@ -1,6 +1,5 @@
 export { default as Exception } from "./Exception";
 export { default as FormInput } from "./FormInput";
-export { default as NameChangeList } from "./NameChangeList";
 export { default as NameChangeTable } from "./NameChangeTable";
 export { default as NavLink } from "./NavLink";
 export { default as ProgressBar } from "./ProgressBar";

@@ -22,6 +22,8 @@ export default defineWorkspace([
         ],
         test: {
             name: "storybook",
+            globals: true,
+            environment: "jsdom",
             browser: {
                 enabled: true,
                 headless: true,
