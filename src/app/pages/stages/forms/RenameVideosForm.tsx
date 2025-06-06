@@ -67,11 +67,11 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
             stageDispatcher("next");
+            setSeasonNumber("");
+            setStartNumber("");
+            setEpisodeFiles([]);
         }
         uploadDispatcher({ type: "RESET_UPLOAD" });
-        setSeasonNumber("");
-        setStartNumber("");
-        setEpisodeFiles([]);
         abortControllerRef.current = null;
     };
 
