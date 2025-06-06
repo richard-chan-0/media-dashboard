@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import { postForm } from "../../../lib/api";
-import { useDropzone } from "react-dropzone";
 import {
-    formDropdownMessage,
     inputStoryNameMessage,
+    mediaLink,
+    no_api_error,
 } from "../../../lib/constants";
-import theme from "../../../lib/theme";
-import Exception from "../../../lib/components/Exception";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import VolumeMappingForm from "./VolumeMappingForm";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
+import FileUploader from "../../../lib/components/FileUploader";
+import { uploadReducer } from "../../state/uploadReducer";
+import { ProgressBar } from "../../../lib/components";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -20,20 +21,13 @@ export type VolumeMapping = {
 };
 
 const CreateVolumesForm = () => {
-    // TODO: import api constant
-    const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK;
     const [storyName, setStoryName] = useState("");
     const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const [createVolumesMessage, setCreateVolumesMessage] = useState("");
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => {
-            setVolumeFiles(acceptedFiles);
-            setError("");
-        },
-    });
+    const abortControllerRef = useRef<AbortController | null>(null);
+    const [upload, uploadDispatcher] = useReducer(uploadReducer, { isUploading: false, uploadPercent: 0 });
 
     const getVolumesMappingToApiField = () => {
         const mappings = Object.entries(volumesMapping).map((entry) => ({
@@ -51,13 +45,19 @@ const CreateVolumesForm = () => {
         setVolumeFiles(newFiles);
     }
 
+    const handleDrop = (acceptedFiles: File[]) => {
+        setVolumeFiles(acceptedFiles);
+        // dispatch({ type: "CLEAR_ERROR" });
+    }
+
     const handleSubmit = async () => {
-        if (!apiLink) {
-            setError("can't find api link");
+        if (!mediaLink) {
+            // dispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
+
         }
         if (!storyName) {
-            setError("story title is required");
+            // dispatch({ type: "SET_ERROR", payload: 'story name required' });
             return;
         }
 
@@ -68,62 +68,71 @@ const CreateVolumesForm = () => {
             JSON.stringify(getVolumesMappingToApiField()),
         );
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${apiLink}/manage/volumes`, formData);
-        setCreateVolumesMessage(response?.error ? response.error : response);
-        setStoryName("");
-        setVolumeFiles([]);
-        setVolumesMapping({});
+        abortControllerRef.current = new AbortController();
+        const response = await postForm(
+            `${mediaLink}/manage/volumes`,
+            formData,
+            uploadDispatcher,
+            abortControllerRef.current.signal
+        );
+        if (response?.error) {
+            // dispatch({ type: "SET_ERROR", payload: response.error });
+        } else {
+            setCreateVolumesMessage(response?.error ? response.error : response);
+            setStoryName("");
+            setVolumeFiles([]);
+            setVolumesMapping({});
+        }
+        uploadDispatcher({ type: "RESET_UPLOAD" });
+        abortControllerRef.current = null;
     };
 
     return (
         <>
-            <Exception error={error} />
-            <div className="flex md:flex-row flex-col gap-4 items-center md:justify-center md:items-start">
-                <FormContainer
-                    size={4}
-                    containerStyle="flex flex-col gap-2"
-                    formTitle="Create Volume Mapping"
+            <FormContainer
+                size={4}
+                containerStyle="flex flex-col gap-2"
+                formTitle="Create Volume Mapping"
+            >
+                <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
+                {Object.keys(volumesMapping).length > 0 && (
+                    <pre className="text-sm border p-4 bg-black text-green-400 border-blue-200 rounded-lg opacity-90">
+                        {JSON.stringify(volumesMapping, null, 2)}
+                    </pre>
+                )}
+            </FormContainer>
+            <FormContainer
+                size={2}
+                formTitle="Create Volumes"
+                containerStyle="flex flex-col gap-2"
+            >
+                <FormInput
+                    type="text"
+                    inputValue={storyName}
+                    setInputValue={setStoryName}
+                    placeholder={inputStoryNameMessage}
+                />
+                <FileUploader onDrop={handleDrop} />
+                <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
+                <button
+                    onClick={handleSubmit}
+                    className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg"
+                    disabled={volumeFiles.length == 0}
                 >
-                    <VolumeMappingForm setVolumesMapping={setVolumesMapping} />
-                    {Object.keys(volumesMapping).length > 0 && (
-                        <pre className="text-sm border p-4 bg-black text-green-400 border-blue-200 rounded-lg opacity-90">
-                            {JSON.stringify(volumesMapping, null, 2)}
-                        </pre>
-                    )}
-                </FormContainer>
-                <FormContainer
-                    size={2}
-                    formTitle="Create Volumes"
-                    containerStyle="flex flex-col gap-2"
-                >
-                    <FormInput
-                        type="text"
-                        inputValue={storyName}
-                        setInputValue={setStoryName}
-                        placeholder={inputStoryNameMessage}
-                    />
-                    <div
-                        {...getRootProps()}
-                        className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 text-center cursor-pointer`}
-                    >
-                        <input {...getInputProps()} />
-                        <p>{formDropdownMessage}</p>
+                    Submit Files!
+                </button>
+                <ProgressBar
+                    isInProgress={upload.isUploading}
+                    progressPercent={upload.uploadPercent}
+                    progressLabel={"Uploading..."}
+                    abortController={abortControllerRef.current}
+                />
+                {createVolumesMessage && (
+                    <div className="flex justify-center">
+                        {createVolumesMessage}
                     </div>
-                    <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
-                    <button
-                        onClick={handleSubmit}
-                        className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white  w-full rounded-b-lg"
-                        disabled={volumeFiles.length == 0}
-                    >
-                        Submit Files!
-                    </button>
-                    {createVolumesMessage && (
-                        <div className="flex justify-center">
-                            {createVolumesMessage}
-                        </div>
-                    )}
-                </FormContainer>
-            </div>
+                )}
+            </FormContainer>
         </>
     );
 };

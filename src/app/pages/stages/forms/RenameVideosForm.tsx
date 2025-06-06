@@ -1,14 +1,11 @@
 import { useReducer, useRef, useState } from "react";
 import { postForm } from "../../../lib/api";
-import { useDropzone } from "react-dropzone";
 import {
-    formDropdownMessage,
     inputSeasonMessage,
     inputStartEpisodeMessage,
     mediaLink,
     no_api_error,
 } from "../../../lib/constants";
-import theme from "../../../lib/theme";
 import { processApiResponseToNameChange } from "../../../lib/api";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "./FormContainer";
@@ -16,6 +13,7 @@ import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
 import { useRename } from "../../hooks/useRename";
 import { uploadReducer } from "../../state/uploadReducer";
+import FileUploader from "../../../lib/components/FileUploader";
 
 type RenameVideosFormProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -33,14 +31,11 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         const newFiles = episodeFiles.filter((file: File) => file.name !== file_name);
         setEpisodeFiles(newFiles);
     }
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => {
-            setEpisodeFiles(acceptedFiles);
-            dispatch({ type: "CLEAR_ERROR" });
-            dispatch({ type: "CLEAR_NAME_CHANGES" });
-        },
-    });
+    const handleDrop = (acceptedFiles: File[]) => {
+        setEpisodeFiles(acceptedFiles);
+        dispatch({ type: "CLEAR_ERROR" });
+        dispatch({ type: "CLEAR_NAME_CHANGES" });
+    };
 
     const isRetry = state.previewFiles.length > 0 && episodeFiles.length === 0;
     const handleSubmit = async () => {
@@ -96,14 +91,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                     placeholder={inputStartEpisodeMessage}
                 />
             </div>
-
-            <div
-                {...getRootProps()}
-                className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}
-            >
-                <input {...getInputProps()} />
-                <p>{formDropdownMessage}</p>
-            </div>
+            <FileUploader onDrop={handleDrop} />
             {episodeFiles.length > 0 && (
                 <UploadPreview files={episodeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}

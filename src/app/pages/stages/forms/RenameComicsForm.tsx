@@ -1,14 +1,11 @@
 import React, { useReducer, useRef, useState } from "react";
 import { postForm } from "../../../lib/api";
-import { useDropzone } from "react-dropzone";
 import {
-    formDropdownMessage,
     inputStartVolumeMessage,
     inputStoryNameMessage,
     mediaLink,
     no_api_error,
 } from "../../../lib/constants";
-import theme from "../../../lib/theme";
 import { processApiResponseToNameChange } from "../../../lib/api";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "./FormContainer";
@@ -16,6 +13,7 @@ import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
 import { useRename } from "../../hooks/useRename";
 import { uploadReducer } from "../../state/uploadReducer";
+import FileUploader from "../../../lib/components/FileUploader";
 
 type RenameComicsFormProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -29,13 +27,11 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
     const { state, dispatch } = useRename();
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => {
-            setVolumeFiles(acceptedFiles);
-            dispatch({ type: "CLEAR_ERROR" });
-            dispatch({ type: "CLEAR_NAME_CHANGES" });
-        },
-    });
+    const handleDrop = (acceptedFiles: File[]) => {
+        setVolumeFiles(acceptedFiles);
+        dispatch({ type: "CLEAR_ERROR" });
+        dispatch({ type: "CLEAR_NAME_CHANGES" });
+    };
 
     const handleDelete = (file_name: string) => {
         const newFiles = volumeFiles.filter((file: File) => file.name !== file_name);
@@ -96,14 +92,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
                     placeholder={inputStartVolumeMessage}
                 />
             </div>
-
-            <div
-                {...getRootProps()}
-                className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer`}
-            >
-                <input {...getInputProps()} />
-                <p>{formDropdownMessage}</p>
-            </div>
+            <FileUploader onDrop={handleDrop} />
             {volumeFiles.length > 0 && (
                 <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
