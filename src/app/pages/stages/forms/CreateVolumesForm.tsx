@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { postForm } from "../../../lib/api";
-import { useDropzone } from "react-dropzone";
 import {
-    formDropdownMessage,
     inputStoryNameMessage,
+    mediaLink,
 } from "../../../lib/constants";
-import theme from "../../../lib/theme";
 import Exception from "../../../lib/components/Exception";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import VolumeMappingForm from "./VolumeMappingForm";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
+import FileUploader from "../../../lib/components/FileUploader";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -20,20 +19,11 @@ export type VolumeMapping = {
 };
 
 const CreateVolumesForm = () => {
-    // TODO: import api constant
-    const apiLink = import.meta.env.VITE_MEDIA_UTILITY_API_LINK;
     const [storyName, setStoryName] = useState("");
     const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
     const [error, setError] = useState("");
     const [createVolumesMessage, setCreateVolumesMessage] = useState("");
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop: (acceptedFiles) => {
-            setVolumeFiles(acceptedFiles);
-            setError("");
-        },
-    });
 
     const getVolumesMappingToApiField = () => {
         const mappings = Object.entries(volumesMapping).map((entry) => ({
@@ -51,8 +41,13 @@ const CreateVolumesForm = () => {
         setVolumeFiles(newFiles);
     }
 
+    const handleDrop = (acceptedFiles: File[]) => {
+        setVolumeFiles(acceptedFiles);
+        setError("");
+    }
+
     const handleSubmit = async () => {
-        if (!apiLink) {
+        if (!mediaLink) {
             setError("can't find api link");
             return;
         }
@@ -68,7 +63,7 @@ const CreateVolumesForm = () => {
             JSON.stringify(getVolumesMappingToApiField()),
         );
         volumeFiles.forEach((file) => formData.append("files", file));
-        const response = await postForm(`${apiLink}/manage/volumes`, formData);
+        const response = await postForm(`${mediaLink}/manage/volumes`, formData);
         setCreateVolumesMessage(response?.error ? response.error : response);
         setStoryName("");
         setVolumeFiles([]);
@@ -102,13 +97,7 @@ const CreateVolumesForm = () => {
                         setInputValue={setStoryName}
                         placeholder={inputStoryNameMessage}
                     />
-                    <div
-                        {...getRootProps()}
-                        className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 text-center cursor-pointer`}
-                    >
-                        <input {...getInputProps()} />
-                        <p>{formDropdownMessage}</p>
-                    </div>
+                    <FileUploader onDrop={handleDrop} />
                     <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
                     <button
                         onClick={handleSubmit}

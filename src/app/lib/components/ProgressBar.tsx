@@ -1,5 +1,4 @@
-import { Eye, Refresh, XmarkCircleSolid } from "iconoir-react";
-import theme from "../theme";
+import { XmarkCircleSolid } from "iconoir-react";
 import Spinner from "./Spinner";
 
 type ProgressBarProps = {
