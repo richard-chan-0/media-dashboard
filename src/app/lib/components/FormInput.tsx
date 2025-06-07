@@ -1,6 +1,6 @@
 import theme from "../theme";
 
-type FormInputProps = {
+export type FormInputProps = {
     type: string;
     inputValue: string;
     setInputValue: CallableFunction;

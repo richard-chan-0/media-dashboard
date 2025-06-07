@@ -1,19 +1,19 @@
 import React, { useReducer, useRef, useState } from "react";
-import { postForm } from "../../../lib/api";
+import { postForm } from "../../../../lib/api";
 import {
     inputStartVolumeMessage,
     inputStoryNameMessage,
     mediaLink,
     no_api_error,
-} from "../../../lib/constants";
-import { processApiResponseToNameChange } from "../../../lib/api";
-import UploadPreview from "../../../lib/components/UploadPreview";
-import FormContainer from "./FormContainer";
-import FormInput from "../../../lib/components/FormInput";
-import ProgressBar from "../../../lib/components/ProgressBar";
-import { useRename } from "../../hooks/useRename";
-import { uploadReducer } from "../../state/uploadReducer";
-import FileUploader from "../../../lib/components/FileUploader";
+} from "../../../../lib/constants";
+import { processApiResponseToNameChange } from "../../../../lib/api";
+import UploadPreview from "../../../../lib/components/UploadPreview";
+import FormContainer from "../FormContainer";
+import FormInput from "../../../../lib/components/FormInput";
+import ProgressBar from "../../../../lib/components/ProgressBar";
+import { useRename } from "../../../hooks/useRename";
+import { uploadReducer } from "../../../state/uploadReducer";
+import FileUploader from "../../../../lib/components/FileUploader";
 
 type RenameComicsFormProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -47,7 +47,6 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
             dispatch({ type: "SET_ERROR", payload: "story title is required" });
             return;
         }
-
         const formData = new FormData();
         formData.append("comic_name", storyName);
         formData.append("start_number", startVolume);

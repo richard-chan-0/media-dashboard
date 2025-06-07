@@ -2,7 +2,7 @@ import { useDropzone } from "react-dropzone";
 import { formDropzoneMessage } from "../constants";
 import theme from "../theme";
 
-type FileUploaderProps = {
+export type FileUploaderProps = {
     onDrop: (files: File[]) => void;
 }
 
