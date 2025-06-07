@@ -1,7 +1,7 @@
 import { TrashSolid } from "iconoir-react";
 import theme from "../theme";
 
-type UploadPreviewProps = {
+export type UploadPreviewProps = {
     files: string[];
     deleteFile: (fileName: string) => void;
 };

@@ -1,7 +1,7 @@
 import { XmarkCircleSolid } from "iconoir-react";
 import Spinner from "./Spinner";
 
-type ProgressBarProps = {
+export type ProgressBarProps = {
     isInProgress: boolean;
     progressLabel: string;
     progressPercent: number;
