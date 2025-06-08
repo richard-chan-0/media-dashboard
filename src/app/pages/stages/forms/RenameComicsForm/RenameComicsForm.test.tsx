@@ -11,6 +11,8 @@ import { UploadPreviewProps } from "../../../../lib/components/UploadPreview";
 import { UploadAction, UploadState } from "../../../state/uploadReducer";
 
 const dispatch = vi.fn();
+const pageDispatch = vi.fn();
+const initialContext = { state: { nameChanges: { changes: [] }, mediaType: COMICS }, dispatch, pageState: { previewFiles: [], error: "" }, pageDispatch }
 
 vi.mock("../../../../lib/api", () => ({
     postForm: vi.fn(),
@@ -86,10 +88,8 @@ vi.mock("../../../state/uploadReducer", () => ({
 }));
 
 const renderWithContext = (props = {}) => {
-    const dispatch = vi.fn();
-    const state = { previewFiles: [], error: "", nameChanges: { changes: [] }, mediaType: COMICS };
     return render(
-        <RenameContext.Provider value={{ state, dispatch }}>
+        <RenameContext.Provider value={initialContext}>
             <RenameComicsForm stageDispatcher={vi.fn()} {...props} />
         </RenameContext.Provider>
     );
@@ -126,7 +126,7 @@ describe("RenameComicsForm", () => {
 
     it("shows error if story name is missing on submit", async () => {
         render(
-            <RenameContext.Provider value={{ state: { previewFiles: [], error: "", nameChanges: { changes: [] }, mediaType: COMICS }, dispatch }}>
+            <RenameContext.Provider value={initialContext}>
                 <RenameComicsForm stageDispatcher={vi.fn()} />
             </RenameContext.Provider>
         );
@@ -146,7 +146,7 @@ describe("RenameComicsForm", () => {
 
         const stageDispatcher = vi.fn();
         render(
-            <RenameContext.Provider value={{ state: { previewFiles: [], error: "", nameChanges: { changes: [] }, mediaType: COMICS }, dispatch }}>
+            <RenameContext.Provider value={initialContext}>
                 <RenameComicsForm stageDispatcher={stageDispatcher} />
             </RenameContext.Provider>
         );

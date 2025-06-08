@@ -1,40 +1,14 @@
 import { useReducer, ReactNode } from "react";
 import { RenameContext } from "../context/RenameContext";
-import { RenameState, Action } from "../context/RenameContext";
-
-const initialState: RenameState = {
-    nameChanges: { changes: [] },
-    previewFiles: [],
-    error: "",
-    mediaType: "",
-};
-
-function renameReducer(state: RenameState, action: Action): RenameState {
-    switch (action.type) {
-        case "SET_NAME_CHANGES":
-            return { ...state, nameChanges: action.payload };
-        case "SET_PREVIEWS":
-            return { ...state, previewFiles: action.payload };
-        case "SET_ERROR":
-            return { ...state, error: action.payload };
-        case "RESET":
-            return initialState;
-        case "CLEAR_ERROR":
-            return { ...state, error: "" };
-        case "CLEAR_NAME_CHANGES":
-            return { ...state, nameChanges: { changes: [] } };
-        case "SET_MEDIA_TYPE":
-            return { ...state, mediaType: action.payload };
-        default:
-            return state;
-    }
-}
+import { renameReducer, initialState as initialRenameState } from "../state/renameReducer";
+import { pageReducer, initialState as initialPageState } from "../state/pageReducer";
 
 export const RenameProvider = ({ children }: { children: ReactNode }) => {
-    const [state, dispatch] = useReducer(renameReducer, initialState);
+    const [state, dispatch] = useReducer(renameReducer, initialRenameState);
+    const [pageState, pageDispatch] = useReducer(pageReducer, initialPageState);
 
     return (
-        <RenameContext.Provider value={{ state, dispatch }}>
+        <RenameContext.Provider value={{ state, dispatch, pageState, pageDispatch }}>
             {children}
         </RenameContext.Provider>
     );

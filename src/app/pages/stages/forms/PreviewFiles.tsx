@@ -1,12 +1,12 @@
 import FormContainer from "./FormContainer";
-import { useRename } from "../../hooks/useRename";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import { useDeleteFile } from "../../hooks/useDeleteFile";
+import { useRename } from "../../hooks/usePageContext";
 
 const PreviewFiles = () => {
-    const { state } = useRename();
+    const { pageState } = useRename();
     const deleteFile = useDeleteFile();
-    if (!state.previewFiles || state.previewFiles.length == 0) {
+    if (!pageState.previewFiles || pageState.previewFiles.length == 0) {
         return <></>;
     }
 
@@ -19,7 +19,7 @@ const PreviewFiles = () => {
             <p className="text-sm">
                 <i>files currently uploaded</i>
             </p>
-            <UploadPreview files={state.previewFiles} deleteFile={deleteFile} />
+            <UploadPreview files={pageState.previewFiles} deleteFile={deleteFile} />
         </FormContainer>
     );
 };

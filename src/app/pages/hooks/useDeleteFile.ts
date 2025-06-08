@@ -1,15 +1,16 @@
 import { postForm } from "../../lib/api";
 import { mediaLink , no_api_error} from "../../lib/constants";
 import { removePathFromFilePath } from "../../lib/utilities";
-import { Action } from "../context/RenameContext";
-import { useRename } from "./useRename";
+import { PageAction } from "../state/pageReducer";
+import { RenameAction } from "../state/renameReducer";
+import { useRename } from "./usePageContext";
 
 export const useDeleteFile = () => {
-    const { state, dispatch } = useRename();
+    const { state, dispatch, pageState, pageDispatch } = useRename();
     const deleteFile = async (fileName: string) => {
         
         if (!mediaLink) {
-            dispatch({ type: "SET_ERROR", payload: no_api_error });
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
         const formData = new FormData();
@@ -20,16 +21,16 @@ export const useDeleteFile = () => {
             formData,
         );
         if (response?.error) {
-            dispatch({ type: "SET_ERROR", payload: response.error });
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            const newFiles = state.previewFiles.filter((file) => file !== fileName);
-            const setPreview = { type: "SET_PREVIEWS", payload: newFiles } as Action
-            dispatch(setPreview);
+            const newFiles = pageState.previewFiles.filter((file) => file !== fileName);
+            const setPreview = { type: "SET_PREVIEWS", payload: newFiles } as PageAction
+            pageDispatch(setPreview);
             const newNameChanges = state.nameChanges.changes.filter(
                 (nameChange) => removePathFromFilePath(nameChange.input) !== fileName);
-            const setNameChanges = { type: "SET_NAME_CHANGES", payload: { changes: newNameChanges } } as Action
+            const setNameChanges = { type: "SET_NAME_CHANGES", payload: { changes: newNameChanges } } as RenameAction
             dispatch(setNameChanges);
-            dispatch({ type: "CLEAR_ERROR" });
+            pageDispatch({ type: "CLEAR_ERROR" });
         }
     }
     return deleteFile;

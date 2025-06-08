@@ -11,7 +11,7 @@ import UploadPreview from "../../../../lib/components/UploadPreview";
 import FormContainer from "../FormContainer";
 import FormInput from "../../../../lib/components/FormInput";
 import ProgressBar from "../../../../lib/components/ProgressBar";
-import { useRename } from "../../../hooks/useRename";
+import { useRename } from "../../../hooks/usePageContext";
 import { uploadReducer } from "../../../state/uploadReducer";
 import FileUploader from "../../../../lib/components/FileUploader";
 
@@ -24,12 +24,12 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
     const [startVolume, setStartVolume] = useState("");
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
     const [upload, uploadDispatcher] = useReducer(uploadReducer, { isUploading: false, uploadPercent: 0 });
-    const { state, dispatch } = useRename();
+    const { dispatch, pageState, pageDispatch } = useRename();
     const abortControllerRef = useRef<AbortController | null>(null);
 
     const handleDrop = (acceptedFiles: File[]) => {
         setVolumeFiles(acceptedFiles);
-        dispatch({ type: "CLEAR_ERROR" });
+        pageDispatch({ type: "CLEAR_ERROR" });
         dispatch({ type: "CLEAR_NAME_CHANGES" });
     };
 
@@ -40,11 +40,11 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
 
     const handleSubmit = async () => {
         if (!mediaLink) {
-            dispatch({ type: "SET_ERROR", payload: no_api_error });
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
         if (!storyName) {
-            dispatch({ type: "SET_ERROR", payload: "story title is required" });
+            pageDispatch({ type: "SET_ERROR", payload: "story title is required" });
             return;
         }
         const formData = new FormData();
@@ -60,7 +60,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
             abortControllerRef.current.signal
         );
         if (response?.error) {
-            dispatch({ type: "SET_ERROR", payload: response.error });
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
@@ -99,7 +99,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
                 onClick={handleSubmit}
                 className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
                 disabled={upload.isUploading ||
-                    (state.previewFiles.length == 0 && volumeFiles.length == 0)}
+                    (pageState.previewFiles.length == 0 && volumeFiles.length == 0)}
             >
                 Submit Files!
             </button>

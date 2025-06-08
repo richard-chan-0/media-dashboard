@@ -11,7 +11,7 @@ import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "./FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
-import { useRename } from "../../hooks/useRename";
+import { useRename } from "../../hooks/usePageContext";
 import { uploadReducer } from "../../state/uploadReducer";
 import FileUploader from "../../../lib/components/FileUploader";
 
@@ -25,7 +25,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
     const [upload, uploadDispatcher] = useReducer(uploadReducer, { isUploading: false, uploadPercent: 0 });
     const abortControllerRef = useRef<AbortController | null>(null);
-    const { state, dispatch } = useRename();
+    const { dispatch, pageState, pageDispatch } = useRename();
 
     const handleDelete = (file_name: string) => {
         const newFiles = episodeFiles.filter((file: File) => file.name !== file_name);
@@ -33,14 +33,14 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     }
     const handleDrop = (acceptedFiles: File[]) => {
         setEpisodeFiles(acceptedFiles);
-        dispatch({ type: "CLEAR_ERROR" });
+        pageDispatch({ type: "CLEAR_ERROR" });
         dispatch({ type: "CLEAR_NAME_CHANGES" });
     };
 
-    const isRetry = state.previewFiles.length > 0 && episodeFiles.length === 0;
+    const isRetry = pageState.previewFiles.length > 0 && episodeFiles.length === 0;
     const handleSubmit = async () => {
         if (!mediaLink) {
-            dispatch({ type: "SET_ERROR", payload: no_api_error });
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
 
@@ -57,7 +57,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             abortControllerRef.current.signal
         );
         if (response?.error) {
-            dispatch({ type: "SET_ERROR", payload: response.error });
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
@@ -100,7 +100,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
                 disabled={
                     upload.isUploading ||
-                    (state.previewFiles.length == 0 && episodeFiles.length == 0)
+                    (pageState.previewFiles.length == 0 && episodeFiles.length == 0)
                 }
             >
                 {isRetry ? "Retrigger" : "Upload"}

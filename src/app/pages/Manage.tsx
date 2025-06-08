@@ -1,11 +1,14 @@
 import CreateVolumesForm from "./stages/forms/CreateVolumesForm";
 import FormPage from "./FormPage";
+import { ManageProvider } from "./provider/ManageProvider";
 
 const ManagePage = () => {
     return (
-        <FormPage>
-            <CreateVolumesForm />
-        </FormPage>
+        <ManageProvider>
+            <FormPage>
+                <CreateVolumesForm />
+            </FormPage>
+        </ManageProvider>
     );
 };
 

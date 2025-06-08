@@ -1,7 +1,6 @@
-import { XmarkSquareSolid } from "iconoir-react";
 import theme from "../../theme";
 import { useEffect, useState } from "react";
-import { useRename } from "../../../pages/hooks/useRename";
+import { useRename } from "../../../pages/hooks/usePageContext";
 import { removePathFromFilePath, splitPathFromFilePath } from "../../utilities";
 import Modal from "../Modal/Modal";
 import CloseButton from "../CloseButton";
@@ -60,7 +59,7 @@ const NameChangeModal = ({ isOpen, onClose, initialName }: NameChangeModalProps)
             >
                 Update
             </button>
-            <CloseButton onClick={onClose} />
+            <CloseButton onClose={onClose} />
         </Modal>
     );
 };

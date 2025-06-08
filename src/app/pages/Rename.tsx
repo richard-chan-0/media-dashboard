@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react";
 import FormPage from "./FormPage";
 import { mediaLink } from "../lib/constants";
 import { get } from "../lib/api";
-import { useRename } from "./hooks/useRename";
+import { useRename } from "./hooks/usePageContext";
 import { RenameProvider } from "./provider/RenameProvider";
 import PreviewFiles from "./stages/forms/PreviewFiles";
 import { RenameUploadStage, SetStreams, NameChangePreview } from "./stages"
@@ -30,7 +30,7 @@ const stageReducer = (stage: number, action: string) => {
 };
 
 const RenamePage = ({ mediaType }: RenamePageProps) => {
-    const { state, dispatch } = useRename();
+    const { dispatch, pageState, pageDispatch } = useRename();
     const [stage, stageDispatcher] = useReducer(stageReducer, 0);
 
     const getStages = (stage: number) => {
@@ -61,12 +61,12 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
             }
             const response = await get(`${apiLink}/rename/read`);
             if (response?.error) {
-                dispatch({ type: "SET_ERROR", payload: response.error });
+                pageDispatch({ type: "SET_ERROR", payload: response.error });
             } else {
                 const previews = response
                     .map((file: PreviewFile) => file?.name)
                     .sort();
-                dispatch({ type: "SET_PREVIEWS", payload: previews });
+                pageDispatch({ type: "SET_PREVIEWS", payload: previews });
             }
         };
         fetch(mediaLink);
@@ -79,7 +79,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
 
     return (
         <FormPage
-            error={state.error}
+            error={pageState.error}
             isColumn={false}
             pageStyle="justify-center items-start"
         >
