@@ -1,7 +1,7 @@
 import FormContainer from "./FormContainer";
-import { useRename } from "../../hooks/usePageContext";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import { useDeleteFile } from "../../hooks/useDeleteFile";
+import { useRename } from "../../hooks/usePageContext";
 
 const PreviewFiles = () => {
     const { pageState } = useRename();

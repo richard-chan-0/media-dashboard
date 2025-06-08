@@ -2,9 +2,11 @@ import { createContext } from "react";
 import { RenameState, RenameAction } from "../state/renameReducer";
 import { PageState, PageAction } from "../state/pageReducer";
 
-export const RenameContext = createContext<{
+export type RenameContextType = {
     state: RenameState;
     dispatch: React.Dispatch<RenameAction>;
     pageState: PageState;
     pageDispatch: React.Dispatch<PageAction>;
-} | null>(null);
+};
+
+export const RenameContext = createContext<RenameContextType | null>(null);

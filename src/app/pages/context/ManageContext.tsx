@@ -1,7 +1,9 @@
 import { createContext } from "react";
 import { PageState, PageAction } from "../state/pageReducer";
 
-export const ManageContext = createContext<{
+export type ManageContextType = {
     pageState: PageState;
     pageDispatch: React.Dispatch<PageAction>;
-} | null>(null);
+};
+
+export const ManageContext = createContext<ManageContextType | null>(null);
