@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRename } from "../../../pages/hooks/useRename";
 import { removePathFromFilePath, splitPathFromFilePath } from "../../utilities";
 import Modal from "../Modal/Modal";
+import CloseButton from "../CloseButton";
 
 type NameChangeModalProps = {
     isOpen: boolean;
@@ -59,12 +60,7 @@ const NameChangeModal = ({ isOpen, onClose, initialName }: NameChangeModalProps)
             >
                 Update
             </button>
-            <button
-                className="absolute top-2 right-2 text-gray-500 hover:text-black"
-                onClick={onClose}
-            >
-                <XmarkSquareSolid />
-            </button>
+            <CloseButton onClick={onClose} />
         </Modal>
     );
 };
