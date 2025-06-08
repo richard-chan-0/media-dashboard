@@ -4,7 +4,7 @@ import { useState } from "react";
 import { StreamSelect, StreamCheckboxList, SubmitButton } from "../../../lib/components";
 import { postForm } from "../../../lib/api";
 import { ffmpegLink, no_api_error } from "../../../lib/constants";
-import { useRename } from "../../../pages/hooks/useRename";
+import { useRename } from "../../hooks/usePageContext";
 
 export type Stream = {
     is_default: string;
@@ -30,12 +30,12 @@ const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
     const subtitles = streams["subtitle"];
     const audios = streams["audio"];
 
-    const { dispatch } = useRename();
+    const { pageDispatch } = useRename();
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!ffmpegLink) {
-            dispatch({ type: "SET_ERROR", payload: no_api_error });
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
 
@@ -51,9 +51,9 @@ const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
         );
         const response = await postForm(`${ffmpegLink}${writeLink}`, formData);
         if (response?.error) {
-            dispatch({ type: "SET_ERROR", payload: response.error });
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            dispatch({ type: "CLEAR_ERROR" });
+            pageDispatch({ type: "CLEAR_ERROR" });
             setMessage(response);
         }
     };

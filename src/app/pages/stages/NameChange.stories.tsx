@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import NameChangePreview from "./NameChange";
 import { RenameProvider } from "../provider/RenameProvider";
-import { useRename } from "../hooks/useRename";
+import { useRename } from "../hooks/usePageContext";
 import { NameChanges } from "../../lib/types";
-import { Action } from "../context/RenameContext";
 import { useEffect } from "react";
+import { RenameAction } from "../state/renameReducer";
 
 type TestNameChangePreviewProps = {
     stageDispatcher: (action: string) => void;
@@ -17,7 +17,7 @@ const TestNameChangePreview = (args: TestNameChangePreviewProps) => {
         const set_name_change_action = {
             type: "SET_NAME_CHANGES",
             payload: args.nameChanges as NameChanges,
-        } as Action;
+        } as RenameAction;
 
         dispatch(set_name_change_action);
     }, [dispatch, args.nameChanges]);

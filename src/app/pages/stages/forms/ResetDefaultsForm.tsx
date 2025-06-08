@@ -3,19 +3,19 @@ import { ffmpegLink, mediaLink } from "../../../lib/constants";
 import { FormEvent } from "react";
 import FormContainer from "./FormContainer";
 import SubmitButton from "../../../lib/components/SubmitButton";
-import { useRename } from "../../../pages/hooks/useRename";
+import { useRename } from "../../hooks/usePageContext";
 
 type ResetDefaultsFormProps = {
     setStreams: CallableFunction;
 };
 
 const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
-    const { dispatch } = useRename();
+    const { pageDispatch } = useRename();
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!ffmpegLink) {
-            dispatch({ type: "SET_ERROR", payload: "ffmpeg api not defined" });
+            pageDispatch({ type: "SET_ERROR", payload: "ffmpeg api not defined" });
             return;
         }
         if (mediaLink) {
@@ -24,10 +24,10 @@ const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
 
         const response = await get(`${ffmpegLink}/read`);
         if (response?.error) {
-            dispatch({ type: "SET_ERROR", payload: response.error });
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             setStreams(response);
-            dispatch({ type: "CLEAR_ERROR" });
+            pageDispatch({ type: "CLEAR_ERROR" });
         }
     };
 
