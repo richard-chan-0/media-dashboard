@@ -3,7 +3,7 @@ import { postForm } from "../../../lib/api";
 import {
     inputStoryNameMessage,
     mediaLink,
-    // no_api_error,
+    no_api_error,
 } from "../../../lib/constants";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import VolumeMappingForm from "./VolumeMappingForm";
@@ -12,6 +12,7 @@ import FormInput from "../../../lib/components/FormInput";
 import FileUploader from "../../../lib/components/FileUploader";
 import { uploadReducer } from "../../state/uploadReducer";
 import { ProgressBar } from "../../../lib/components";
+import { useManage } from "../../hooks/usePageContext";
 
 export type VolumeMapping = {
     [key: string]: {
@@ -24,8 +25,8 @@ const CreateVolumesForm = () => {
     const [storyName, setStoryName] = useState("");
     const [volumesMapping, setVolumesMapping] = useState<VolumeMapping>({});
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
-    // const [error, setError] = useState("");
     const [createVolumesMessage, setCreateVolumesMessage] = useState("");
+    const { pageDispatch } = useManage();;
     const abortControllerRef = useRef<AbortController | null>(null);
     const [upload, uploadDispatcher] = useReducer(uploadReducer, { isUploading: false, uploadPercent: 0 });
 
@@ -47,17 +48,17 @@ const CreateVolumesForm = () => {
 
     const handleDrop = (acceptedFiles: File[]) => {
         setVolumeFiles(acceptedFiles);
-        // dispatch({ type: "CLEAR_ERROR" });
+        pageDispatch({ type: "CLEAR_ERROR" });
     }
 
     const handleSubmit = async () => {
         if (!mediaLink) {
-            // dispatch({ type: "SET_ERROR", payload: no_api_error });
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
 
         }
         if (!storyName) {
-            // dispatch({ type: "SET_ERROR", payload: 'story name required' });
+            pageDispatch({ type: "SET_ERROR", payload: 'story name required' });
             return;
         }
 
