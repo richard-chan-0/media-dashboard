@@ -7,6 +7,15 @@ import * as usePageContext from "../../hooks/usePageContext";
 import { COMICS, VIDEOS } from "../../../lib/constants";
 import '@testing-library/jest-dom';
 
+vi.mock("../../../lib/constants", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("../../../lib/constants")>();
+    return {
+        ...actual,
+        mediaLink: "http://localhost/api", // <-- mock API link
+        no_api_error: "No API link",
+    };
+});
+
 function renderWithProvider(ui: React.ReactElement) {
     return render(<RenameProvider>{ui}</RenameProvider>);
 }
@@ -80,7 +89,7 @@ describe("NameChangePreview", () => {
 
     it("handles API error response", async () => {
         const errorMsg = "API error";
-        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
+        vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
         useRenameMock.mockReturnValueOnce({
