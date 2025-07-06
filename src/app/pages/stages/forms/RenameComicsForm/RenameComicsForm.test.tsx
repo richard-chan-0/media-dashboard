@@ -133,8 +133,7 @@ describe("RenameComicsForm", () => {
         fireEvent.click(screen.getByTestId("file-uploader"));
         fireEvent.click(screen.getByText("Submit Files!"));
         await waitFor(() => {
-            console.log(dispatch.mock.calls);
-            expect(dispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: "story title is required" });
+            expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: "story title is required" });
         });
     });
 
@@ -158,7 +157,7 @@ describe("RenameComicsForm", () => {
         await waitFor(() => {
             expect(postForm).toHaveBeenCalled();
             expect(dispatch).toHaveBeenCalledWith({ type: "SET_NAME_CHANGES", payload: { changes: ["foo"] } });
-            expect(stageDispatcher).toHaveBeenCalledWith("reset");
+            expect(stageDispatcher).toHaveBeenCalledWith("next");
         });
     });
 

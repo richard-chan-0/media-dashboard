@@ -44,6 +44,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
             return;
         }
         if (!storyName) {
+            console.log('here');
             pageDispatch({ type: "SET_ERROR", payload: "story title is required" });
             return;
         }
@@ -64,7 +65,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
-            stageDispatcher("reset");
+            stageDispatcher("next");
         }
         setStoryName("");
         setVolumeFiles([]);

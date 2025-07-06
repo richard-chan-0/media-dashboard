@@ -1,0 +1,115 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import NameChangePreview from "./NameChange";
+import { RenameProvider } from "../../provider/RenameProvider";
+import * as api from "../../../lib/api";
+import * as usePageContext from "../../hooks/usePageContext";
+import { COMICS, VIDEOS } from "../../../lib/constants";
+import '@testing-library/jest-dom';
+
+function renderWithProvider(ui: React.ReactElement) {
+    return render(<RenameProvider>{ui}</RenameProvider>);
+}
+
+const mockStageDispatcher = vi.fn();
+
+const mockState = {
+    nameChanges: { changes: [{ input: "a.mp4", output: "b.mp4" }] },
+    mediaType: VIDEOS,
+}
+
+const mockPageState = {
+    error: "",
+    previewFiles: [],
+};
+
+describe("NameChangePreview", () => {
+    let useRenameMock: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        useRenameMock = vi.spyOn(usePageContext, "useRename").mockReturnValue({
+            pageState: mockPageState,
+            state: mockState,
+            dispatch: vi.fn(),
+            pageDispatch: vi.fn(),
+        });
+
+    });
+
+    it("renders the table and submit button when there are name changes", () => {
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        expect(screen.getByText("Rename Files")).toBeInTheDocument();
+        expect(screen.getByText("Rename!")).toBeInTheDocument();
+        expect(screen.getByText("a.mp4")).toBeInTheDocument();
+        expect(screen.getByText("b.mp4")).toBeInTheDocument();
+    });
+
+    it("shows 'No files to rename.' when there are no name changes", () => {
+        useRenameMock.mockReturnValueOnce({
+            state: {
+                ...mockState,
+                nameChanges: { changes: [] },
+            },
+            dispatch: vi.fn(),
+            pageDispatch: vi.fn(),
+        });
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        expect(screen.getByText("No files to rename.")).toBeInTheDocument();
+    });
+
+    it("calls handleSubmit and processes success path", async () => {
+        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
+        const dispatch = vi.fn();
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch,
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        fireEvent.click(screen.getByText("Rename!"));
+
+        await waitFor(() => {
+            expect(postJsonMock).toHaveBeenCalled();
+            expect(dispatch).toHaveBeenCalledWith({ type: "CLEAR_NAME_CHANGES" });
+            expect(mockStageDispatcher).toHaveBeenCalledWith("next");
+        });
+    });
+
+    it("handles API error response", async () => {
+        const errorMsg = "API error";
+        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
+        const dispatch = vi.fn();
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch,
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        fireEvent.click(screen.getByText("Rename!"));
+
+        await waitFor(() => {
+            expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
+        });
+    });
+
+    it("uses correct navProps for COMICS", () => {
+        useRenameMock.mockReturnValueOnce({
+            state: {
+                ...mockState,
+                mediaType: COMICS,
+            },
+            dispatch: vi.fn(),
+            pageDispatch: vi.fn(),
+        });
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        expect(screen.getByText("Back")).toBeInTheDocument();
+        // No right button for comics
+        expect(screen.queryByText("Skip")).not.toBeInTheDocument();
+        expect(screen.queryByText("Next")).not.toBeInTheDocument();
+    });
+});
