@@ -1,12 +1,12 @@
-import FormContainer from "./forms/FormContainer";
-import NameChangeTable from "../../lib/components/NameChangeTable";
-import { postJson, processNameChangeToApiRequest } from "../../lib/api";
-import SubmitButton from "../../lib/components/SubmitButton";
-import StageNavButtons from "./StageNavButtons";
-import { COMICS, mediaLink, no_api_error, VIDEOS } from "../../lib/constants";
-import { useRename } from "../hooks/usePageContext";
+import FormContainer from "../forms/FormContainer";
+import NameChangeTable from "../../../lib/components/NameChangeTable";
+import { postJson, processNameChangeToApiRequest } from "../../../lib/api";
+import SubmitButton from "../../../lib/components/SubmitButton";
+import StageNavButtons from "../StageNavButtons";
+import { COMICS, mediaLink, no_api_error, VIDEOS } from "../../../lib/constants";
+import { useRename } from "../../hooks/usePageContext";
 import { useState } from "react";
-import Spinner from "../../lib/components/Spinner";
+import Spinner from "../../../lib/components/Spinner";
 
 type NameChangePreviewProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -36,6 +36,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             dispatch({ type: "CLEAR_NAME_CHANGES" });
             if (state.mediaType === VIDEOS) {
                 stageDispatcher("next");
+            } else {
+                stageDispatcher("reset");
             }
         }
         setIsSpinner(false);

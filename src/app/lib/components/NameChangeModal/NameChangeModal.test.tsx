@@ -1,16 +1,19 @@
 import { vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import NameChangeModal from './NameChangeModal';
+import { renderWithProvider } from '../../test/renameRenderer';
 
-// Mock dependencies
 const mockDispatch = vi.fn();
-vi.mock('../../../pages/hooks/useRename', () => ({
+vi.mock('../../../pages/hooks/usePageContext', () => ({
     useRename: () => ({
         state: {
             nameChanges: {
                 changes: [
-                    { output: 'folder/oldname.txt' }
+                    {
+                        input: 'folder/oldname.txt',
+                        output: 'folder/changedname.txt'
+                    }
                 ]
             }
         },
@@ -39,32 +42,31 @@ describe('NameChangeModal', () => {
     };
 
     it('renders modal when open', () => {
-        render(<NameChangeModal {...defaultProps} />);
+        renderWithProvider(<NameChangeModal {...defaultProps} />);
         expect(screen.getByTestId('modal')).toBeInTheDocument();
         expect(screen.getByLabelText(/Name:/)).toBeInTheDocument();
         expect(screen.getByDisplayValue('oldname.txt')).toBeInTheDocument();
     });
 
     it('does not render modal when closed', () => {
-        render(<NameChangeModal {...defaultProps} isOpen={false} />);
+        renderWithProvider(<NameChangeModal {...defaultProps} isOpen={false} />);
         expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
     });
 
     it('calls onClose when close button is clicked', () => {
-        render(<NameChangeModal {...defaultProps} />);
+        renderWithProvider(<NameChangeModal {...defaultProps} />);
         fireEvent.click(screen.getByTestId('close-icon').parentElement!);
         expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
     it('updates input value when typed', () => {
-        render(<NameChangeModal {...defaultProps} />);
+        renderWithProvider(<NameChangeModal {...defaultProps} />);
         const input = screen.getByLabelText(/Name:/);
         fireEvent.change(input, { target: { value: 'newname.txt' } });
         expect((input as HTMLInputElement).value).toBe('newname.txt');
     });
     it('calls dispatch and onClose when Update is clicked', () => {
-        mockDispatch.mockClear();
-        render(<NameChangeModal {...defaultProps} />);
+        renderWithProvider(<NameChangeModal {...defaultProps} />);
         const input = screen.getByLabelText(/Name:/);
         fireEvent.change(input, { target: { value: 'newname.txt' } });
         fireEvent.click(screen.getByText('Update'));

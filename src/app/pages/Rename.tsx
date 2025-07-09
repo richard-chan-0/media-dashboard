@@ -30,7 +30,7 @@ const stageReducer = (stage: number, action: string) => {
 };
 
 const RenamePage = ({ mediaType }: RenamePageProps) => {
-    const { dispatch, pageState, pageDispatch } = useRename();
+    const { state, dispatch, pageState, pageDispatch } = useRename();
     const [stage, stageDispatcher] = useReducer(stageReducer, 0);
 
     const getStages = (stage: number) => {
@@ -70,7 +70,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
             }
         };
         fetch(mediaLink);
-    }, [dispatch]);
+    }, [state, pageState]);
 
     useEffect(() => {
         dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });

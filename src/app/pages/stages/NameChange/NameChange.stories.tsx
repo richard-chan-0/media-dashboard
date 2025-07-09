@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import NameChangePreview from "./NameChange";
-import { RenameProvider } from "../provider/RenameProvider";
-import { useRename } from "../hooks/usePageContext";
-import { NameChanges } from "../../lib/types";
+import NameChangePreview from "../NameChange/NameChange";
+import { RenameProvider } from "../../provider/RenameProvider";
+import { useRename } from "../../hooks/usePageContext";
+import { NameChanges } from "../../../lib/types";
 import { useEffect } from "react";
-import { RenameAction } from "../state/renameReducer";
+import { RenameAction } from "../../state/renameReducer";
 
 type TestNameChangePreviewProps = {
     stageDispatcher: (action: string) => void;

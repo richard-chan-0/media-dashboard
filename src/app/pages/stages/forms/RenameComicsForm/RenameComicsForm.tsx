@@ -64,7 +64,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
-            stageDispatcher("reset");
+            stageDispatcher("next");
         }
         setStoryName("");
         setVolumeFiles([]);
