@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import NameChangePreview from "./NameChange";
-import { RenameProvider } from "../../provider/RenameProvider";
 import * as api from "../../../lib/api";
 import * as usePageContext from "../../hooks/usePageContext";
 import { COMICS, VIDEOS } from "../../../lib/constants";
 import '@testing-library/jest-dom';
+import { renderWithProvider } from "../../../lib/test/renameRenderer";
 
 vi.mock("../../../lib/constants", async (importOriginal) => {
     const actual = await importOriginal<typeof import("../../../lib/constants")>();
@@ -15,10 +15,6 @@ vi.mock("../../../lib/constants", async (importOriginal) => {
         no_api_error: "No API link",
     };
 });
-
-function renderWithProvider(ui: React.ReactElement) {
-    return render(<RenameProvider>{ui}</RenameProvider>);
-}
 
 const mockStageDispatcher = vi.fn();
 

@@ -44,7 +44,6 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
             return;
         }
         if (!storyName) {
-            console.log('here');
             pageDispatch({ type: "SET_ERROR", payload: "story title is required" });
             return;
         }
