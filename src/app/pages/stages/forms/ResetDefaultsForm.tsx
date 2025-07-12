@@ -18,9 +18,6 @@ const ResetDefaultsForm = ({ setStreams }: ResetDefaultsFormProps) => {
             pageDispatch({ type: "SET_ERROR", payload: "ffmpeg api not defined" });
             return;
         }
-        if (mediaLink) {
-            await get(`${mediaLink}/rename/push`);
-        }
 
         const response = await get(`${ffmpegLink}/read`);
         if (response?.error) {
