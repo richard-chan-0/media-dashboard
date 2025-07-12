@@ -70,7 +70,7 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
             }
         };
         fetch(mediaLink);
-    }, [state, pageState]);
+    }, [state]);
 
     useEffect(() => {
         dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });
