@@ -1,7 +1,7 @@
 import { useState } from "react";
 import theme from "../theme";
 import { NameChanges } from "../types";
-import { removePathFromFilePath } from "../utilities";
+import { removePathFromFilePath, truncateString } from "../utilities";
 import NameChangeModal from "./NameChangeModal/NameChangeModal";
 import TableCell from "./TableCell";
 import { EditPencil, TrashSolid } from "iconoir-react";
@@ -41,10 +41,10 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                         return (
                             <tr key={choice.output}>
                                 <TableCell >
-                                    {removePathFromFilePath(choice.input)}
+                                    {truncateString(removePathFromFilePath(choice.input), 30)}
                                 </TableCell>
                                 <TableCell >
-                                    {removePathFromFilePath(choice.output)}
+                                    {truncateString(removePathFromFilePath(choice.output), 30)}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-1 justify-center">
