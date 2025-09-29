@@ -35,3 +35,10 @@ export const getWidthSize = (size: number | undefined) => {
             return "w-lg";
     }
 };
+
+export const truncateString = (str: string, truncateLength: number) => {
+    if (str.length > truncateLength) {
+        return str.substring(0, truncateLength) + "...";
+    }
+    return str;
+};
