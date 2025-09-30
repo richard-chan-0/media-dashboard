@@ -1,8 +1,8 @@
 import { useState } from "react";
-import PickStreamsForm from "./forms/PickStreamsForm";
-import ResetDefaultsForm from "./forms/ResetDefaultsForm";
-import SuccessMessage from "../../lib/components/SuccessMessage";
-import FormContainer from "./forms/FormContainer";
+import PickStreamsForm from "../form/PickStreamsForm";
+import ResetDefaultsForm from "../form/ResetDefaultsForm";
+import SuccessMessage from "../../../lib/components/SuccessMessage";
+import FormContainer from "../../../lib/components/FormContainer";
 import StageNavButtons from "./StageNavButtons";
 
 type SetStreamsProps = {

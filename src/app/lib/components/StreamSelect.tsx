@@ -1,4 +1,4 @@
-import { Stream } from "../../pages/stages/forms/PickStreamsForm";
+import { Stream } from "../../pages/rename/form/PickStreamsForm";
 
 type StreamSelectProps = {
     select: string;

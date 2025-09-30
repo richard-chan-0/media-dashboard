@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import SetStreams from "./SetStreams";
-import { RenameProvider } from "../provider/RenameProvider";
+import { RenameProvider } from "../RenameProvider";
 
 const meta = {
     component: SetStreams,

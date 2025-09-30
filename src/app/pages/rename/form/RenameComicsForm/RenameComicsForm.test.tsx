@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import RenameComicsForm from "./RenameComicsForm";
 import '@testing-library/jest-dom';
-import { RenameContext } from "../../../context/RenameContext";
+import { RenameContext } from "../../RenameContext";
 import { COMICS } from "../../../../lib/constants";
 import { FormInputProps } from "../../../../lib/components/FormInput";
 import { FileUploaderProps } from "../../../../lib/components/FileUploader";

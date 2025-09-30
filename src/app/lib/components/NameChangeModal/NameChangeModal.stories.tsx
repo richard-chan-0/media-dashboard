@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import NameChangeModal from "./NameChangeModal";
 import { useState } from "react";
-import { RenameProvider } from "../../../pages/provider/RenameProvider";
+import { RenameProvider } from "../../../pages/rename/RenameProvider";
 
 
 const meta = {

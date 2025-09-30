@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import FormContainer from "./FormContainer";
+import FormContainer from "../../../lib/components/FormContainer";
 import { useState } from "react";
 import { StreamSelect, StreamCheckboxList, SubmitButton } from "../../../lib/components";
 import { postForm } from "../../../lib/api";

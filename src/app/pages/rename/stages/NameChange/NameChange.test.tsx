@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import NameChangePreview from "./NameChange";
-import * as api from "../../../lib/api";
-import * as usePageContext from "../../hooks/usePageContext";
-import { COMICS, VIDEOS } from "../../../lib/constants";
+import * as api from "../../../../lib/api";
+import * as usePageContext from "../../../hooks/usePageContext";
+import { COMICS, VIDEOS } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
-import { renderWithProvider } from "../../../lib/test/renameRenderer";
+import { renderWithProvider } from "../../../../lib/test/renameRenderer";
 
 vi.mock("../../../lib/constants", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("../../../lib/constants")>();
+    const actual = await importOriginal<typeof import("../../../../lib/constants")>();
     return {
         ...actual,
         mediaLink: "http://localhost/api", // <-- mock API link
