@@ -50,11 +50,11 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         leftButtonAction: () => stageDispatcher("prev"),
     } : {
         leftLabel: "Back",
-        rightLabel: isNameChanges ? "Skip" : "Next",
+        // rightLabel: isNameChanges ? "Skip" : "Next",
         isLeftEnabled: true,
-        isRightEnabled: true,
+        // isRightEnabled: true,
         leftButtonAction: () => stageDispatcher("prev"),
-        rightButtonAction: () => stageDispatcher("next")
+        // rightButtonAction: () => stageDispatcher("next")
     }
 
     return (
@@ -69,13 +69,13 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             {
                 isNameChanges && (
                     <>
-                        <NameChangeTable nameChanges={state.nameChanges} />
+                        <NameChangeTable nameChanges={state.nameChanges} mediaType={state.mediaType} />
                         <div className="flex justify-center">
                             {
                                 isSpinner ? (
                                     <Spinner />
                                 ) : <SubmitButton
-                                    onClick={handleSubmit}
+                                    onClick={() => { }}
                                     label="Rename!"
                                     type="button"
                                     buttonStyle="w-fit"

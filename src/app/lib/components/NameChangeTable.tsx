@@ -2,16 +2,19 @@ import { useState } from "react";
 import theme from "../theme";
 import { NameChanges } from "../types";
 import { removePathFromFilePath, truncateString } from "../utilities";
-import NameChangeModal from "./NameChangeModal/NameChangeModal";
+import MetadataChangeModal from "./MetadataChangeModal/MetadataChangeModal";
 import TableCell from "./TableCell";
 import { EditPencil, TrashSolid } from "iconoir-react";
 import { useDeleteFile } from "../../pages/hooks/useDeleteFile";
+import NameChangeModal from "./NameChangeModal/NameChangeModal";
+import { VIDEOS } from "../constants";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
+    mediaType?: string;
 };
 
-const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
+const NameChangeTable = ({ nameChanges, mediaType }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
     const deleteFile = useDeleteFile();
@@ -61,11 +64,15 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                     })}
                 </tbody>
             </table>
-            <NameChangeModal
+            {mediaType === VIDEOS ? <MetadataChangeModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 initialName={name}
-            />
+            /> : <NameChangeModal
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                initialName={name}
+            />}
         </div>
     );
 };

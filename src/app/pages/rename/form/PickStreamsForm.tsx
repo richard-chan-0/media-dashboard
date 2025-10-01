@@ -5,19 +5,8 @@ import { StreamSelect, StreamCheckboxList, SubmitButton } from "../../../lib/com
 import { postForm } from "../../../lib/api";
 import { ffmpegLink, no_api_error } from "../../../lib/constants";
 import { useRename } from "../../hooks/usePageContext";
+import { Streams, Stream } from "../../../lib/types";
 
-export type Stream = {
-    is_default: string;
-    language: string;
-    stream_number: number;
-    title: string;
-};
-type Streams = {
-    attachment: object[];
-    audio: Stream[];
-    subtitle: Stream[];
-    is_mkv?: boolean;
-};
 type PickStreamsFormProps = {
     streams: Streams;
     setMessage: React.Dispatch<React.SetStateAction<string>>;

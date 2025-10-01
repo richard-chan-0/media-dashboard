@@ -12,7 +12,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
 
     return (
         <div
-            className={`fixed inset-0 ${theme.appColor} bg-opacity-50 flex items-center justify-center z-50`}
+            className={`fixed inset-0 ${theme.appColorLightOpacity}  flex items-center justify-center z-50`}
             onClick={onClose}
         >
             <div

@@ -21,3 +21,17 @@ export type ApiNameChangeResponse = {
 export type MediaUtiliityApiResponse = {
     error?: AxiosError;
 };
+
+export type Stream = {
+    is_default: string;
+    language: string;
+    stream_number: number;
+    title: string;
+};
+
+export type Streams = {
+    attachment: object[];
+    audio: Stream[];
+    subtitle: Stream[];
+    is_mkv?: boolean;
+};
