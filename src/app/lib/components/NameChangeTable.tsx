@@ -8,13 +8,15 @@ import { EditPencil, TrashSolid } from "iconoir-react";
 import { useDeleteFile } from "../../pages/hooks/useDeleteFile";
 import NameChangeModal from "./NameChangeModal/NameChangeModal";
 import { VIDEOS } from "../constants";
+import { MetadataChange } from "../types";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
     mediaType?: string;
+    onEdit: (filename: string, newChange: MetadataChange) => void;
 };
 
-const NameChangeTable = ({ nameChanges, mediaType }: NameChangesTableProps) => {
+const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
     const deleteFile = useDeleteFile();
@@ -68,6 +70,7 @@ const NameChangeTable = ({ nameChanges, mediaType }: NameChangesTableProps) => {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 initialName={name}
+                onEdit={onEdit}
             /> : <NameChangeModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}

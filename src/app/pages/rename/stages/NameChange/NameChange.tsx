@@ -7,6 +7,8 @@ import { COMICS, mediaLink, no_api_error, VIDEOS } from "../../../../lib/constan
 import { useRename } from "../../../hooks/usePageContext";
 import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
+import MetadataChangeModal from "../../../../lib/components/MetadataChangeModal/MetadataChangeModal";
+import { MetadataChanges, MetadataChange } from "../../../../lib/types";
 
 type NameChangePreviewProps = {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -15,6 +17,15 @@ type NameChangePreviewProps = {
 const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
+
+    const handleMetadataChange = (filename: string, newChange: MetadataChange) => {
+        setMetadataChanges((prevChanges) => ({
+            ...prevChanges,
+            [filename]: newChange
+        }));
+    };
 
     const handleSubmit = async () => {
         pageDispatch({ type: "CLEAR_ERROR" });
@@ -43,6 +54,10 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         setIsSpinner(false);
     };
 
+    const handlePrototypeSubmit = () => {
+        console.log("Metadata Changes:", metadataChanges);
+    };
+
     const isNameChanges = state.nameChanges.changes.length > 0;
     const navProps = state.mediaType == COMICS ? {
         leftLabel: "Back",
@@ -50,11 +65,9 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         leftButtonAction: () => stageDispatcher("prev"),
     } : {
         leftLabel: "Back",
-        // rightLabel: isNameChanges ? "Skip" : "Next",
+        rightLabel: isNameChanges ? "Skip" : "Next",
         isLeftEnabled: true,
-        // isRightEnabled: true,
         leftButtonAction: () => stageDispatcher("prev"),
-        // rightButtonAction: () => stageDispatcher("next")
     }
 
     return (
@@ -69,19 +82,32 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             {
                 isNameChanges && (
                     <>
-                        <NameChangeTable nameChanges={state.nameChanges} mediaType={state.mediaType} />
-                        <div className="flex justify-center">
+                        <NameChangeTable
+                            nameChanges={state.nameChanges}
+                            mediaType={state.mediaType}
+                            onEdit={state.mediaType === VIDEOS ? handleMetadataChange : () => { }}
+                        />
+                        <div className="flex justify-center gap-4">
                             {
                                 isSpinner ? (
                                     <Spinner />
-                                ) : <SubmitButton
-                                    onClick={() => { }}
-                                    label="Rename!"
-                                    type="button"
-                                    buttonStyle="w-fit"
-                                />
+                                ) : (
+                                    <>
+                                        {state.mediaType === VIDEOS ? <SubmitButton
+                                            onClick={handlePrototypeSubmit}
+                                            label="Prototype Submit"
+                                            type="button"
+                                            buttonStyle="w-fit"
+                                        /> : <SubmitButton
+                                            onClick={handleSubmit}
+                                            label="Rename!"
+                                            type="button"
+                                            buttonStyle="w-fit"
+                                        />
+                                        }
+                                    </>
+                                )
                             }
-
                         </div>
                     </>
                 )
@@ -95,7 +121,6 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                     </div>
                 )
             }
-
         </FormContainer>
     );
 };

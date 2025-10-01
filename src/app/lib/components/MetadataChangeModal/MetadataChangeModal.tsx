@@ -7,16 +7,18 @@ import CloseButton from "../CloseButton";
 import { get } from "../../api";
 import { ffmpegLink, no_api_error } from "../../constants";
 import { StreamSelect, StreamCheckboxList } from "../../components";
-import { Streams, Stream } from "../../../lib/types";
+import { Streams, Stream, MetadataChange } from "../../../lib/types";
 import Spinner from "../Spinner";
 
 type MetadataChangeModalProps = {
     isOpen: boolean;
     onClose: () => void;
     initialName: string;
+    onEdit: (filename: string, newChange: MetadataChange) => void;
 };
 
-const MetadataChangeModal = ({ isOpen, onClose, initialName }: MetadataChangeModalProps) => {
+const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataChangeModalProps) => {
+    console.log("MetadataChangeModal opened with initialName:", initialName);
     const [filename, setFilename] = useState(initialName);
     const [fileTitle, setFileTitle] = useState("");
     const [streams, setStreams] = useState<Streams | null>(null);
@@ -30,7 +32,6 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName }: MetadataChangeMod
 
     useEffect(() => {
         if (isOpen) {
-            setFilename(initialName);
             fetchStreams();
         }
     }, [initialName, isOpen]);
@@ -43,12 +44,33 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName }: MetadataChangeMod
         setIsLoading(true);
         const response = await get(`${ffmpegLink}/read`);
         setIsLoading(false);
+        console.log("Fetched Streams:", response);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             setStreams(response);
             pageDispatch({ type: "CLEAR_ERROR" });
         }
+    };
+
+    const handleEditSubmit = () => {
+        const fileToEdit = initialName;
+        const newChange: MetadataChange = {
+            newFilename: filename,
+            title: fileTitle || undefined,
+            defaultSubtitle: defaultSubtitle || undefined,
+            defaultAudio: defaultAudio || undefined,
+            additionalSubtitles: checkedSubtitles.length > 0 ? checkedSubtitles : undefined,
+            additionalAudios: checkedAudios.length > 0 ? checkedAudios : undefined,
+        };
+        console.log("Submitting Metadata Change:", fileToEdit, newChange);
+        onEdit(fileToEdit, newChange);
+        onClose();
+        setFileTitle("");
+        setDefaultAudio("");
+        setDefaultSubtitle("");
+        setCheckedAudios([]);
+        setCheckedSubtitles([]);
     };
 
     const handleSubmit = () => {
@@ -154,7 +176,7 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName }: MetadataChangeMod
                 )}
 
                 <button
-                    onClick={handleSubmit}
+                    onClick={handleEditSubmit}
                     className={`${theme.buttonColor} ${theme.buttonFormat} w-1/5 self-center`}
                 >
                     Update

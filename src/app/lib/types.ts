@@ -35,3 +35,16 @@ export type Streams = {
     subtitle: Stream[];
     is_mkv?: boolean;
 };
+
+export type MetadataChanges = {
+    [key: string]: MetadataChange;
+};
+
+export type MetadataChange = {
+    newFilename: string;
+    title?: string;
+    defaultSubtitle?: string;
+    defaultAudio?: string;
+    additionalSubtitles?: string[];
+    additionalAudios?: string[];
+};
