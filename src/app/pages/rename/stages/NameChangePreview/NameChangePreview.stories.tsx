@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import NameChangePreview from "./NameChange";
+import NameChangePreview from "./NameChangePreview";
 import { RenameProvider } from "../../RenameProvider";
 import { useRename } from "../../../hooks/usePageContext";
 import { NameChanges } from "../../../../lib/types";

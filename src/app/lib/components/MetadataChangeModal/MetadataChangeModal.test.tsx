@@ -40,6 +40,8 @@ describe('NameChangeModal', () => {
         onClose: vi.fn(),
         initialName: 'folder/oldname.txt',
         onEdit: vi.fn(),
+        currentName: 'oldname.txt',
+        suggestedName: 'newname.txt',
     };
 
     it('renders modal when open', () => {

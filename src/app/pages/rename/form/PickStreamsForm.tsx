@@ -13,9 +13,9 @@ type PickStreamsFormProps = {
 };
 const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
-    const [checkedSubtitles, setCheckedSubtitles] = useState([]);
+    const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
     const [defaultAudio, setDefaultAudio] = useState("");
-    const [checkedAudios, setCheckedAudios] = useState([]);
+    const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
     const subtitles = streams["subtitle"];
     const audios = streams["audio"];
 

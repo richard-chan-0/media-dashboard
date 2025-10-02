@@ -4,7 +4,7 @@ import { Stream } from "../../lib/types";
 type StreamCheckboxListProps = {
     checkedStreams: string[];
     label: string;
-    setCheckedStreams: (streams: string[]) => void;
+    setCheckedStreams: React.Dispatch<React.SetStateAction<string[]>>;
     streams: Stream[];
     createVal: (option: Stream) => string;
 };

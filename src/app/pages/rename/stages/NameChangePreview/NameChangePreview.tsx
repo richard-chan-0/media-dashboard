@@ -76,8 +76,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             acc[filename] = {
                 filename: removePathFromFilePath(filename),
                 output_filename: change.newFilename,
-                audio_tracks: change.additionalAudios ? `[${change.additionalAudios.join(",")}]` : undefined,
-                subtitle_tracks: change.additionalSubtitles ? `[${change.additionalSubtitles.join(",")}]` : undefined,
+                audio_tracks: `[${change.defaultAudio}${change.additionalAudios ? `,${change.additionalAudios.join(",")}` : ""}]`,
+                subtitle_tracks: `[${change.defaultSubtitle}${change.additionalSubtitles ? `,${change.additionalSubtitles.join(",")}` : ""}]`,
             };
             return acc;
         }, {} as MetadataUtiliityMergeRequest);
