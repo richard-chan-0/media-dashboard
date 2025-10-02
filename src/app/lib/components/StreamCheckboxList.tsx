@@ -1,12 +1,12 @@
 import { BaseSyntheticEvent, useState } from "react";
-import { Stream } from "../../pages/rename/form/PickStreamsForm";
+import { Stream } from "../../lib/types";
 
 type StreamCheckboxListProps = {
     checkedStreams: string[];
     label: string;
-    setCheckedStreams: CallableFunction;
+    setCheckedStreams: (streams: string[]) => void;
     streams: Stream[];
-    createVal: CallableFunction;
+    createVal: (option: Stream) => string;
 };
 
 const DISPLAY_LIMIT = 5;

@@ -1,25 +1,27 @@
 import theme from "../../theme";
 import { useEffect, useState } from "react";
 import { useRename } from "../../../pages/hooks/usePageContext";
-import { removePathFromFilePath, splitPathFromFilePath } from "../../utilities";
+import { removePathFromFilePath } from "../../utilities";
 import Modal from "../Modal/Modal";
 import CloseButton from "../CloseButton";
 import { get } from "../../api";
 import { ffmpegLink, no_api_error } from "../../constants";
 import { StreamSelect, StreamCheckboxList } from "../../components";
-import { Streams, Stream, MetadataChange } from "../../../lib/types";
+import { Streams, MetadataChange, Stream } from "../../../lib/types";
 import Spinner from "../Spinner";
+import React from "react";
 
 type MetadataChangeModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    initialName: string;
-    onEdit: (filename: string, newChange: MetadataChange) => void;
+    currentName: string;
+    suggestedName: string;
+    onEdit: (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => void;
 };
 
-const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataChangeModalProps) => {
-    console.log("MetadataChangeModal opened with initialName:", initialName);
-    const [filename, setFilename] = useState(initialName);
+const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
+    console.log("MetadataChangeModal opened with initialName:", suggestedName);
+    const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
     const [fileTitle, setFileTitle] = useState("");
     const [streams, setStreams] = useState<Streams | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +30,14 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
     const [defaultAudio, setDefaultAudio] = useState("");
     const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
 
-    const { state, dispatch, pageDispatch } = useRename();
+    const { pageDispatch } = useRename();
 
     useEffect(() => {
         if (isOpen) {
+            setFilename(removePathFromFilePath(suggestedName));
             fetchStreams();
         }
-    }, [initialName, isOpen]);
+    }, [isOpen]);
 
     const fetchStreams = async () => {
         if (!ffmpegLink) {
@@ -44,7 +47,6 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
         setIsLoading(true);
         const response = await get(`${ffmpegLink}/read`);
         setIsLoading(false);
-        console.log("Fetched Streams:", response);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
@@ -53,8 +55,17 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
         }
     };
 
+    const isMetadataChange = (change: MetadataChange) => {
+        return (
+            change.title !== undefined ||
+            change.defaultSubtitle !== undefined ||
+            change.defaultAudio !== undefined ||
+            (change.additionalSubtitles !== undefined && change.additionalSubtitles.length > 0) ||
+            (change.additionalAudios !== undefined && change.additionalAudios.length > 0)
+        );
+    };
+
     const handleEditSubmit = () => {
-        const fileToEdit = initialName;
         const newChange: MetadataChange = {
             newFilename: filename,
             title: fileTitle || undefined,
@@ -63,64 +74,41 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
             additionalSubtitles: checkedSubtitles.length > 0 ? checkedSubtitles : undefined,
             additionalAudios: checkedAudios.length > 0 ? checkedAudios : undefined,
         };
-        console.log("Submitting Metadata Change:", fileToEdit, newChange);
-        onEdit(fileToEdit, newChange);
+        console.log("Submitting metadata change:", newChange);
+        onEdit(currentName, newChange, isMetadataChange(newChange));
         onClose();
-        setFileTitle("");
-        setDefaultAudio("");
-        setDefaultSubtitle("");
-        setCheckedAudios([]);
-        setCheckedSubtitles([]);
     };
 
-    const handleSubmit = () => {
-        const updatedChanges = state.nameChanges.changes.map((change) => {
-            if (change.output === initialName) {
-                const { path } = splitPathFromFilePath(change.output);
-                return {
-                    ...change,
-                    output: `${path}/${filename}`,
-                };
-            } else {
-                return change;
-            }
-        });
-        const updatedNameChanges = {
-            changes: updatedChanges,
-        };
-        dispatch({ type: "SET_NAME_CHANGES", payload: updatedNameChanges });
-        onClose();
+    const createStreamVal = (option: Stream) => {
+        return `${option.language}${option.title ? `:${option.title}` : ""}`;
     };
 
     if (!isOpen) return null;
-
-    const createStreamValue = (option: Stream) =>
-        `${option.language}${option.title ? `:${option.title}` : ""}`;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="flex flex-col gap-2 text-blue-900 font-medium text-left">
                 <div className="flex justify-between items-center">
                     <div className="text-lg">
-                        {removePathFromFilePath(initialName)}
+                        {removePathFromFilePath(suggestedName)}
                     </div>
                     <CloseButton onClose={onClose} />
                 </div>
                 <div className="flex items-center gap-2 w-full">
                     <label className="w-fit" htmlFor="name">
-                        New Filename:
+                        New Filename <span className="text-red-500">*</span>
                     </label>
                     <input
                         id="name"
                         type="text"
-                        value={removePathFromFilePath(filename)}
+                        value={filename}
                         onChange={(e) => setFilename(e.target.value)}
                         className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
                     />
                 </div>
                 <div className="flex items-center gap-2 w-full">
                     <label className="w-fit " htmlFor="title">
-                        New Title (optional):
+                        Title:
                     </label>
                     <input
                         id="title"
@@ -134,43 +122,39 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
                 {!isLoading && streams && (
                     <div className="w-full flex flex-col gap-4">
                         <StreamSelect
-                            label="Select Default Subtitle"
-                            select={defaultSubtitle}
-                            setSelect={setDefaultSubtitle}
-                            selections={streams.subtitle}
-                            createVal={createStreamValue}
-                            isCenterAlign={true}
-                            isRequired={true}
-                        />
-                        <StreamSelect
                             label="Select Default Audio"
                             select={defaultAudio}
                             setSelect={setDefaultAudio}
                             selections={streams.audio}
-                            createVal={createStreamValue}
+                            createVal={createStreamVal}
                             isCenterAlign={true}
+                        />
+                        <StreamSelect
+                            label="Select Default Subtitle"
+                            select={defaultSubtitle}
+                            setSelect={setDefaultSubtitle}
+                            selections={streams.subtitle}
+                            createVal={createStreamVal}
+                            isCenterAlign={true}
+                            isRequired={true}
                         />
                         <StreamCheckboxList
                             label="Check Additional Audios"
                             checkedStreams={checkedAudios}
                             setCheckedStreams={setCheckedAudios}
                             streams={streams.audio.filter(
-                                (audio) =>
-                                    audio.stream_number.toString() !==
-                                    defaultAudio,
+                                (audio) => audio.stream_number.toString() !== defaultAudio,
                             )}
-                            createVal={createStreamValue}
+                            createVal={createStreamVal}
                         />
                         <StreamCheckboxList
                             label="Check Additional Subtitles"
                             checkedStreams={checkedSubtitles}
                             setCheckedStreams={setCheckedSubtitles}
                             streams={streams.subtitle.filter(
-                                (subtitle) =>
-                                    subtitle.stream_number.toString() !==
-                                    defaultSubtitle,
+                                (subtitle) => subtitle.stream_number.toString() !== defaultSubtitle,
                             )}
-                            createVal={createStreamValue}
+                            createVal={createStreamVal}
                         />
                     </div>
                 )}
@@ -184,6 +168,8 @@ const MetadataChangeModal = ({ isOpen, onClose, initialName, onEdit }: MetadataC
             </div>
         </Modal>
     );
-};
+});
+
+MetadataChangeModal.displayName = "MetadataChangeModal";
 
 export default MetadataChangeModal;

@@ -19,7 +19,7 @@ const meta = {
                     Open Modal
                 </button>
                 <RenameProvider>
-                    <MetadataChangeModal isOpen={isOpen} onClose={() => setIsOpen(false)} initialName={args.initialName} />
+                    <MetadataChangeModal isOpen={isOpen} onClose={() => setIsOpen(false)} currentName={args.currentName} onEdit={() => { }} />
                 </RenameProvider>
             </>
         )
@@ -31,8 +31,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
-        initialName: "example.txt",
+        currentName: "example.txt",
         isOpen: true,
-        onClose: () => { }
+        onClose: () => { },
+        onEdit: () => { }
     }
 };

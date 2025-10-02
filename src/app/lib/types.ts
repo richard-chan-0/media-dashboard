@@ -36,15 +36,15 @@ export type Streams = {
     is_mkv?: boolean;
 };
 
-export type MetadataChanges = {
+export interface MetadataChanges {
     [key: string]: MetadataChange;
-};
+}
 
-export type MetadataChange = {
+export interface MetadataChange {
     newFilename: string;
     title?: string;
     defaultSubtitle?: string;
     defaultAudio?: string;
     additionalSubtitles?: string[];
     additionalAudios?: string[];
-};
+}
