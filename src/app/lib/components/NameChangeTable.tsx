@@ -1,28 +1,36 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import theme from "../theme";
 import { NameChanges } from "../types";
 import { removePathFromFilePath, truncateString } from "../utilities";
-import NameChangeModal from "./NameChangeModal/NameChangeModal";
+import MetadataChangeModal from "./MetadataChangeModal/MetadataChangeModal";
 import TableCell from "./TableCell";
 import { EditPencil, TrashSolid } from "iconoir-react";
 import { useDeleteFile } from "../../pages/hooks/useDeleteFile";
+import NameChangeModal from "./NameChangeModal/NameChangeModal";
+import { VIDEOS } from "../constants";
+import { MetadataChange } from "../types";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
+    mediaType?: string;
+    onEdit: (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => void;
 };
 
-const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
+const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [name, setName] = useState("");
+    const [currentName, setCurrentName] = useState("");
+    const [suggestedName, setSuggestedName] = useState("");
     const deleteFile = useDeleteFile();
 
-    const handleNameEdit = (name: string) => {
-        setName(name);
+    const handleNameEdit = (current: string, suggestion: string) => {
+        setCurrentName(current);
+        setSuggestedName(suggestion);
         setIsOpen(true);
-    }
+    };
 
     const changes = nameChanges?.changes;
-    if (!changes || changes.length == 0) {
+    console.log("Rendering NameChangeTable with changes:", changes);
+    if (!changes || changes.length === 0) {
         return <></>;
     }
 
@@ -37,37 +45,47 @@ const NameChangeTable = ({ nameChanges }: NameChangesTableProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {changes.map((choice) => {
-                        return (
-                            <tr key={choice.output}>
-                                <TableCell >
-                                    {truncateString(removePathFromFilePath(choice.input), 30)}
-                                </TableCell>
-                                <TableCell >
-                                    {truncateString(removePathFromFilePath(choice.output), 30)}
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-1 justify-center">
-                                        <button onClick={() => handleNameEdit(choice.output)}>
-                                            <EditPencil className="hover:text-green-400" />
-                                        </button>
-                                        <button onClick={() => deleteFile(removePathFromFilePath(choice.input))}>
-                                            <TrashSolid className={theme.deleteIconColor} />
-                                        </button>
-                                    </div>
-                                </TableCell>
-                            </tr>
-                        );
-                    })}
+                    {changes.map((choice) => (
+                        <tr key={choice.output}>
+                            <TableCell>
+                                {truncateString(removePathFromFilePath(choice.input), 30)}
+                            </TableCell>
+                            <TableCell>
+                                {truncateString(removePathFromFilePath(choice.output), 30)}
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex items-center gap-1 justify-center">
+                                    <button onClick={() => handleNameEdit(choice.input, choice.output)}>
+                                        <EditPencil className="hover:text-green-400" />
+                                    </button>
+                                    <button onClick={() => deleteFile(removePathFromFilePath(choice.input))}>
+                                        <TrashSolid className={theme.deleteIconColor} />
+                                    </button>
+                                </div>
+                            </TableCell>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            <NameChangeModal
-                isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
-                initialName={name}
-            />
+            {mediaType === VIDEOS ? (
+                <MetadataChangeModal
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(false)}
+                    currentName={currentName}
+                    suggestedName={suggestedName}
+                    onEdit={onEdit}
+                />
+            ) : (
+                <NameChangeModal
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(false)}
+                    initialName={suggestedName}
+                />
+            )}
         </div>
     );
-};
+});
+
+NameChangeTable.displayName = "NameChangeTable";
 
 export default NameChangeTable;

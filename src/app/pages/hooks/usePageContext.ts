@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { RenameContext } from "../context/RenameContext";
-import { ManageContext } from "../context/ManageContext";
+import { RenameContext } from "../rename/RenameContext";
+import { ManageContext } from "../manage/ManageContext";
 
 export const useRename = () => {
     const context = useContext(RenameContext);
@@ -16,4 +16,4 @@ export const useManage = () => {
         throw new Error("useManage must be used within a ManageProvider");
     }
     return context;
-}
+};

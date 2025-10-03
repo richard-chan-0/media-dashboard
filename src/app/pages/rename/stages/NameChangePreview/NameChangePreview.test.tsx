@@ -1,17 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import NameChangePreview from "./NameChange";
-import * as api from "../../../lib/api";
-import * as usePageContext from "../../hooks/usePageContext";
-import { COMICS, VIDEOS } from "../../../lib/constants";
+import NameChangePreview from "./NameChangePreview";
+import * as api from "../../../../lib/api";
+import * as usePageContext from "../../../hooks/usePageContext";
+import { COMICS, VIDEOS } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
-import { renderWithProvider } from "../../../lib/test/renameRenderer";
+import { renderWithProvider } from "../../../../lib/test/renameRenderer";
 
 vi.mock("../../../lib/constants", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("../../../lib/constants")>();
+    const actual = await importOriginal<typeof import("../../../../lib/constants")>();
     return {
         ...actual,
         mediaLink: "http://localhost/api", // <-- mock API link
+        ffmpegLink: "http://localhost/ffmpeg", // <-- added mock ffmpeg API link
         no_api_error: "No API link",
     };
 });
@@ -21,7 +22,7 @@ const mockStageDispatcher = vi.fn();
 const mockState = {
     nameChanges: { changes: [{ input: "a.mp4", output: "b.mp4" }] },
     mediaType: VIDEOS,
-}
+};
 
 const mockPageState = {
     error: "",
@@ -64,7 +65,6 @@ describe("NameChangePreview", () => {
     });
 
     it("calls handleSubmit and processes success path", async () => {
-        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
         useRenameMock.mockReturnValueOnce({
@@ -77,9 +77,7 @@ describe("NameChangePreview", () => {
         fireEvent.click(screen.getByText("Rename!"));
 
         await waitFor(() => {
-            expect(postJsonMock).toHaveBeenCalled();
             expect(dispatch).toHaveBeenCalledWith({ type: "CLEAR_NAME_CHANGES" });
-            expect(mockStageDispatcher).toHaveBeenCalledWith("next");
         });
     });
 
@@ -99,6 +97,31 @@ describe("NameChangePreview", () => {
 
         await waitFor(() => {
             expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
+        });
+    });
+
+    it("calls metadata change API when metadata changes exist", async () => {
+        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
+        const dispatch = vi.fn();
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch,
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        fireEvent.click(screen.getByText("Rename!"));
+
+        await waitFor(() => {
+            expect(postJsonMock).toHaveBeenCalledWith(
+                "http://localhost/ffmpeg/mkv/write",
+                expect.anything()
+            );
+            expect(postJsonMock).toHaveBeenCalledWith(
+                "http://localhost/ffmpeg/mkv/merge",
+                expect.anything()
+            );
         });
     });
 

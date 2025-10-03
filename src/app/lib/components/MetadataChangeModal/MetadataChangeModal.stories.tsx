@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import NameChangeModal from "./NameChangeModal";
+import MetadataChangeModal from "./MetadataChangeModal";
 import { useState } from "react";
 import { RenameProvider } from "../../../pages/rename/RenameProvider";
 
 
 const meta = {
-    component: NameChangeModal,
+    component: MetadataChangeModal,
     title: "Name Change Modal",
     tags: ["autodocs"],
     render: (args) => {
@@ -19,20 +19,28 @@ const meta = {
                     Open Modal
                 </button>
                 <RenameProvider>
-                    <NameChangeModal isOpen={isOpen} onClose={() => setIsOpen(false)} initialName={args.initialName} />
+                    <MetadataChangeModal
+                        isOpen={isOpen}
+                        onClose={() => setIsOpen(false)}
+                        currentName={args.currentName}
+                        suggestedName={args.suggestedName}
+                        onEdit={() => { }}
+                    />
                 </RenameProvider>
             </>
         )
     }
-} satisfies Meta<typeof NameChangeModal>;
+} satisfies Meta<typeof MetadataChangeModal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
-        initialName: "example.txt",
+        currentName: "example.txt",
         isOpen: true,
-        onClose: () => { }
+        onClose: () => { },
+        onEdit: () => { },
+        suggestedName: "newname.txt",
     }
 };

@@ -43,6 +43,9 @@ const NameChangeModal = ({ isOpen, onClose, initialName }: NameChangeModalProps)
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
+            <div className="flex justify-end">
+                <CloseButton onClose={onClose} />
+            </div>
             <label className="block text-gray-700 font-medium ml-1" htmlFor="name">
                 Name: {removePathFromFilePath(initialName)}
             </label>
@@ -59,7 +62,6 @@ const NameChangeModal = ({ isOpen, onClose, initialName }: NameChangeModalProps)
             >
                 Update
             </button>
-            <CloseButton onClose={onClose} />
         </Modal>
     );
 };

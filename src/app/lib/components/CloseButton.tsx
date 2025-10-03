@@ -8,7 +8,7 @@ type CloseButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 const CloseButton = ({ onClose, ...rest }: CloseButtonProps) => {
     return (
         <button
-            className=" text-gray-500 hover:text-black"
+            className="text-gray-500 hover:text-black"
             onClick={onClose}
             {...rest}
         >

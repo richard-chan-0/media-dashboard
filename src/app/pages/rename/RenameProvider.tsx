@@ -1,5 +1,5 @@
 import { useReducer, ReactNode } from "react";
-import { RenameContext } from "../context/RenameContext";
+import { RenameContext } from "./RenameContext";
 import { renameReducer, initialState as initialRenameState } from "../state/renameReducer";
 import { pageReducer, initialState as initialPageState } from "../state/pageReducer";
 

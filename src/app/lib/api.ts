@@ -8,14 +8,21 @@ import { CANCELLED_ERROR, NETWORK_ERROR } from "./constants";
 import React from "react";
 import { UploadAction } from "../pages/state/uploadReducer";
 
-type ApiError = {
+export interface ApiError {
     code?: string;
     response?: {
         data: {
             error: string;
         };
     };
-};
+}
+
+export interface NameChangeApiRequest {
+    changes: {
+        old_path: string;
+        new_path: string;
+    }[];
+}
 
 const processAxiosError = (axiosError: ApiError) => {
     const isWithApiError = !!axiosError?.response?.data?.error;
@@ -25,7 +32,7 @@ const processAxiosError = (axiosError: ApiError) => {
     if (axiosError?.code === NETWORK_ERROR) {
         return "error could not reach api";
     }
-    if (axiosError?.code === CANCELLED_ERROR){
+    if (axiosError?.code === CANCELLED_ERROR) {
         return "upload cancelled";
     }
     return JSON.stringify(axiosError);
@@ -35,7 +42,7 @@ export const postForm = async (
     apiLink: string,
     formData: FormData,
     uploadDispatcher?: React.Dispatch<UploadAction>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
 ) => {
     try {
         const configs: AxiosRequestConfig = {
@@ -51,7 +58,8 @@ export const postForm = async (
                 );
                 uploadDispatcher({
                     type: "UPDATE_PROGRESS",
-                    payload: {uploadPercent: percent},})
+                    payload: { uploadPercent: percent },
+                });
             };
         }
         if (abortSignal) {
@@ -117,7 +125,9 @@ export const processApiResponseToNameChange = (
     };
 };
 
-export const processNameChangeToApiRequest = (request: NameChanges) => {
+export const processNameChangeToApiRequest = (
+    request: NameChanges,
+): NameChangeApiRequest => {
     const fileChanges = request?.changes;
     if (!fileChanges) {
         return {

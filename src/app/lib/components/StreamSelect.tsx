@@ -1,4 +1,4 @@
-import { Stream } from "../../pages/stages/forms/PickStreamsForm";
+import { Stream } from "../../lib/types";
 
 type StreamSelectProps = {
     select: string;
@@ -30,7 +30,7 @@ const StreamSelect = ({
                 value={select}
                 onChange={(e) => setSelect(e.target.value)}
                 required={isRequired || false}
-                className="border rounded-md p-2 w-1/2"
+                className="border rounded-md p-2 flex-1"
             >
                 <option value="" disabled>
                     Select an option

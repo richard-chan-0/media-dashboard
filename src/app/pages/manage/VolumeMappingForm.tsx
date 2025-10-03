@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import theme from "../../../lib/theme";
+import theme from "../../lib/theme";
 
 type VolumeMappingFormInputProps = {
     label: string;

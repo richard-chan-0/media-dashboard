@@ -1,32 +1,21 @@
 import { FormEvent } from "react";
-import FormContainer from "./FormContainer";
+import FormContainer from "../../../lib/components/FormContainer";
 import { useState } from "react";
 import { StreamSelect, StreamCheckboxList, SubmitButton } from "../../../lib/components";
 import { postForm } from "../../../lib/api";
 import { ffmpegLink, no_api_error } from "../../../lib/constants";
 import { useRename } from "../../hooks/usePageContext";
+import { Streams, Stream } from "../../../lib/types";
 
-export type Stream = {
-    is_default: string;
-    language: string;
-    stream_number: number;
-    title: string;
-};
-type Streams = {
-    attachment: object[];
-    audio: Stream[];
-    subtitle: Stream[];
-    is_mkv?: boolean;
-};
 type PickStreamsFormProps = {
     streams: Streams;
     setMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 const PickStreamsForm = ({ streams, setMessage }: PickStreamsFormProps) => {
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
-    const [checkedSubtitles, setCheckedSubtitles] = useState([]);
+    const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
     const [defaultAudio, setDefaultAudio] = useState("");
-    const [checkedAudios, setCheckedAudios] = useState([]);
+    const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
     const subtitles = streams["subtitle"];
     const audios = streams["audio"];
 

@@ -1,4 +1,4 @@
-import StageButton from "../../lib/components/StageButton";
+import StageButton from "../../../lib/components/StageButton";
 
 type StageNavButtonsProps = {
     leftLabel?: string;

@@ -1,18 +1,18 @@
 import { useReducer, useRef, useState } from "react";
-import { postForm } from "../../../lib/api";
+import { postForm } from "../../lib/api";
 import {
     inputStoryNameMessage,
     mediaLink,
     no_api_error,
-} from "../../../lib/constants";
-import UploadPreview from "../../../lib/components/UploadPreview";
+} from "../../lib/constants";
+import UploadPreview from "../../lib/components/UploadPreview";
 import VolumeMappingForm from "./VolumeMappingForm";
-import FormContainer from "./FormContainer";
-import FormInput from "../../../lib/components/FormInput";
-import FileUploader from "../../../lib/components/FileUploader";
-import { uploadReducer } from "../../state/uploadReducer";
-import { ProgressBar } from "../../../lib/components";
-import { useManage } from "../../hooks/usePageContext";
+import FormContainer from "../../lib/components/FormContainer";
+import FormInput from "../../lib/components/FormInput";
+import FileUploader from "../../lib/components/FileUploader";
+import { uploadReducer } from "../state/uploadReducer";
+import { ProgressBar } from "../../lib/components";
+import { useManage } from "../hooks/usePageContext";
 
 export type VolumeMapping = {
     [key: string]: {

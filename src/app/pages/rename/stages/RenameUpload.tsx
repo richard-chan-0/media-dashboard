@@ -1,6 +1,6 @@
-import RenameVideosForm from "../rename/form/RenameVideosForm";
-import RenameComicsForm from "../rename/form/RenameComicsForm/RenameComicsForm";
-import { COMICS, VIDEOS } from "../../lib/constants";
+import RenameVideosForm from "../form/RenameVideosForm";
+import RenameComicsForm from "../form/RenameComicsForm/RenameComicsForm";
+import { COMICS, VIDEOS } from "../../../lib/constants";
 
 type RenameUploadStageProps = {
     mediaType: string;

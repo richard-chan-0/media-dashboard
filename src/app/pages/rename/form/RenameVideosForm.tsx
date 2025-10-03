@@ -8,7 +8,7 @@ import {
 } from "../../../lib/constants";
 import { processApiResponseToNameChange } from "../../../lib/api";
 import UploadPreview from "../../../lib/components/UploadPreview";
-import FormContainer from "./FormContainer";
+import FormContainer from "../../../lib/components/FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import ProgressBar from "../../../lib/components/ProgressBar";
 import { useRename } from "../../hooks/usePageContext";

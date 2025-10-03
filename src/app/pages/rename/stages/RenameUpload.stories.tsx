@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import RenameUploadStage from "./RenameUpload";
-import { RenameProvider } from "../provider/RenameProvider";
+import { RenameProvider } from "../RenameProvider";
 
 type TestRenameUploadStageProps = {
     mediaType: string;

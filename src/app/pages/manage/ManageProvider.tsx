@@ -1,5 +1,5 @@
 import { useReducer, ReactNode } from "react";
-import { ManageContext } from "../context/ManageContext";
+import { ManageContext } from "./ManageContext";
 import { pageReducer, initialState as initialPageState } from "../state/pageReducer";
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
