@@ -9,6 +9,7 @@ import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataChanges, MetadataChange } from "../../../../lib/types";
 import { removePathFromFilePath } from "../../../../lib/utilities";
+import { useDeleteFile } from "../../../hooks/useDeleteFile";
 
 interface NameChangePreviewProps {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -38,6 +39,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
     const [isMetadataChange, setIsMetadataChange] = useState(false);
+    const deleteFile = useDeleteFile();
 
     const handleMetadataChange = (filename: string, newChange: MetadataChange, isChange: boolean) => {
         console.log("Handling metadata change:", filename, newChange, isChange);
@@ -76,8 +78,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             acc[filename] = {
                 filename: removePathFromFilePath(filename),
                 output_filename: change.newFilename,
-                audio_tracks: `[${change.defaultAudio}${change.additionalAudios ? `,${change.additionalAudios.join(",")}` : ""}]`,
-                subtitle_tracks: `[${change.defaultSubtitle}${change.additionalSubtitles ? `,${change.additionalSubtitles.join(",")}` : ""}]`,
+                audio_tracks: `[${change.audiosToKeep?.join(",")}]`,
+                subtitle_tracks: `[${change.subtitlesToKeep?.join(",")}]`,
             };
             return acc;
         }, {} as MetadataUtiliityMergeRequest);
@@ -86,6 +88,11 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             `${ffmpegLink}/mkv/merge`,
             mergeRequest,
         );
+
+        Object.keys(mergeRequest).forEach(async (filename) => {
+            await deleteFile(removePathFromFilePath(filename));
+        });
+
     }
 
     const handleSubmit = async () => {

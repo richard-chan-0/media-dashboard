@@ -27,6 +27,8 @@ export type Stream = {
     language: string;
     stream_number: number;
     title: string;
+    absolute_track_number: number;
+    merge_track_number: number;
 };
 
 export type Streams = {
@@ -45,6 +47,6 @@ export interface MetadataChange {
     title?: string;
     defaultSubtitle?: string;
     defaultAudio?: string;
-    additionalSubtitles?: string[];
-    additionalAudios?: string[];
+    audiosToKeep?: string[];
+    subtitlesToKeep?: string[];
 }

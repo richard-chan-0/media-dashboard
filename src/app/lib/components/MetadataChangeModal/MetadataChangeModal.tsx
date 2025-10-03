@@ -46,6 +46,7 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
         }
         setIsLoading(true);
         const response = await get(`${ffmpegLink}/read`);
+        console.log("Fetched streams:", response);
         setIsLoading(false);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
@@ -60,19 +61,30 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
             change.title !== undefined ||
             change.defaultSubtitle !== undefined ||
             change.defaultAudio !== undefined ||
-            (change.additionalSubtitles !== undefined && change.additionalSubtitles.length > 0) ||
-            (change.additionalAudios !== undefined && change.additionalAudios.length > 0)
+            (change.audiosToKeep !== undefined && change.audiosToKeep.length > 0) ||
+            (change.subtitlesToKeep !== undefined && change.subtitlesToKeep.length > 0)
         );
     };
 
     const handleEditSubmit = () => {
+        console.log("subtitles", checkedSubtitles);
+        console.log("audios", checkedAudios);
+        const additionalSubtitles = [defaultSubtitle, ...checkedSubtitles].map((number) => {
+            return streams?.subtitle.find((s) => s.stream_number.toString() === number)?.merge_track_number.toString()
+        }).filter((track) => track !== undefined);
+        const additionalAudios = [defaultAudio, ...checkedAudios].map((number) => {
+            return streams?.audio.find((a) => a.stream_number.toString() === number)?.merge_track_number.toString()
+        }).filter((track) => track !== undefined);
+        console.log("additional subtitles", additionalSubtitles);
+        console.log("additional audios", additionalAudios);
+
         const newChange: MetadataChange = {
             newFilename: filename,
             title: fileTitle || undefined,
             defaultSubtitle: defaultSubtitle || undefined,
             defaultAudio: defaultAudio || undefined,
-            additionalSubtitles: checkedSubtitles.length > 0 ? checkedSubtitles : undefined,
-            additionalAudios: checkedAudios.length > 0 ? checkedAudios : undefined,
+            audiosToKeep: additionalAudios || undefined,
+            subtitlesToKeep: additionalSubtitles || undefined,
         };
         console.log("Submitting metadata change:", newChange);
         onEdit(currentName, newChange, isMetadataChange(newChange));
