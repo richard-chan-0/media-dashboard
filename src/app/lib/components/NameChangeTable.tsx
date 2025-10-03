@@ -48,7 +48,7 @@ const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChan
                     {changes.map((choice) => (
                         <tr key={choice.output}>
                             <TableCell>
-                                {truncateString(removePathFromFilePath(choice.input), 30)}
+                                <span title={removePathFromFilePath(choice.input)}>{truncateString(removePathFromFilePath(choice.input), 30)}</span>
                             </TableCell>
                             <TableCell>
                                 {truncateString(removePathFromFilePath(choice.output), 30)}
