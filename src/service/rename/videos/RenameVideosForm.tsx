@@ -56,9 +56,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
             uploadDispatcher,
             abortControllerRef.current.signal
         );
-        console.log(`received response:`, response);
         if (response?.error) {
-            console.error("Error response from API:", response.error);
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             const processedResponse = processApiResponseToNameChange(response);

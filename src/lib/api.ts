@@ -72,7 +72,6 @@ export const postForm = async (
         if (error instanceof AxiosError) {
             return { error: processAxiosError(error) };
         }
-        console.log(error);
     }
 };
 
@@ -86,7 +85,6 @@ export const get = async (apiLink: string) => {
         if (error instanceof AxiosError) {
             return { error: processAxiosError(error) };
         }
-        console.log(error);
     }
 };
 
@@ -100,7 +98,6 @@ export const postJson = async (apiLink: string, formJson: object) => {
         if (error instanceof AxiosError) {
             return error?.response?.data;
         }
-        console.log(error);
     }
 };
 

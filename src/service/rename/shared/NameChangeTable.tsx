@@ -29,7 +29,6 @@ const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChan
     };
 
     const changes = nameChanges?.changes;
-    console.log("Rendering NameChangeTable with changes:", changes);
     if (!changes || changes.length === 0) {
         return <></>;
     }
