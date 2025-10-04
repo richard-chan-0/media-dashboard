@@ -6,9 +6,9 @@ import { RenameContext } from "../../RenameContext";
 import { COMICS } from "../../../../lib/constants";
 import { FormInputProps } from "../../../../lib/components/FormInput";
 import { FileUploaderProps } from "../../../../lib/components/FileUploader";
-import { ProgressBarProps } from "../../../../lib/components/ProgressBar";
+import { ProgressBarProps } from "../../../../lib/components/ProgressBar/ProgressBar";
 import { UploadPreviewProps } from "../../../../lib/components/UploadPreview";
-import { UploadAction, UploadState } from "../../../state/uploadReducer";
+import { UploadAction, UploadState } from "../../../../lib/reducers/uploadReducer";
 
 const dispatch = vi.fn();
 const pageDispatch = vi.fn();
@@ -63,7 +63,7 @@ vi.mock("../../../../lib/components/FileUploader", () => ({
         </button>
     ),
 }));
-vi.mock("../../../../lib/components/ProgressBar", () => ({
+vi.mock("../../../../lib/components/ProgressBar/ProgressBar", () => ({
     __esModule: true,
     default: ({ isInProgress }: ProgressBarProps) =>
         isInProgress ? <div data-testid="progress-bar">Uploading...</div> : null,
@@ -167,7 +167,7 @@ describe("RenameComicsForm", () => {
         fireEvent.change(screen.getByPlaceholderText("Enter story name"), { target: { value: "My Comic" } });
         fireEvent.change(screen.getByPlaceholderText("Enter start volume"), { target: { value: "1" } });
         fireEvent.click(screen.getByText("Submit Files!"));
-        // Simulate upload state
+        screen.debug();
         expect(screen.queryByTestId("progress-bar")).toBeInTheDocument();
     });
 });

@@ -1,9 +1,9 @@
-import theme from "../../theme";
+import theme from "../../../../lib/theme";
 import { useEffect, useState } from "react";
-import { useRename } from "../../hooks/usePageContext";
-import { removePathFromFilePath, splitPathFromFilePath } from "../../utilities";
+import { useRename } from "../../../../lib/hooks/usePageContext";
+import { removePathFromFilePath, splitPathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../Modal/Modal";
-import CloseButton from "../CloseButton";
+import { CloseButton } from "../../../../lib/components";
 
 type NameChangeModalProps = {
     isOpen: boolean;

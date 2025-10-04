@@ -1,6 +1,6 @@
 import { ArrowLeft } from "iconoir-react";
 import { ArrowRight } from "iconoir-react";
-import theme from "../theme";
+import theme from "../../../lib/theme";
 
 type StageButtonProps = {
     label: string;

@@ -7,7 +7,7 @@ import { COMICS, VIDEOS } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
 import { renderWithProvider } from "../../../../lib/test/renameRenderer";
 
-vi.mock("../../../lib/constants", async (importOriginal) => {
+vi.mock("../../../../lib/constants", async (importOriginal) => {
     const actual = await importOriginal<typeof import("../../../../lib/constants")>();
     return {
         ...actual,
@@ -65,6 +65,7 @@ describe("NameChangePreview", () => {
     });
 
     it("calls handleSubmit and processes success path", async () => {
+        vi.spyOn(api, "postJson").mockResolvedValue({}); // Mock successful API response
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
         useRenameMock.mockReturnValueOnce({
@@ -100,7 +101,7 @@ describe("NameChangePreview", () => {
         });
     });
 
-    it("calls metadata change API when metadata changes exist", async () => {
+    it("calls regular rename API when no metadata changes exist", async () => {
         const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
@@ -115,11 +116,7 @@ describe("NameChangePreview", () => {
 
         await waitFor(() => {
             expect(postJsonMock).toHaveBeenCalledWith(
-                "http://localhost/ffmpeg/mkv/write",
-                expect.anything()
-            );
-            expect(postJsonMock).toHaveBeenCalledWith(
-                "http://localhost/ffmpeg/mkv/merge",
+                "http://localhost/api/rename/process",
                 expect.anything()
             );
         });

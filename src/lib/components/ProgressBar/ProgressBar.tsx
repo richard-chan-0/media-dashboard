@@ -1,5 +1,5 @@
 import { XmarkCircleSolid } from "iconoir-react";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 
 export type ProgressBarProps = {
     isInProgress: boolean;

@@ -1,13 +1,10 @@
 export { default as Exception } from "./Exception";
 export { default as FormInput } from "./FormInput";
-export { default as NameChangeTable } from "./NameChangeTable";
 export { default as NavLink } from "./NavLink";
-export { default as ProgressBar } from "./ProgressBar";
-export { default as StageButton } from "./StageButton";
-export { default as StreamCheckboxList } from "./StreamCheckboxList";
+export { default as ProgressBar } from "./ProgressBar/ProgressBar";
 export { default as SubmitButton } from "./SubmitButton";
 export { default as SuccessMessage } from "./SuccessMessage";
-export { default as TableCell } from "./TableCell";
-export { default as StreamSelect } from "./StreamSelect";
-
-
+export { default as CloseButton } from "./CloseButton";
+export { default as UploadPreview } from "./UploadPreview";
+export { default as FormContainer } from "./FormContainer";
+export { default as Spinner } from "./Spinner";

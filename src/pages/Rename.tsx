@@ -1,11 +1,11 @@
 import { useEffect, useReducer } from "react";
-import FormPage from "../../lib/components/FormPage";
-import { mediaLink } from "../../lib/constants";
-import { get } from "../../lib/api";
-import { useRename } from "../../lib/hooks/usePageContext";
-import { RenameProvider } from "./RenameProvider";
-import PreviewFiles from "../../lib/components/PreviewFiles";
-import { RenameUploadStage, SetStreams, NameChangePreview } from "./stages"
+import FormPage from "../lib/components/FormPage";
+import { mediaLink } from "../lib/constants";
+import { get } from "../lib/api";
+import { useRename } from "../lib/hooks/usePageContext";
+import { RenameProvider } from "../service/rename/RenameProvider";
+import PreviewFiles from "../lib/components/PreviewFiles";
+import { RenameUploadStage, SetStreams, NameChangePreview } from "../service/rename/stages"
 
 type RenamePageProps = {
     mediaType: string;

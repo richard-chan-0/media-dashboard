@@ -1,5 +1,5 @@
 import Home from "./Home";
-import RenamePage from "./rename/Rename";
+import RenamePage from "./Rename";
 import ManagePage from "./Manage";
 
 export default {

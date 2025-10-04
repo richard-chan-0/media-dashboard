@@ -6,7 +6,7 @@ import axios, {
 import { ApiNameChangeResponse, NameChanges } from "./types";
 import { CANCELLED_ERROR, NETWORK_ERROR } from "./constants";
 import React from "react";
-import { UploadAction } from "../pages/state/uploadReducer";
+import { UploadAction } from "../lib/reducers/uploadReducer";
 
 export interface ApiError {
     code?: string;

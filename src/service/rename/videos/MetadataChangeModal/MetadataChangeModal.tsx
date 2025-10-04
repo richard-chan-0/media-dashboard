@@ -1,14 +1,13 @@
-import theme from "../../theme";
+import theme from "../../../../lib/theme";
 import { useEffect, useState } from "react";
-import { useRename } from "../../hooks/usePageContext";
-import { removePathFromFilePath } from "../../utilities";
-import Modal from "../Modal/Modal";
-import CloseButton from "../CloseButton";
-import { get } from "../../api";
-import { ffmpegLink, no_api_error } from "../../constants";
-import { StreamSelect, StreamCheckboxList } from "../../components";
-import { Streams, MetadataChange, Stream } from "../../../lib/types";
-import Spinner from "../Spinner";
+import { useRename } from "../../../../lib/hooks/usePageContext";
+import { removePathFromFilePath } from "../../../../lib/utilities";
+import Modal from "../../shared/Modal/Modal";
+import { CloseButton, Spinner } from "../../../../lib/components";
+import { get } from "../../../../lib/api";
+import { ffmpegLink, no_api_error } from "../../../../lib/constants";
+import { StreamSelect, StreamCheckboxList } from "../../shared";
+import { Streams, MetadataChange, Stream } from "../../../../lib/types";
 import React from "react";
 
 type MetadataChangeModalProps = {

@@ -1,4 +1,4 @@
-import { Stream } from "../../lib/types";
+import { Stream } from "../../../lib/types";
 
 type StreamSelectProps = {
     select: string;

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import theme from "../theme";
-import { NameChanges } from "../types";
-import { removePathFromFilePath, truncateString } from "../utilities";
-import MetadataChangeModal from "./MetadataChangeModal/MetadataChangeModal";
-import TableCell from "./TableCell";
+import theme from "../../../lib/theme";
+import { NameChanges } from "../../../lib/types";
+import { removePathFromFilePath, truncateString } from "../../../lib/utilities";
+import MetadataChangeModal from "../videos/MetadataChangeModal/MetadataChangeModal";
+import { TableCell } from "../shared";
 import { EditPencil, TrashSolid } from "iconoir-react";
-import { useDeleteFile } from "../hooks/useDeleteFile";
+import { useDeleteFile } from "../../../lib/hooks/useDeleteFile";
 import NameChangeModal from "./NameChangeModal/NameChangeModal";
-import { VIDEOS } from "../constants";
-import { MetadataChange } from "../types";
+import { VIDEOS } from "../../../lib/constants";
+import { MetadataChange } from "../../../lib/types";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;

@@ -7,10 +7,7 @@ import {
     no_api_error,
 } from "../../../../lib/constants";
 import { processApiResponseToNameChange } from "../../../../lib/api";
-import UploadPreview from "../../../../lib/components/UploadPreview";
-import FormContainer from "../../../../lib/components/FormContainer";
-import FormInput from "../../../../lib/components/FormInput";
-import ProgressBar from "../../../../lib/components/ProgressBar";
+import { ProgressBar, FormInput, FormContainer, UploadPreview } from "../../../../lib/components";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../../lib/reducers/uploadReducer";
 import FileUploader from "../../../../lib/components/FileUploader";

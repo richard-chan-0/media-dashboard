@@ -1,4 +1,4 @@
-import { NameChanges } from "../../lib/types";
+import { NameChanges } from "../types";
 
 export const initialState: RenameState = {
     nameChanges: { changes: [] },

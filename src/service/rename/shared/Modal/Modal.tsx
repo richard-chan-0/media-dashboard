@@ -1,4 +1,4 @@
-import theme from "../../theme";
+import theme from "../../../../lib/theme";
 
 type ModalProps = {
     isOpen: boolean;

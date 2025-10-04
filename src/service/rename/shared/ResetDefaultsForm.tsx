@@ -1,8 +1,7 @@
 import { get } from "../../../lib/api";
 import { ffmpegLink } from "../../../lib/constants";
 import { FormEvent } from "react";
-import FormContainer from "../../../lib/components/FormContainer";
-import SubmitButton from "../../../lib/components/SubmitButton";
+import { SubmitButton, FormContainer } from "../../../lib/components";
 import { useRename } from "../../../lib/hooks/usePageContext";
 
 type ResetDefaultsFormProps = {

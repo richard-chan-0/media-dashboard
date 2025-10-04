@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { RenameProvider } from "../../pages/rename/RenameProvider";
+import { RenameProvider } from "../../service/rename/RenameProvider";
 
 
 export function renderWithProvider(ui: React.ReactElement) {

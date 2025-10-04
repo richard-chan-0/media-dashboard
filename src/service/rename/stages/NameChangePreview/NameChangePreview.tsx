@@ -1,5 +1,5 @@
 import FormContainer from "../../../../lib/components/FormContainer";
-import NameChangeTable from "../../../../lib/components/NameChangeTable";
+import { NameChangeTable } from "../../shared";
 import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import StageNavButtons from "../StageNavButtons";

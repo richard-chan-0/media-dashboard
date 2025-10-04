@@ -1,5 +1,5 @@
-import RenameVideosForm from "../form/RenameVideosForm";
-import RenameComicsForm from "../form/RenameComicsForm/RenameComicsForm";
+import RenameVideosForm from "../videos/RenameVideosForm";
+import RenameComicsForm from "../comics/RenameComicsForm/RenameComicsForm";
 import { COMICS, VIDEOS } from "../../../lib/constants";
 
 type RenameUploadStageProps = {

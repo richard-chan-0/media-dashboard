@@ -4,7 +4,7 @@ import { RenameProvider } from "../../RenameProvider";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { NameChanges } from "../../../../lib/types";
 import { useEffect } from "react";
-import { RenameAction } from "../../../state/renameReducer";
+import { RenameAction } from "../../../../lib/reducers/renameReducer";
 
 type TestNameChangePreviewProps = {
     stageDispatcher: (action: string) => void;
