@@ -35,7 +35,6 @@ const ProgressBar = ({
                 <button
                     className="text-red-600 hover:text-red-500"
                     onClick={() => {
-                        console.log("aborting upload");
                         abortController.abort();
                     }}
                 >

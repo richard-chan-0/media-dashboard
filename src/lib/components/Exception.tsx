@@ -6,6 +6,14 @@ type ExceptionProps = {
     error: string;
 };
 
+const parseError = (error: string) => {
+    try {
+        return JSON.parse(error);
+    } catch {
+        return { message: error, name: "Error", stack: "" };
+    }
+}
+
 const Exception = ({ error }: ExceptionProps) => {
     const { pageDispatch: errorDispatch } = useRename();
     const [isShowStack, setIsShowStack] = React.useState(false);
@@ -13,7 +21,7 @@ const Exception = ({ error }: ExceptionProps) => {
         return <></>;
     }
 
-    const errorDict = JSON.parse(error);
+    const errorDict = parseError(error);
 
     return (
         <div className="flex w-full bg-red-300 p-2 text-red-600 text-left opacity-80">

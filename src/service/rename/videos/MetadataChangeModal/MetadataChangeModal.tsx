@@ -19,7 +19,6 @@ type MetadataChangeModalProps = {
 };
 
 const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
-    console.log("MetadataChangeModal opened with initialName:", suggestedName);
     const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
     const [fileTitle, setFileTitle] = useState("");
     const [streams, setStreams] = useState<Streams | null>(null);
@@ -45,7 +44,6 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
         }
         setIsLoading(true);
         const response = await get(`${ffmpegLink}/read`);
-        console.log("Fetched streams:", response);
         setIsLoading(false);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
@@ -66,16 +64,12 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
     };
 
     const handleEditSubmit = () => {
-        console.log("subtitles", checkedSubtitles);
-        console.log("audios", checkedAudios);
         const additionalSubtitles = [defaultSubtitle, ...checkedSubtitles].map((number) => {
             return streams?.subtitle.find((s) => s.stream_number.toString() === number)?.merge_track_number.toString()
         }).filter((track) => track !== undefined);
         const additionalAudios = [defaultAudio, ...checkedAudios].map((number) => {
             return streams?.audio.find((a) => a.stream_number.toString() === number)?.merge_track_number.toString()
         }).filter((track) => track !== undefined);
-        console.log("additional subtitles", additionalSubtitles);
-        console.log("additional audios", additionalAudios);
 
         const newChange: MetadataChange = {
             newFilename: filename,
@@ -85,7 +79,6 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
             audiosToKeep: additionalAudios || undefined,
             subtitlesToKeep: additionalSubtitles || undefined,
         };
-        console.log("Submitting metadata change:", newChange);
         onEdit(currentName, newChange, isMetadataChange(newChange));
         onClose();
     };

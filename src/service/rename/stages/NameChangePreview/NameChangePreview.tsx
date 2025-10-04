@@ -42,7 +42,6 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const deleteFile = useDeleteFile();
 
     const handleMetadataChange = (filename: string, newChange: MetadataChange, isChange: boolean) => {
-        console.log("Handling metadata change:", filename, newChange, isChange);
         setMetadataChanges((prevChanges) => ({
             ...prevChanges,
             [filename]: newChange
@@ -51,7 +50,6 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     };
 
     const postRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest) => {
-        console.log("Posting name changes:", nameChangeRequest);
         return await postJson(
             `${mediaLink}/rename/process`,
             nameChangeRequest,
@@ -59,7 +57,6 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     }
 
     const postMetadataRenameChangeRequest = async (metadataChangeRequest: MetadataChanges) => {
-        console.log("Posting metadata changes:", metadataChangeRequest);
         const writeRequest = Object.entries(metadataChangeRequest).reduce((acc, [filename, change]) => {
             acc[filename] = {
                 video_title: change.title,
