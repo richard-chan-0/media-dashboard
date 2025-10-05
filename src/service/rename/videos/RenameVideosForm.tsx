@@ -1,12 +1,12 @@
 import { useReducer, useRef, useState } from "react";
-import { postForm } from "../../../lib/api";
+import { postForm } from "../../../lib/api/api";
 import {
     inputSeasonMessage,
     inputStartEpisodeMessage,
     mediaLink,
     no_api_error,
 } from "../../../lib/constants";
-import { processApiResponseToNameChange } from "../../../lib/api";
+import { processApiResponseToNameChange } from "../../../lib/api/api";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import FormContainer from "../../../lib/components/FormContainer";
 import FormInput from "../../../lib/components/FormInput";

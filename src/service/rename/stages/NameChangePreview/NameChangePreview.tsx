@@ -1,6 +1,6 @@
 import FormContainer from "../../../../lib/components/FormContainer";
 import { NameChangeTable } from "../../shared";
-import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api";
+import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api/api";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import StageNavButtons from "../StageNavButtons";
 import { COMICS, mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
@@ -10,35 +10,20 @@ import Spinner from "../../../../lib/components/Spinner";
 import { MetadataChanges, MetadataChange } from "../../../../lib/types";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
+import { postMetadataMerge, postMetadataWrite } from "../../../../lib/api/Metadata";
 
 interface NameChangePreviewProps {
     stageDispatcher: React.ActionDispatch<[action: string]>;
 };
 
-interface MetadataUtilityWriteChange {
-    video_title?: string;
-    default_audio?: string;
-    default_subtitle?: string;
-}
-interface MetadataUtilityWriteRequest {
-    [key: string]: MetadataUtilityWriteChange;
-}
 
-interface MetadataUtilityMergeChange {
-    filename: string;
-    output_filename?: string;
-    audio_tracks?: string;
-    subtitle_tracks?: string;
-}
-interface MetadataUtiliityMergeRequest {
-    [key: string]: MetadataUtilityMergeChange;
-}
 
 const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
     const [isMetadataChange, setIsMetadataChange] = useState(false);
+    const [isMetadataMerge, setIsMetadataMerge] = useState(false);
     const deleteFile = useDeleteFile();
 
     const handleMetadataChange = (filename: string, newChange: MetadataChange, isChange: boolean) => {
@@ -56,40 +41,21 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         );
     }
 
-    const postMetadataRenameChangeRequest = async (metadataChangeRequest: MetadataChanges) => {
-        const writeRequest = Object.entries(metadataChangeRequest).reduce((acc, [filename, change]) => {
-            acc[filename] = {
-                video_title: change.title,
-                default_audio: change.defaultAudio,
-                default_subtitle: change.defaultSubtitle,
-            };
-            return acc;
-        }, {} as MetadataUtilityWriteRequest);
-
-        await postJson(
-            `${ffmpegLink}/mkv/write`,
-            writeRequest,
-        );
-
-        const mergeRequest = Object.entries(metadataChangeRequest).reduce((acc, [filename, change]) => {
-            acc[filename] = {
-                filename: removePathFromFilePath(filename),
-                output_filename: change.newFilename,
-                audio_tracks: `[${change.audiosToKeep?.join(",")}]`,
-                subtitle_tracks: `[${change.subtitlesToKeep?.join(",")}]`,
-            };
-            return acc;
-        }, {} as MetadataUtiliityMergeRequest);
-
-        await postJson(
-            `${ffmpegLink}/mkv/merge`,
-            mergeRequest,
-        );
-
+    const handleMetadataMerge = async (metadataChangeRequest: MetadataChanges) => {
+        const mergeRequest = await postMetadataMerge(metadataChangeRequest);
         Object.keys(mergeRequest).forEach(async (filename) => {
             await deleteFile(removePathFromFilePath(filename));
         });
+    }
 
+
+    const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataChanges) => {
+        await postMetadataWrite(metadataChanges);
+        if (isMetadataMerge) {
+            await handleMetadataMerge(metadataChanges);
+        } else {
+            await postRenameChangeRequest(nameChangeRequest);
+        }
     }
 
     const handleSubmit = async () => {
@@ -104,7 +70,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         setIsSpinner(true);
         const response = await (
             isMetadataChange && metadataChanges ?
-                postMetadataRenameChangeRequest(metadataChanges) :
+                postMetadataRenameChangeRequest(nameChangeRequest, metadataChanges) :
                 postRenameChangeRequest(nameChangeRequest)
         );
         if (response?.error) {
@@ -145,19 +111,26 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                             mediaType={state.mediaType}
                             onEdit={state.mediaType === VIDEOS ? handleMetadataChange : () => { }}
                         />
-                        <div className="flex justify-center gap-4">
+                        <div className="flex justify-between gap-4 w-full">
                             {
                                 isSpinner ? (
                                     <Spinner />
                                 ) : (
+                                    <>
+                                        <SubmitButton
+                                            label={`Merge`}
+                                            onClick={() => setIsMetadataMerge(prev => !prev)}
+                                            buttonStyle={`w-1/8  ${isMetadataMerge ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
+                                        />
+                                        <SubmitButton
+                                            onClick={handleSubmit}
+                                            label="Submit!"
+                                            buttonStyle="w-fit"
+                                        />
 
-                                    <SubmitButton
-                                        onClick={handleSubmit}
-                                        label="Rename!"
-                                        type="button"
-                                        buttonStyle="w-fit"
-                                    />
 
+
+                                    </>
 
                                 )
                             }

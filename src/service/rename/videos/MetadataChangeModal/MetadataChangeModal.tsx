@@ -4,7 +4,7 @@ import { useRename } from "../../../../lib/hooks/usePageContext";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../../shared/Modal/Modal";
 import { CloseButton, Spinner } from "../../../../lib/components";
-import { get } from "../../../../lib/api";
+import { get } from "../../../../lib/api/api";
 import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamSelect, StreamCheckboxList } from "../../shared";
 import { Streams, MetadataChange, Stream } from "../../../../lib/types";

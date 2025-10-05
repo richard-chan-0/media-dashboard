@@ -138,8 +138,8 @@ describe("RenameComicsForm", () => {
     });
 
     it("submits form and resets state on success", async () => {
-        const { postForm } = await import("../../../../lib/api");
-        const { processApiResponseToNameChange } = await import("../../../../lib/api");
+        const { postForm } = await import("../../../../lib/api/api");
+        const { processApiResponseToNameChange } = await import("../../../../lib/api/api");
         (postForm as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ success: true });
         (processApiResponseToNameChange as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ changes: ["foo"] });
 

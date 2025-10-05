@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import NameChangePreview from "./NameChangePreview";
-import * as api from "../../../../lib/api";
+import * as api from "../../../../lib/api/api";
 import * as usePageContext from "../../../../lib/hooks/usePageContext";
 import { COMICS, VIDEOS } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
