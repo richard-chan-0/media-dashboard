@@ -8,9 +8,7 @@ import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataChanges, MetadataChange } from "../../../../lib/types";
-import { removePathFromFilePath } from "../../../../lib/utilities";
-import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
-import { postMetadataMerge, postMetadataWrite } from "../../../../lib/api/Metadata";
+import { postMetadataWrite } from "../../../../lib/api/Metadata";
 
 interface NameChangePreviewProps {
     stageDispatcher: React.ActionDispatch<[action: string]>;
@@ -22,16 +20,14 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
-    const [isMetadataChange, setIsMetadataChange] = useState(false);
-    const [isMetadataMerge, setIsMetadataMerge] = useState(false);
-    const deleteFile = useDeleteFile();
 
-    const handleMetadataChange = (filename: string, newChange: MetadataChange, isChange: boolean) => {
-        setMetadataChanges((prevChanges) => ({
-            ...prevChanges,
-            [filename]: newChange
-        }));
-        setIsMetadataChange(isMetadataChange || isChange);
+    const handleMetadataChange = (filename: string, newChange: MetadataChange | undefined) => {
+        if (newChange !== undefined) {
+            setMetadataChanges((prevChanges) => ({
+                ...prevChanges,
+                [filename]: newChange
+            }));
+        }
     };
 
     const postRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest) => {
@@ -41,21 +37,9 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         );
     }
 
-    const handleMetadataMerge = async (metadataChangeRequest: MetadataChanges) => {
-        const mergeRequest = await postMetadataMerge(metadataChangeRequest);
-        Object.keys(mergeRequest).forEach(async (filename) => {
-            await deleteFile(removePathFromFilePath(filename));
-        });
-    }
-
-
     const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataChanges) => {
         await postMetadataWrite(metadataChanges);
-        if (isMetadataMerge) {
-            await handleMetadataMerge(metadataChanges);
-        } else {
-            await postRenameChangeRequest(nameChangeRequest);
-        }
+        await postRenameChangeRequest(nameChangeRequest);
     }
 
     const handleSubmit = async () => {
@@ -69,7 +53,7 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         );
         setIsSpinner(true);
         const response = await (
-            isMetadataChange && metadataChanges ?
+            metadataChanges ?
                 postMetadataRenameChangeRequest(nameChangeRequest, metadataChanges) :
                 postRenameChangeRequest(nameChangeRequest)
         );
@@ -111,27 +95,16 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                             mediaType={state.mediaType}
                             onEdit={state.mediaType === VIDEOS ? handleMetadataChange : () => { }}
                         />
-                        <div className="flex justify-between gap-4 w-full">
+                        <div className="flex gap-4 w-full justify-end mt-2">
                             {
                                 isSpinner ? (
                                     <Spinner />
                                 ) : (
-                                    <>
-                                        <SubmitButton
-                                            label={`Merge`}
-                                            onClick={() => setIsMetadataMerge(prev => !prev)}
-                                            buttonStyle={`w-1/8  ${isMetadataMerge ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
-                                        />
-                                        <SubmitButton
-                                            onClick={handleSubmit}
-                                            label="Submit!"
-                                            buttonStyle="w-fit"
-                                        />
-
-
-
-                                    </>
-
+                                    <SubmitButton
+                                        onClick={handleSubmit}
+                                        label="Submit!"
+                                        buttonStyle="w-fit"
+                                    />
                                 )
                             }
                         </div>

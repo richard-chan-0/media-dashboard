@@ -14,7 +14,7 @@ const dispatch = vi.fn();
 const pageDispatch = vi.fn();
 const initialContext = { state: { nameChanges: { changes: [] }, mediaType: COMICS }, dispatch, pageState: { previewFiles: [], error: "" }, pageDispatch }
 
-vi.mock("../../../../lib/api", () => ({
+vi.mock("../../../../lib/api/api", () => ({
     postForm: vi.fn(),
     processApiResponseToNameChange: vi.fn((resp) => resp),
 }));

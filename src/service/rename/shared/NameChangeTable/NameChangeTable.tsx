@@ -13,7 +13,7 @@ import { MetadataChange } from "../../../../lib/types";
 type NameChangesTableProps = {
     nameChanges: NameChanges;
     mediaType?: string;
-    onEdit: (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => void;
+    onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
 };
 
 const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
@@ -34,12 +34,11 @@ const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChan
         return <></>;
     }
 
-    const onTableEdit = (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => {
-        if (isMetadataChange && wasEditedList.includes(filename) === false) {
+    const onTableEdit = (filename: string, newChange: MetadataChange | undefined) => {
+        if (newChange !== undefined && wasEditedList.includes(filename) === false) {
             setWasEditedList((prev) => [...prev, filename]);
         }
-        console.log("onTableEdit called with:", filename, newChange, isMetadataChange);
-        onEdit(filename, newChange, isMetadataChange);
+        onEdit(filename, newChange);
     }
 
     const onModalClose = () => {

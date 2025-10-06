@@ -15,7 +15,7 @@ type MetadataChangeModalProps = {
     onClose: () => void;
     currentName: string;
     suggestedName: string;
-    onEdit: (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => void;
+    onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
 };
 
 const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
@@ -79,7 +79,8 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
             audiosToKeep: additionalAudios || undefined,
             subtitlesToKeep: additionalSubtitles || undefined,
         };
-        onEdit(currentName, newChange, isMetadataChange(newChange));
+
+        onEdit(currentName, isMetadataChange(newChange) ? newChange : undefined);
         onClose();
     };
 
