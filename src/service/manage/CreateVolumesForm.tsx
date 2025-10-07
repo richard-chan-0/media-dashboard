@@ -1,5 +1,5 @@
 import { useReducer, useRef, useState } from "react";
-import { postForm } from "../../lib/api";
+import { postForm } from "../../lib/api/api";
 import {
     inputStoryNameMessage,
     mediaLink,

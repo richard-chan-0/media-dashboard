@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
 import FormPage from "../lib/components/FormPage";
 import { mediaLink } from "../lib/constants";
-import { get } from "../lib/api";
+import { get } from "../lib/api/api";
 import { useRename } from "../lib/hooks/usePageContext";
 import { RenameProvider } from "../service/rename/RenameProvider";
 import PreviewFiles from "../lib/components/PreviewFiles";

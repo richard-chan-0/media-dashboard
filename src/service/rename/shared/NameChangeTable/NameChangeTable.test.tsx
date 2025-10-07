@@ -55,6 +55,6 @@ describe('NameChangeTable', () => {
         const updateButton = screen.getByText('Update');
         fireEvent.click(updateButton);
 
-        expect(mockOnEdit).toHaveBeenCalledWith('File1', expect.anything(), false);
+        expect(mockOnEdit).toHaveBeenCalledWith('File1', undefined);
     });
 });

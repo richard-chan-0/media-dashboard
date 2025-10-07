@@ -1,6 +1,6 @@
 import FormContainer from "../../../../lib/components/FormContainer";
 import { NameChangeTable } from "../../shared";
-import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api";
+import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api/api";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import StageNavButtons from "../StageNavButtons";
 import { COMICS, mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
@@ -8,45 +8,26 @@ import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataChanges, MetadataChange } from "../../../../lib/types";
-import { removePathFromFilePath } from "../../../../lib/utilities";
-import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
+import { postMetadataWrite } from "../../../../lib/api/Metadata";
 
 interface NameChangePreviewProps {
     stageDispatcher: React.ActionDispatch<[action: string]>;
 };
 
-interface MetadataUtilityWriteChange {
-    video_title?: string;
-    default_audio?: string;
-    default_subtitle?: string;
-}
-interface MetadataUtilityWriteRequest {
-    [key: string]: MetadataUtilityWriteChange;
-}
 
-interface MetadataUtilityMergeChange {
-    filename: string;
-    output_filename?: string;
-    audio_tracks?: string;
-    subtitle_tracks?: string;
-}
-interface MetadataUtiliityMergeRequest {
-    [key: string]: MetadataUtilityMergeChange;
-}
 
 const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
-    const [isMetadataChange, setIsMetadataChange] = useState(false);
-    const deleteFile = useDeleteFile();
 
-    const handleMetadataChange = (filename: string, newChange: MetadataChange, isChange: boolean) => {
-        setMetadataChanges((prevChanges) => ({
-            ...prevChanges,
-            [filename]: newChange
-        }));
-        setIsMetadataChange(isMetadataChange || isChange);
+    const handleMetadataChange = (filename: string, newChange: MetadataChange | undefined) => {
+        if (newChange !== undefined) {
+            setMetadataChanges((prevChanges) => ({
+                ...prevChanges,
+                [filename]: newChange
+            }));
+        }
     };
 
     const postRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest) => {
@@ -56,40 +37,9 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         );
     }
 
-    const postMetadataRenameChangeRequest = async (metadataChangeRequest: MetadataChanges) => {
-        const writeRequest = Object.entries(metadataChangeRequest).reduce((acc, [filename, change]) => {
-            acc[filename] = {
-                video_title: change.title,
-                default_audio: change.defaultAudio,
-                default_subtitle: change.defaultSubtitle,
-            };
-            return acc;
-        }, {} as MetadataUtilityWriteRequest);
-
-        await postJson(
-            `${ffmpegLink}/mkv/write`,
-            writeRequest,
-        );
-
-        const mergeRequest = Object.entries(metadataChangeRequest).reduce((acc, [filename, change]) => {
-            acc[filename] = {
-                filename: removePathFromFilePath(filename),
-                output_filename: change.newFilename,
-                audio_tracks: `[${change.audiosToKeep?.join(",")}]`,
-                subtitle_tracks: `[${change.subtitlesToKeep?.join(",")}]`,
-            };
-            return acc;
-        }, {} as MetadataUtiliityMergeRequest);
-
-        await postJson(
-            `${ffmpegLink}/mkv/merge`,
-            mergeRequest,
-        );
-
-        Object.keys(mergeRequest).forEach(async (filename) => {
-            await deleteFile(removePathFromFilePath(filename));
-        });
-
+    const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataChanges) => {
+        await postMetadataWrite(metadataChanges);
+        await postRenameChangeRequest(nameChangeRequest);
     }
 
     const handleSubmit = async () => {
@@ -103,8 +53,8 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
         );
         setIsSpinner(true);
         const response = await (
-            isMetadataChange && metadataChanges ?
-                postMetadataRenameChangeRequest(metadataChanges) :
+            metadataChanges ?
+                postMetadataRenameChangeRequest(nameChangeRequest, metadataChanges) :
                 postRenameChangeRequest(nameChangeRequest)
         );
         if (response?.error) {
@@ -145,20 +95,16 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
                             mediaType={state.mediaType}
                             onEdit={state.mediaType === VIDEOS ? handleMetadataChange : () => { }}
                         />
-                        <div className="flex justify-center gap-4">
+                        <div className="flex gap-4 w-full justify-end mt-2">
                             {
                                 isSpinner ? (
                                     <Spinner />
                                 ) : (
-
                                     <SubmitButton
                                         onClick={handleSubmit}
-                                        label="Rename!"
-                                        type="button"
+                                        label="Submit!"
                                         buttonStyle="w-fit"
                                     />
-
-
                                 )
                             }
                         </div>

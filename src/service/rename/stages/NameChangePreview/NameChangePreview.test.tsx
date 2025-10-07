@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
 import NameChangePreview from "./NameChangePreview";
-import * as api from "../../../../lib/api";
+import * as api from "../../../../lib/api/api";
 import * as usePageContext from "../../../../lib/hooks/usePageContext";
 import { COMICS, VIDEOS } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
@@ -46,7 +46,7 @@ describe("NameChangePreview", () => {
     it("renders the table and submit button when there are name changes", () => {
         renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
         expect(screen.getByText("Rename Files")).toBeInTheDocument();
-        expect(screen.getByText("Rename!")).toBeInTheDocument();
+        expect(screen.getByText("Submit!")).toBeInTheDocument();
         expect(screen.getByText("a.mp4")).toBeInTheDocument();
         expect(screen.getByText("b.mp4")).toBeInTheDocument();
     });
@@ -75,7 +75,7 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
-        fireEvent.click(screen.getByText("Rename!"));
+        fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
             expect(dispatch).toHaveBeenCalledWith({ type: "CLEAR_NAME_CHANGES" });
@@ -94,7 +94,7 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
-        fireEvent.click(screen.getByText("Rename!"));
+        fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
             expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
@@ -112,7 +112,7 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
-        fireEvent.click(screen.getByText("Rename!"));
+        fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
             expect(postJsonMock).toHaveBeenCalledWith(

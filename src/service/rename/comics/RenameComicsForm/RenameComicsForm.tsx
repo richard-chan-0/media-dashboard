@@ -1,12 +1,12 @@
 import React, { useReducer, useRef, useState } from "react";
-import { postForm } from "../../../../lib/api";
+import { postForm } from "../../../../lib/api/api";
 import {
     inputStartVolumeMessage,
     inputStoryNameMessage,
     mediaLink,
     no_api_error,
 } from "../../../../lib/constants";
-import { processApiResponseToNameChange } from "../../../../lib/api";
+import { processApiResponseToNameChange } from "../../../../lib/api/api";
 import { ProgressBar, FormInput, FormContainer, UploadPreview } from "../../../../lib/components";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../../lib/reducers/uploadReducer";

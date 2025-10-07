@@ -3,10 +3,10 @@ import axios, {
     AxiosProgressEvent,
     AxiosRequestConfig,
 } from "axios";
-import { ApiNameChangeResponse, NameChanges } from "./types";
-import { CANCELLED_ERROR, NETWORK_ERROR } from "./constants";
+import { ApiNameChangeResponse, NameChanges } from "../types";
+import { CANCELLED_ERROR, NETWORK_ERROR } from "../constants";
 import React from "react";
-import { UploadAction } from "../lib/reducers/uploadReducer";
+import { UploadAction } from "../reducers/uploadReducer";
 
 export interface ApiError {
     code?: string;

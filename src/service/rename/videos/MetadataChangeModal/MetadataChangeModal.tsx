@@ -4,7 +4,7 @@ import { useRename } from "../../../../lib/hooks/usePageContext";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../../shared/Modal/Modal";
 import { CloseButton, Spinner } from "../../../../lib/components";
-import { get } from "../../../../lib/api";
+import { get } from "../../../../lib/api/api";
 import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamSelect, StreamCheckboxList } from "../../shared";
 import { Streams, MetadataChange, Stream } from "../../../../lib/types";
@@ -15,7 +15,7 @@ type MetadataChangeModalProps = {
     onClose: () => void;
     currentName: string;
     suggestedName: string;
-    onEdit: (filename: string, newChange: MetadataChange, isMetadataChange: boolean) => void;
+    onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
 };
 
 const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
@@ -79,7 +79,8 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
             audiosToKeep: additionalAudios || undefined,
             subtitlesToKeep: additionalSubtitles || undefined,
         };
-        onEdit(currentName, newChange, isMetadataChange(newChange));
+
+        onEdit(currentName, isMetadataChange(newChange) ? newChange : undefined);
         onClose();
     };
 
