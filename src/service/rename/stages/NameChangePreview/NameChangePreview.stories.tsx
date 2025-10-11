@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { RenameAction } from "../../../../lib/reducers/renameReducer";
 
 type TestNameChangePreviewProps = {
-    stageDispatcher: (action: string) => void;
     nameChanges: NameChanges;
 }
 
@@ -22,7 +21,7 @@ const TestNameChangePreview = (args: TestNameChangePreviewProps) => {
         dispatch(set_name_change_action);
     }, [dispatch, args.nameChanges]);
     return (
-        <NameChangePreview {...args} />
+        <NameChangePreview />
     )
 }
 
@@ -45,7 +44,6 @@ type Story = StoryObj<typeof meta>;
 
 export const VideoNameChangePreview: Story = {
     args: {
-        stageDispatcher: () => { },
         nameChanges: {
             changes: [
                 {
@@ -63,7 +61,6 @@ export const VideoNameChangePreview: Story = {
 
 export const VideoNameChangePreviewEmpty: Story = {
     args: {
-        stageDispatcher: () => { },
         nameChanges: {
             changes: [],
         }

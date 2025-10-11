@@ -17,7 +17,6 @@ vi.mock("../../../../lib/constants", async (importOriginal) => {
     };
 });
 
-const mockStageDispatcher = vi.fn();
 
 const mockState = {
     nameChanges: { changes: [{ input: "a.mp4", output: "b.mp4" }] },
@@ -44,7 +43,7 @@ describe("NameChangePreview", () => {
     });
 
     it("renders the table and submit button when there are name changes", () => {
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        renderWithProvider(<NameChangePreview />);
         expect(screen.getByText("Rename Files")).toBeInTheDocument();
         expect(screen.getByText("Submit!")).toBeInTheDocument();
         expect(screen.getByText("a.mp4")).toBeInTheDocument();
@@ -60,7 +59,7 @@ describe("NameChangePreview", () => {
             dispatch: vi.fn(),
             pageDispatch: vi.fn(),
         });
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        renderWithProvider(<NameChangePreview />);
         expect(screen.getByText("No files to rename.")).toBeInTheDocument();
     });
 
@@ -74,7 +73,7 @@ describe("NameChangePreview", () => {
             pageDispatch,
         });
 
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        renderWithProvider(<NameChangePreview />);
         fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
@@ -93,7 +92,7 @@ describe("NameChangePreview", () => {
             pageDispatch,
         });
 
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        renderWithProvider(<NameChangePreview />);
         fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
@@ -111,7 +110,7 @@ describe("NameChangePreview", () => {
             pageDispatch,
         });
 
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
+        renderWithProvider(<NameChangePreview />);
         fireEvent.click(screen.getByText("Submit!"));
 
         await waitFor(() => {
@@ -131,8 +130,7 @@ describe("NameChangePreview", () => {
             dispatch: vi.fn(),
             pageDispatch: vi.fn(),
         });
-        renderWithProvider(<NameChangePreview stageDispatcher={mockStageDispatcher} />);
-        expect(screen.getByText("Back")).toBeInTheDocument();
+        renderWithProvider(<NameChangePreview />);
         // No right button for comics
         expect(screen.queryByText("Skip")).not.toBeInTheDocument();
         expect(screen.queryByText("Next")).not.toBeInTheDocument();

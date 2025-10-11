@@ -90,7 +90,7 @@ vi.mock("../../../state/uploadReducer", () => ({
 const renderWithContext = (props = {}) => {
     return render(
         <RenameContext.Provider value={initialContext}>
-            <RenameComicsForm stageDispatcher={vi.fn()} {...props} />
+            <RenameComicsForm {...props} />
         </RenameContext.Provider>
     );
 };
@@ -127,7 +127,7 @@ describe("RenameComicsForm", () => {
     it("shows error if story name is missing on submit", async () => {
         render(
             <RenameContext.Provider value={initialContext}>
-                <RenameComicsForm stageDispatcher={vi.fn()} />
+                <RenameComicsForm />
             </RenameContext.Provider>
         );
         fireEvent.click(screen.getByTestId("file-uploader"));
@@ -143,10 +143,9 @@ describe("RenameComicsForm", () => {
         (postForm as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ success: true });
         (processApiResponseToNameChange as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ changes: ["foo"] });
 
-        const stageDispatcher = vi.fn();
         render(
             <RenameContext.Provider value={initialContext}>
-                <RenameComicsForm stageDispatcher={stageDispatcher} />
+                <RenameComicsForm />
             </RenameContext.Provider>
         );
         fireEvent.change(screen.getByPlaceholderText("Enter story name"), { target: { value: "My Comic" } });
@@ -157,7 +156,6 @@ describe("RenameComicsForm", () => {
         await waitFor(() => {
             expect(postForm).toHaveBeenCalled();
             expect(dispatch).toHaveBeenCalledWith({ type: "SET_NAME_CHANGES", payload: { changes: ["foo"] } });
-            expect(stageDispatcher).toHaveBeenCalledWith("next");
         });
     });
 

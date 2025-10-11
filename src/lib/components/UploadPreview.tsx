@@ -15,7 +15,7 @@ const UploadPreview = ({ files, deleteFile }: UploadPreviewProps) => {
                 {
                     files.map((file: string) => (
                         <li key={file} className="flex justify-between">
-                            {truncateString(file, 40)}
+                            <span title={file}>{truncateString(file, 40)}</span>
                             <button
                                 className={theme.deleteIconColor}
                                 onClick={() => { deleteFile(file) }}

@@ -17,11 +17,11 @@ const FormPage = ({
     return (
         <>
             {error && <Exception error={error} />}
-            <div
-                className={`flex ${isColumn ? "flex-col" : ""} items-center m-4 gap-4 ${pageStyle}`}
+            <main
+                className={`flex ${isColumn ? "flex-col" : ""} items-center gap-4 ${pageStyle}`}
             >
                 {children}
-            </div>
+            </main>
         </>
     );
 };

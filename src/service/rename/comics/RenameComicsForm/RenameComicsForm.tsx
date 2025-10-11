@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import { postForm } from "../../../../lib/api/api";
 import {
     inputStartVolumeMessage,
@@ -7,16 +7,12 @@ import {
     no_api_error,
 } from "../../../../lib/constants";
 import { processApiResponseToNameChange } from "../../../../lib/api/api";
-import { ProgressBar, FormInput, FormContainer, UploadPreview } from "../../../../lib/components";
+import { ProgressBar, FormInput, UploadPreview } from "../../../../lib/components";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../../lib/reducers/uploadReducer";
 import FileUploader from "../../../../lib/components/FileUploader";
 
-type RenameComicsFormProps = {
-    stageDispatcher: React.ActionDispatch<[action: string]>;
-};
-
-const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
+const RenameComicsForm = () => {
     const [storyName, setStoryName] = useState("");
     const [startVolume, setStartVolume] = useState("");
     const [volumeFiles, setVolumeFiles] = useState<File[]>([]);
@@ -61,7 +57,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
-            stageDispatcher("next");
+            // stageDispatcher("next");
         }
         setStoryName("");
         setVolumeFiles([]);
@@ -69,32 +65,28 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
     };
 
     return (
-        <FormContainer
-            formTitle="Upload Comics"
-            size={3}
-            containerStyle="flex flex-col gap-2"
-        >
-            <div className="flex justify-between gap-4">
-                <FormInput
-                    type="text"
-                    inputValue={storyName}
-                    setInputValue={setStoryName}
-                    placeholder={inputStoryNameMessage}
-                />
-                <FormInput
-                    type="number"
-                    inputValue={startVolume}
-                    setInputValue={setStartVolume}
-                    placeholder={inputStartVolumeMessage}
-                />
-            </div>
+        <div className="flex flex-col gap-4 w-full">
+
+            <FormInput
+                type="text"
+                inputValue={storyName}
+                setInputValue={setStoryName}
+                placeholder={inputStoryNameMessage}
+            />
+            <FormInput
+                type="number"
+                inputValue={startVolume}
+                setInputValue={setStartVolume}
+                placeholder={inputStartVolumeMessage}
+            />
+
             <FileUploader onDrop={handleDrop} />
             {volumeFiles.length > 0 && (
                 <UploadPreview files={volumeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
                 onClick={handleSubmit}
-                className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
+                className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-lg"
                 disabled={upload.isUploading ||
                     (pageState.previewFiles.length == 0 && volumeFiles.length == 0)}
             >
@@ -106,7 +98,7 @@ const RenameComicsForm = ({ stageDispatcher }: RenameComicsFormProps) => {
                 progressLabel="Uploading..."
                 abortController={abortControllerRef.current}
             />
-        </FormContainer>
+        </div>
     );
 };
 

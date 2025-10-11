@@ -59,6 +59,12 @@ A modern web interface for managing and transforming media files for your media 
     pnpm run test
     ```
 
+## Deployment
+
+`docker buildx build --platform linux/amd64 -t <account>/media-dashboard .`
+
+`docker push <account>/media-dashboard:latest`
+
 ## Technologies
 
 - [React](https://react.dev/)

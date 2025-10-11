@@ -15,13 +15,14 @@ const FileUploader = ({ onDrop }: FileUploaderProps) => {
         onDrop: onDrop,
     });
 
-    return (<div
-        {...getRootProps()}
-        className={`border-dashed border-2 border-blue-200 ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}
-    >
-        <input {...getInputProps()} />
-        <p>{formDropzoneMessage}</p>
-    </div>)
+    return (
+        <div
+            {...getRootProps()}
+            className={`border-dashed border-2 border-blue-200 ${theme.roundedBorder} ${theme.appSecondaryColor}  hover:bg-blue-200 active:bg-blue-300 p-2 text-center cursor-pointer w-full`}
+        >
+            <input {...getInputProps()} />
+            <p>{formDropzoneMessage}</p>
+        </div>)
 }
 
 export default FileUploader;

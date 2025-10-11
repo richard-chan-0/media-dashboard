@@ -2,21 +2,15 @@ import FormContainer from "../../../../lib/components/FormContainer";
 import { NameChangeTable } from "../../shared";
 import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api/api";
 import SubmitButton from "../../../../lib/components/SubmitButton";
-import StageNavButtons from "../StageNavButtons";
-import { COMICS, mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
+import { mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataChanges, MetadataChange } from "../../../../lib/types";
-import { postMetadataWrite } from "../../../../lib/api/Metadata";
-
-interface NameChangePreviewProps {
-    stageDispatcher: React.ActionDispatch<[action: string]>;
-};
+import { postMetadataWrite } from "../../../../lib/api/metadata";
 
 
-
-const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
+const NameChangePreview = () => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
@@ -61,32 +55,17 @@ const NameChangePreview = ({ stageDispatcher }: NameChangePreviewProps) => {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             dispatch({ type: "CLEAR_NAME_CHANGES" });
-            stageDispatcher("reset");
         }
         setIsSpinner(false);
     };
 
     const isNameChanges = state.nameChanges.changes.length > 0;
-    const navProps = state.mediaType == COMICS ? {
-        leftLabel: "Back",
-        isLeftEnabled: true,
-        leftButtonAction: () => stageDispatcher("prev"),
-    } : {
-        leftLabel: "Back",
-        rightLabel: isNameChanges ? "Skip" : "Next",
-        isLeftEnabled: true,
-        leftButtonAction: () => stageDispatcher("prev"),
-    }
 
     return (
         <FormContainer
             formTitle="Rename Files"
             containerStyle="flex flex-col gap-2"
-            size={5}
         >
-            <StageNavButtons
-                {...navProps}
-            />
             {
                 isNameChanges && (
                     <>

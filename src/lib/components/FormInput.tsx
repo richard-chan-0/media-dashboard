@@ -22,7 +22,7 @@ const FormInput = ({
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={placeholder}
             required={required}
-            className={`border p-2 w-1/2 rounded-sm ${theme.appSecondaryColor} text-sm text-center`}
+            className={`border p-2 ${theme.roundedBorder} ${theme.appSecondaryColor} text-sm text-center`}
         />
     );
 };
