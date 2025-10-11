@@ -17,13 +17,13 @@ type PreviewFile = {
 const RenamePage = () => {
     const [mediaType, setMediaType] = useState<string>(VIDEOS);
     const { state, dispatch, pageState, pageDispatch } = useRename();
-    const [changeType, setChangeType] = useState<"rename" | "merge">("rename");
+    const [changeType, setChangeType] = useState<typeof TASK_RENAME | typeof TASK_MERGE>(TASK_RENAME);
 
     const getTaskLayout = () => {
         switch (changeType) {
-            case "merge":
+            case TASK_MERGE:
                 return <PreviewFiles />
-            case "rename":
+            case TASK_RENAME:
                 return <NameChangePreview />;
             default:
                 return <></>;
