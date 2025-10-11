@@ -24,3 +24,8 @@
 # Documentation
 
 - Always use JSDoc comments for functions.
+
+# Testing
+
+- Use Vitest for unit tests.
+- import '@testing-library/jest-dom' for DOM matchers.

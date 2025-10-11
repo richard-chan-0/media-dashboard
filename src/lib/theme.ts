@@ -9,6 +9,7 @@ const buttonFormat = " text-white p-2 rounded-xl justify-center";
 const shadowBorder = "shadow-blue-200 shadow-sm border border-blue-400";
 const shadowBorderHover =
     "hover:shadow-blue-200 hover:shadow-sm hover:border hover:border-blue-400";
+const roundedBorder = "rounded-lg";
 
 export default {
     appColor,
@@ -20,4 +21,5 @@ export default {
     deleteIconColor,
     shadowBorder,
     shadowBorderHover,
+    roundedBorder,
 };

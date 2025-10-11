@@ -1,54 +1,30 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 import FormPage from "../lib/components/FormPage";
-import { mediaLink } from "../lib/constants";
+import { mediaLink, TASK_RENAME, VIDEOS, TASK_MERGE } from "../lib/constants";
 import { get } from "../lib/api/api";
 import { useRename } from "../lib/hooks/usePageContext";
 import { RenameProvider } from "../service/rename/RenameProvider";
 import PreviewFiles from "../lib/components/PreviewFiles";
-import { RenameUploadStage, SetStreams, NameChangePreview } from "../service/rename/stages"
+import { NameChangePreview } from "../service/rename/stages"
+import RenamePanel from "../service/rename/shared/RenamePanel/RenamePanel";
 
-type RenamePageProps = {
-    mediaType: string;
-};
 
 type PreviewFile = {
     name: string;
     path: string;
 };
 
-const stageReducer = (stage: number, action: string) => {
-    switch (action) {
-        case "next":
-            return stage + 1 > 2 ? 2 : stage + 1;
-        case "prev":
-            return stage - 1 < 0 ? 0 : stage - 1;
-        case "reset":
-            return 0;
-        default:
-            return stage;
-    }
-};
-
-const RenamePage = ({ mediaType }: RenamePageProps) => {
+const RenamePage = () => {
+    const [mediaType, setMediaType] = useState<string>(VIDEOS);
     const { state, dispatch, pageState, pageDispatch } = useRename();
-    const [stage, stageDispatcher] = useReducer(stageReducer, 0);
+    const [changeType, setChangeType] = useState<typeof TASK_RENAME | typeof TASK_MERGE>(TASK_RENAME);
 
-    const getStages = (stage: number) => {
-        switch (stage) {
-            case 0:
-                return (
-                    <>
-                        <PreviewFiles />
-                        <RenameUploadStage
-                            mediaType={mediaType}
-                            stageDispatcher={stageDispatcher}
-                        />
-                    </>
-                );
-            case 1:
-                return <NameChangePreview stageDispatcher={stageDispatcher} />;
-            case 2:
-                return <SetStreams stageDispatcher={stageDispatcher} />;
+    const getTaskLayout = () => {
+        switch (changeType) {
+            case TASK_MERGE:
+                return <PreviewFiles />
+            case TASK_RENAME:
+                return <NameChangePreview />;
             default:
                 return <></>;
         }
@@ -81,17 +57,27 @@ const RenamePage = ({ mediaType }: RenamePageProps) => {
         <FormPage
             error={pageState.error}
             isColumn={false}
-            pageStyle="justify-center items-start"
+            pageStyle="justify-center items-start h-full w-full"
         >
-            {getStages(stage)}
+            <div className="flex w-full h-full">
+                <RenamePanel
+                    renameMedia={mediaType}
+                    setRenameMedia={setMediaType}
+                    task={changeType === TASK_RENAME ? TASK_RENAME : TASK_MERGE}
+                    setTask={(v) => setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_MERGE)}
+                />
+                <section className="flex mt-4 justify-center flex-1">
+                    {getTaskLayout()}
+                </section>
+            </div>
         </FormPage>
     );
 };
 
-const RenamePageWrapper = ({ mediaType }: RenamePageProps) => {
+const RenamePageWrapper = () => {
     return (
         <RenameProvider>
-            <RenamePage mediaType={mediaType} />
+            <RenamePage />
         </RenameProvider>
     );
 };

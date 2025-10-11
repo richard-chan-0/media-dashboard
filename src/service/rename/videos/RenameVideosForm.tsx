@@ -8,18 +8,14 @@ import {
 } from "../../../lib/constants";
 import { processApiResponseToNameChange } from "../../../lib/api/api";
 import UploadPreview from "../../../lib/components/UploadPreview";
-import FormContainer from "../../../lib/components/FormContainer";
 import FormInput from "../../../lib/components/FormInput";
 import { ProgressBar } from "../../../lib/components";
 import { useRename } from "../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../lib/reducers/uploadReducer";
 import FileUploader from "../../../lib/components/FileUploader";
+import theme from "../../../lib/theme";
 
-type RenameVideosFormProps = {
-    stageDispatcher: React.ActionDispatch<[action: string]>;
-};
-
-const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
+const RenameVideosForm = () => {
     const [seasonNumber, setSeasonNumber] = useState("");
     const [startNumber, setStartNumber] = useState("");
     const [episodeFiles, setEpisodeFiles] = useState<File[]>([]);
@@ -61,7 +57,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
         } else {
             const processedResponse = processApiResponseToNameChange(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
-            stageDispatcher("next");
+            // stageDispatcher("next");
             setSeasonNumber("");
             setStartNumber("");
             setEpisodeFiles([]);
@@ -71,33 +67,26 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
     };
 
     return (
-        <FormContainer
-            formTitle="Upload Videos"
-            size={3}
-            containerStyle="flex flex-col gap-2 items-center"
-            isBorderEnabled={true}
-        >
-            <div className="flex w-full gap-4 justify-between">
-                <FormInput
-                    type="number"
-                    inputValue={seasonNumber}
-                    setInputValue={setSeasonNumber}
-                    placeholder={inputSeasonMessage}
-                />
-                <FormInput
-                    type="number"
-                    inputValue={startNumber}
-                    setInputValue={setStartNumber}
-                    placeholder={inputStartEpisodeMessage}
-                />
-            </div>
+        <div className="flex flex-col gap-4 w-full">
+            <FormInput
+                type="number"
+                inputValue={seasonNumber}
+                setInputValue={setSeasonNumber}
+                placeholder={inputSeasonMessage}
+            />
+            <FormInput
+                type="number"
+                inputValue={startNumber}
+                setInputValue={setStartNumber}
+                placeholder={inputStartEpisodeMessage}
+            />
             <FileUploader onDrop={handleDrop} />
             {episodeFiles.length > 0 && (
                 <UploadPreview files={episodeFiles.map(file => file.name)} deleteFile={handleDelete} />
             )}
             <button
                 onClick={handleSubmit}
-                className="bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full rounded-b-lg"
+                className={`bg-blue-500 hover:bg-blue-600 active:bg-blue-800 disabled:bg-gray-200 text-white p-2 w-full ${theme.roundedBorder}`}
                 disabled={
                     upload.isUploading ||
                     (pageState.previewFiles.length == 0 && episodeFiles.length == 0)
@@ -111,7 +100,7 @@ const RenameVideosForm = ({ stageDispatcher }: RenameVideosFormProps) => {
                 progressLabel={"Uploading..."}
                 abortController={abortControllerRef.current}
             />
-        </FormContainer>
+        </div>
     );
 };
 

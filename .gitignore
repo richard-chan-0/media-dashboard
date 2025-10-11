@@ -33,3 +33,5 @@ pnpm-lock.yaml
 storybook-static
 
 **/*.prompt.md
+
+**/*.json
