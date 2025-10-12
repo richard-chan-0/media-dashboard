@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import theme from "../../../../lib/theme";
 import { NameChanges } from "../../../../lib/types";
 import { removePathFromFilePath, truncateString } from "../../../../lib/utilities";
-import MetadataChangeModal from "../../videos/MetadataChangeModal/MetadataChangeModal";
+import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/MetadataEditChangeModal";
 import { TableCell } from "..";
-import { EditPencil, TrashSolid } from "iconoir-react";
+import { EditPencil, Scissor, TrashSolid } from "iconoir-react";
 import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
 import NameChangeModal from "../NameChangeModal/NameChangeModal";
 import { VIDEOS } from "../../../../lib/constants";
 import { MetadataChange } from "../../../../lib/types";
+import MetadataMergeChangeModal from "../../videos/MetadataMergeChangeModal/MetadataMergeChangeModal";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
@@ -18,6 +19,7 @@ type NameChangesTableProps = {
 
 const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isMergeOpen, setIsMergeOpen] = useState(false);
     const [currentName, setCurrentName] = useState("");
     const [suggestedName, setSuggestedName] = useState("");
     const [wasEditedList, setWasEditedList] = useState<string[]>([]);
@@ -28,6 +30,12 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
         setSuggestedName(suggestion);
         setIsOpen(true);
     };
+
+    const handleMerge = (current: string, suggestion: string) => {
+        setCurrentName(current);
+        setSuggestedName(suggestion);
+        setIsMergeOpen(true);
+    }
 
     const changes = nameChanges?.changes;
     if (!changes || changes.length === 0) {
@@ -69,6 +77,15 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                                 <TableCell>
                                     <div className="flex items-center gap-1 justify-center">
                                         <button
+                                            aria-label="merge button"
+                                            title="Merge"
+                                            onClick={() => handleMerge(choice.input, choice.output)}
+                                        >
+                                            <Scissor
+                                                className={`hover:text-green-400 ${editPencilStyle}`}
+                                            />
+                                        </button>
+                                        <button
                                             aria-label="edit button"
                                             title="Edit"
                                             onClick={() => handleEdit(choice.input, choice.output)}
@@ -92,7 +109,7 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                 </tbody>
             </table>
             {mediaType === VIDEOS ? (
-                <MetadataChangeModal
+                <MetadataEditChangeModal
                     isOpen={isOpen}
                     onClose={onModalClose}
                     currentName={currentName}
@@ -106,6 +123,13 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                     initialName={suggestedName}
                 />
             )}
+            <MetadataMergeChangeModal
+                isOpen={isMergeOpen}
+                onClose={() => setIsMergeOpen(false)}
+                currentName={currentName}
+                suggestedName={suggestedName}
+                onMerge={onTableEdit}
+            />
         </div>
     );
 };
