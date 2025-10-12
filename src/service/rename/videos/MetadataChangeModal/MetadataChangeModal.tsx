@@ -83,7 +83,7 @@ const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEd
     };
 
     const createStreamVal = (option: Stream) => {
-        const mainIdentifier = option.language ? option.language : option.merge_track_number;
+        const mainIdentifier = option.language && option.language !== "no language" ? option.language : option.merge_track_number;
         const secondaryIdentifier = option.title ? ` - ${option.title}` : "";
         return `${mainIdentifier}${secondaryIdentifier}`;
     };

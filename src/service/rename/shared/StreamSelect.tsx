@@ -42,7 +42,6 @@ const StreamSelect = ({
                             key={option.stream_number}
                             value={option.stream_number}
                         >
-                            {" "}
                             {optionVal}
                         </option>
                     );
