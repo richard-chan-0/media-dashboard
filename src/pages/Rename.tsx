@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FormPage from "../lib/components/FormPage";
 import { mediaLink, TASK_RENAME, VIDEOS, TASK_MERGE } from "../lib/constants";
 import { get } from "../lib/api/api";
@@ -53,6 +53,11 @@ const RenamePage = () => {
         dispatch({ type: "SET_MEDIA_TYPE", payload: mediaType });
     }, [dispatch, mediaType]);
 
+    const handleSetTask = useCallback(
+        (v: typeof TASK_RENAME | typeof TASK_MERGE) => setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_MERGE),
+        []
+    );
+
     return (
         <FormPage
             error={pageState.error}
@@ -64,7 +69,7 @@ const RenamePage = () => {
                     renameMedia={mediaType}
                     setRenameMedia={setMediaType}
                     task={changeType === TASK_RENAME ? TASK_RENAME : TASK_MERGE}
-                    setTask={(v) => setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_MERGE)}
+                    setTask={handleSetTask}
                 />
                 <section className="flex mt-4 justify-center flex-1">
                     {getTaskLayout()}

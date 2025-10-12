@@ -8,7 +8,6 @@ import { get } from "../../../../lib/api/api";
 import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamSelect, StreamCheckboxList } from "../../shared";
 import { Streams, MetadataChange, Stream } from "../../../../lib/types";
-import React from "react";
 
 type MetadataChangeModalProps = {
     isOpen: boolean;
@@ -18,7 +17,7 @@ type MetadataChangeModalProps = {
     onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
 };
 
-const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
+const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
     const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
     const [fileTitle, setFileTitle] = useState("");
     const [streams, setStreams] = useState<Streams | null>(null);
@@ -27,7 +26,6 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
     const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
     const [defaultAudio, setDefaultAudio] = useState("");
     const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
-
     const { pageDispatch } = useRename();
 
     useEffect(() => {
@@ -85,10 +83,10 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
     };
 
     const createStreamVal = (option: Stream) => {
-        return `${option.language}${option.title ? `:${option.title}` : ""}`;
+        const mainIdentifier = option.language ? option.language : option.merge_track_number;
+        const secondaryIdentifier = option.title ? ` - ${option.title}` : "";
+        return `${mainIdentifier}${secondaryIdentifier}`;
     };
-
-    if (!isOpen) return null;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -173,7 +171,7 @@ const MetadataChangeModal = React.memo(({ isOpen, onClose, currentName, suggeste
             </div>
         </Modal>
     );
-});
+};
 
 MetadataChangeModal.displayName = "MetadataChangeModal";
 

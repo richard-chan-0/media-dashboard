@@ -11,7 +11,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
     if (!isOpen) return <></>;
 
     return (
-        <div
+        <section
             className={`fixed inset-0 ${theme.appColorLightOpacity}  flex items-center justify-center z-50`}
             onClick={onClose}
         >
@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
             >
                 {children}
             </div>
-        </div>
+        </section>
     );
 };
 

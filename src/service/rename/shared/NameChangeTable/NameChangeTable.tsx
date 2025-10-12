@@ -16,14 +16,14 @@ type NameChangesTableProps = {
     onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
 };
 
-const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
+const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [currentName, setCurrentName] = useState("");
     const [suggestedName, setSuggestedName] = useState("");
     const [wasEditedList, setWasEditedList] = useState<string[]>([]);
     const deleteFile = useDeleteFile();
 
-    const handleNameEdit = (current: string, suggestion: string) => {
+    const handleEdit = (current: string, suggestion: string) => {
         setCurrentName(current);
         setSuggestedName(suggestion);
         setIsOpen(true);
@@ -71,7 +71,7 @@ const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChan
                                         <button
                                             aria-label="edit button"
                                             title="Edit"
-                                            onClick={() => handleNameEdit(choice.input, choice.output)}
+                                            onClick={() => handleEdit(choice.input, choice.output)}
                                         >
                                             <EditPencil
                                                 className={`hover:text-green-400 ${editPencilStyle}`}
@@ -108,7 +108,7 @@ const NameChangeTable = React.memo(({ nameChanges, mediaType, onEdit }: NameChan
             )}
         </div>
     );
-});
+};
 
 NameChangeTable.displayName = "NameChangeTable";
 
