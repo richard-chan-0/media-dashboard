@@ -8,7 +8,7 @@ import { RenameUploadStage } from "../../stages";
 interface RenamePanelProps extends React.HTMLAttributes<HTMLDivElement> {
     task: typeof TASK_RENAME | typeof TASK_MERGE;
     renameMedia: string;
-    setTask: React.Dispatch<React.SetStateAction<typeof TASK_RENAME | typeof TASK_MERGE>>;
+    setTask: (v: typeof TASK_RENAME | typeof TASK_MERGE) => void;
     setRenameMedia: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -19,16 +19,22 @@ const RenamePanel = ({ setRenameMedia, renameMedia, task, setTask, ...props }: R
         setRenameMedia(isVideo ? VIDEOS : COMICS);
     }, [isVideo, setRenameMedia]);
 
-    const videoTask = () => (
-        <div className="flex gap-2 w-full justify-between">
-            <div className="text-lg font-medium mb-2 w-1/2">Task</div>
-            <SlidingToggleButton
-                isToggle={task === TASK_RENAME}
-                onToggle={(v) => setTask(v ? TASK_RENAME : TASK_MERGE)}
-                icons={{ before: DesignPencil, after: Keyframes }}
-            />
-        </div>
-    );
+    const videoTask = () => {
+        const handleToggle = (isToggled: boolean) => {
+            const task = isToggled ? TASK_RENAME : TASK_MERGE;
+            return setTask(task);
+        }
+        return (
+            <div className="flex gap-2 w-full justify-between">
+                <div className="text-lg font-medium mb-2 w-1/2">Task</div>
+                <SlidingToggleButton
+                    isToggle={task === TASK_RENAME}
+                    onToggle={handleToggle}
+                    icons={{ before: DesignPencil, after: Keyframes }}
+                />
+            </div>
+        )
+    };
 
     return (
         <section

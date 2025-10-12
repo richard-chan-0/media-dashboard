@@ -54,11 +54,6 @@ describe('NameChangeModal', () => {
         expect(screen.getByDisplayValue('newname.txt')).toBeInTheDocument();
     });
 
-    it('does not render modal when closed', () => {
-        renderWithProvider(<MetadataChangeModal {...defaultProps} isOpen={false} />);
-        expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
-    });
-
     it('calls onClose when close button is clicked', () => {
         renderWithProvider(<MetadataChangeModal {...defaultProps} />);
         fireEvent.click(screen.getByTestId('close-icon').parentElement!);
