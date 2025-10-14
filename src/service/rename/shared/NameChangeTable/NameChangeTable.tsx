@@ -1,48 +1,70 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import theme from "../../../../lib/theme";
-import { NameChanges } from "../../../../lib/types";
+import { MetadataMergeChange, NameChanges } from "../../../../lib/types";
 import { removePathFromFilePath, truncateString } from "../../../../lib/utilities";
-import MetadataChangeModal from "../../videos/MetadataChangeModal/MetadataChangeModal";
+import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/MetadataEditChangeModal";
 import { TableCell } from "..";
-import { EditPencil, TrashSolid } from "iconoir-react";
+import { EditPencil, Scissor } from "iconoir-react";
 import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
 import NameChangeModal from "../NameChangeModal/NameChangeModal";
 import { VIDEOS } from "../../../../lib/constants";
-import { MetadataChange } from "../../../../lib/types";
+import { MetadataEditChange } from "../../../../lib/types";
+import MetadataMergeChangeModal from "../../videos/MetadataMergeChangeModal/MetadataMergeChangeModal";
+import TrashButton from "../../../../lib/components/TrashButton/TrashButton";
 
 type NameChangesTableProps = {
     nameChanges: NameChanges;
     mediaType?: string;
-    onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
+    onEdit: (filename: string, newChange: MetadataEditChange | undefined) => void;
+    onMerge: (newChange: MetadataMergeChange | undefined) => void;
 };
 
-const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTableProps) => {
-    const [isOpen, setIsOpen] = useState(false);
+const NameChangeTable = ({ nameChanges, mediaType, onEdit, onMerge }: NameChangesTableProps) => {
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isMergeOpen, setIsMergeOpen] = useState(false);
     const [currentName, setCurrentName] = useState("");
     const [suggestedName, setSuggestedName] = useState("");
-    const [wasEditedList, setWasEditedList] = useState<string[]>([]);
+    const [wasEditAdded, setWasEditAddedList] = useState<string[]>([]);
+    const [wasMergeAdded, setWasMergeAddedList] = useState<string[]>([]);
+
     const deleteFile = useDeleteFile();
 
     const handleEdit = (current: string, suggestion: string) => {
         setCurrentName(current);
         setSuggestedName(suggestion);
-        setIsOpen(true);
+        setIsEditOpen(true);
     };
+
+    const handleMerge = (current: string) => {
+        setCurrentName(current);
+        setIsMergeOpen(true);
+    }
 
     const changes = nameChanges?.changes;
     if (!changes || changes.length === 0) {
         return <></>;
     }
 
-    const onTableEdit = (filename: string, newChange: MetadataChange | undefined) => {
-        if (newChange !== undefined && wasEditedList.includes(filename) === false) {
-            setWasEditedList((prev) => [...prev, filename]);
+    const onTableEdit = (filename: string, newChange: MetadataEditChange | undefined) => {
+        if (newChange !== undefined && wasEditAdded.includes(filename) === false) {
+            setWasEditAddedList((prev) => [...prev, filename]);
         }
         onEdit(filename, newChange);
     }
+    const onTableMerge = (newChange: MetadataMergeChange | undefined) => {
+        console.log("onTableMerge called with:", newChange);
+        if (newChange !== undefined && wasMergeAdded.includes(newChange.filename) === false) {
+            setWasMergeAddedList((prev) => [...prev, newChange.filename]);
+            onMerge(newChange);
+        }
 
-    const onModalClose = () => {
-        setIsOpen(false);
+    }
+
+    const onEditModalClose = () => {
+        setIsEditOpen(false);
+    }
+    const onMergeModalClose = () => {
+        setIsMergeOpen(false);
     }
 
     return (
@@ -57,7 +79,10 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                 </thead>
                 <tbody>
                     {changes.map((choice) => {
-                        const editPencilStyle = wasEditedList.includes(choice.input) ? "text-blue-400" : "hover:text-green-400";
+
+                        const editPencilStyle = wasEditAdded.includes(choice.input) ? "text-blue-400" : "hover:text-green-400";
+
+                        const mergeScissorStyle = wasMergeAdded.includes(removePathFromFilePath(choice.input)) ? "text-blue-400" : "hover:text-indigo-400";
                         return (
                             <tr key={choice.output}>
                                 <TableCell>
@@ -69,21 +94,24 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                                 <TableCell>
                                     <div className="flex items-center gap-1 justify-center">
                                         <button
+                                            aria-label="merge button"
+                                            title="Merge"
+                                            onClick={() => handleMerge(choice.input)}
+                                        >
+                                            <Scissor
+                                                className={`${mergeScissorStyle}`}
+                                            />
+                                        </button>
+                                        <button
                                             aria-label="edit button"
                                             title="Edit"
                                             onClick={() => handleEdit(choice.input, choice.output)}
                                         >
                                             <EditPencil
-                                                className={`hover:text-green-400 ${editPencilStyle}`}
+                                                className={`${editPencilStyle}`}
                                             />
                                         </button>
-                                        <button
-                                            aria-label="delete button"
-                                            title="Delete"
-                                            onClick={() => deleteFile(removePathFromFilePath(choice.input))}
-                                        >
-                                            <TrashSolid className={theme.deleteIconColor} />
-                                        </button>
+                                        <TrashButton onClick={() => deleteFile(removePathFromFilePath(choice.input))} />
                                     </div>
                                 </TableCell>
                             </tr>
@@ -92,20 +120,26 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit }: NameChangesTablePro
                 </tbody>
             </table>
             {mediaType === VIDEOS ? (
-                <MetadataChangeModal
-                    isOpen={isOpen}
-                    onClose={onModalClose}
+                <MetadataEditChangeModal
+                    isOpen={isEditOpen}
+                    onClose={onEditModalClose}
                     currentName={currentName}
                     suggestedName={suggestedName}
                     onEdit={onTableEdit}
                 />
             ) : (
                 <NameChangeModal
-                    isOpen={isOpen}
-                    onClose={onModalClose}
+                    isOpen={isEditOpen}
+                    onClose={onEditModalClose}
                     initialName={suggestedName}
                 />
             )}
+            <MetadataMergeChangeModal
+                isOpen={isMergeOpen}
+                onClose={onMergeModalClose}
+                currentName={currentName}
+                onMerge={onTableMerge}
+            />
         </div>
     );
 };

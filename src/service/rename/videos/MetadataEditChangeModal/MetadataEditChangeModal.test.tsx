@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import MetadataChangeModal from './MetadataChangeModal';
+import MetadataEditChangeModal from './MetadataEditChangeModal';
 import { renderWithProvider } from '../../../../lib/test/renameRenderer';
 
 const mockDispatch = vi.fn();
@@ -47,7 +47,7 @@ describe('NameChangeModal', () => {
     };
 
     it('renders modal when open', () => {
-        renderWithProvider(<MetadataChangeModal {...defaultProps} />);
+        renderWithProvider(<MetadataEditChangeModal {...defaultProps} />);
         screen.debug();
         expect(screen.getByTestId('modal')).toBeInTheDocument();
         expect(screen.getByLabelText(/New Filename/)).toBeInTheDocument();
@@ -55,19 +55,19 @@ describe('NameChangeModal', () => {
     });
 
     it('calls onClose when close button is clicked', () => {
-        renderWithProvider(<MetadataChangeModal {...defaultProps} />);
+        renderWithProvider(<MetadataEditChangeModal {...defaultProps} />);
         fireEvent.click(screen.getByTestId('close-icon').parentElement!);
         expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
     it('updates input value when typed', () => {
-        renderWithProvider(<MetadataChangeModal {...defaultProps} />);
+        renderWithProvider(<MetadataEditChangeModal {...defaultProps} />);
         const input = screen.getByLabelText(/New Filename/);
         fireEvent.change(input, { target: { value: 'newname.txt' } });
         expect((input as HTMLInputElement).value).toBe('newname.txt');
     });
     it('calls dispatch and onClose when Update is clicked', () => {
-        renderWithProvider(<MetadataChangeModal {...defaultProps} />);
+        renderWithProvider(<MetadataEditChangeModal {...defaultProps} />);
         const input = screen.getByLabelText(/New Filename/);
         fireEvent.change(input, { target: { value: 'newname.txt' } });
         fireEvent.click(screen.getByText('Update'));

@@ -1,6 +1,6 @@
 import { postJson } from "./api";
 import { ffmpegLink } from "../constants";
-import { MetadataChanges } from "../types";
+import { MetadataEditChanges, MetadataMergeChanges } from "../types";
 import { removePathFromFilePath } from "../utilities";
 
 interface MetadataUtilityWriteChange {
@@ -23,7 +23,7 @@ interface MetadataUtiliityMergeRequest {
 }
 
 export const postMetadataWrite = async (
-    metadataChangeRequest: MetadataChanges,
+    metadataChangeRequest: MetadataEditChanges,
 ) => {
     const writeRequest = Object.entries(metadataChangeRequest).reduce(
         (acc, [filename, change]) => {
@@ -41,7 +41,7 @@ export const postMetadataWrite = async (
 };
 
 export const postMetadataMerge = async (
-    metadataChangeRequest: MetadataChanges,
+    metadataChangeRequest: MetadataMergeChanges,
 ): Promise<MetadataUtiliityMergeRequest> => {
     const mergeRequest = Object.entries(metadataChangeRequest).reduce(
         (acc, [filename, change]) => {

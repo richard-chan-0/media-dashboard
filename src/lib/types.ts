@@ -38,15 +38,24 @@ export type Streams = {
     is_mkv?: boolean;
 };
 
-export interface MetadataChanges {
-    [key: string]: MetadataChange;
+export interface MetadataEditChanges {
+    [key: string]: MetadataEditChange;
 }
 
-export interface MetadataChange {
+export interface MetadataEditChange {
     newFilename: string;
     title?: string;
     defaultSubtitle?: string;
     defaultAudio?: string;
-    audiosToKeep?: string[];
-    subtitlesToKeep?: string[];
+}
+
+export interface MetadataMergeChanges {
+    changes: MetadataMergeChange[];
+}
+
+export interface MetadataMergeChange {
+    filename: string;
+    output_filename: string;
+    audio_tracks: string;
+    subtitle_tracks: string;
 }

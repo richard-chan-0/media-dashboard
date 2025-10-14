@@ -6,26 +6,24 @@ import Modal from "../../shared/Modal/Modal";
 import { CloseButton, Spinner } from "../../../../lib/components";
 import { get } from "../../../../lib/api/api";
 import { ffmpegLink, no_api_error } from "../../../../lib/constants";
-import { StreamSelect, StreamCheckboxList } from "../../shared";
-import { Streams, MetadataChange, Stream } from "../../../../lib/types";
+import { StreamSelect } from "../../shared";
+import { Streams, MetadataEditChange, Stream } from "../../../../lib/types";
 
-type MetadataChangeModalProps = {
+type MetadataEditChangeModalProps = {
     isOpen: boolean;
     onClose: () => void;
     currentName: string;
     suggestedName: string;
-    onEdit: (filename: string, newChange: MetadataChange | undefined) => void;
+    onEdit: (filename: string, newChange: MetadataEditChange | undefined) => void;
 };
 
-const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataChangeModalProps) => {
+const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataEditChangeModalProps) => {
     const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
     const [fileTitle, setFileTitle] = useState("");
     const [streams, setStreams] = useState<Streams | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
-    const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
     const [defaultAudio, setDefaultAudio] = useState("");
-    const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
     const { pageDispatch } = useRename();
 
     useEffect(() => {
@@ -51,31 +49,21 @@ const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEd
         }
     };
 
-    const isMetadataChange = (change: MetadataChange) => {
+    const isMetadataChange = (change: MetadataEditChange) => {
         return (
             change.title !== undefined ||
             change.defaultSubtitle !== undefined ||
-            change.defaultAudio !== undefined ||
-            (change.audiosToKeep !== undefined && change.audiosToKeep.length > 0) ||
-            (change.subtitlesToKeep !== undefined && change.subtitlesToKeep.length > 0)
+            change.defaultAudio !== undefined
         );
     };
 
     const handleEditSubmit = () => {
-        const additionalSubtitles = [defaultSubtitle, ...checkedSubtitles].map((number) => {
-            return streams?.subtitle.find((s) => s.stream_number.toString() === number)?.merge_track_number.toString()
-        }).filter((track) => track !== undefined);
-        const additionalAudios = [defaultAudio, ...checkedAudios].map((number) => {
-            return streams?.audio.find((a) => a.stream_number.toString() === number)?.merge_track_number.toString()
-        }).filter((track) => track !== undefined);
 
-        const newChange: MetadataChange = {
+        const newChange: MetadataEditChange = {
             newFilename: filename,
             title: fileTitle || undefined,
             defaultSubtitle: defaultSubtitle || undefined,
             defaultAudio: defaultAudio || undefined,
-            audiosToKeep: additionalAudios || undefined,
-            subtitlesToKeep: additionalSubtitles || undefined,
         };
 
         onEdit(currentName, isMetadataChange(newChange) ? newChange : undefined);
@@ -83,7 +71,7 @@ const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEd
     };
 
     const createStreamVal = (option: Stream) => {
-        const mainIdentifier = option.language ? option.language : option.merge_track_number;
+        const mainIdentifier = option.language && option.language !== "no language" ? option.language : option.merge_track_number;
         const secondaryIdentifier = option.title ? ` - ${option.title}` : "";
         return `${mainIdentifier}${secondaryIdentifier}`;
     };
@@ -141,24 +129,6 @@ const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEd
                             isCenterAlign={true}
                             isRequired={true}
                         />
-                        <StreamCheckboxList
-                            label="Check Additional Audios"
-                            checkedStreams={checkedAudios}
-                            setCheckedStreams={setCheckedAudios}
-                            streams={streams.audio.filter(
-                                (audio) => audio.stream_number.toString() !== defaultAudio,
-                            )}
-                            createVal={createStreamVal}
-                        />
-                        <StreamCheckboxList
-                            label="Check Additional Subtitles"
-                            checkedStreams={checkedSubtitles}
-                            setCheckedStreams={setCheckedSubtitles}
-                            streams={streams.subtitle.filter(
-                                (subtitle) => subtitle.stream_number.toString() !== defaultSubtitle,
-                            )}
-                            createVal={createStreamVal}
-                        />
                     </div>
                 )}
 
@@ -173,6 +143,6 @@ const MetadataChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEd
     );
 };
 
-MetadataChangeModal.displayName = "MetadataChangeModal";
+MetadataEditChangeModal.displayName = "MetadataChangeModal";
 
-export default MetadataChangeModal;
+export default MetadataEditChangeModal;

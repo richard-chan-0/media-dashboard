@@ -6,22 +6,32 @@ import { mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/con
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
-import { MetadataChanges, MetadataChange } from "../../../../lib/types";
+import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges } from "../../../../lib/types";
 import { postMetadataWrite } from "../../../../lib/api/metadata";
 
 
 const NameChangePreview = () => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
-    const [metadataChanges, setMetadataChanges] = useState<MetadataChanges>();
-
-    const handleMetadataChange = (filename: string, newChange: MetadataChange | undefined) => {
-        if (newChange !== undefined) {
-            setMetadataChanges((prevChanges) => ({
-                ...prevChanges,
-                [filename]: newChange
-            }));
+    const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>();
+    const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
+    const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
+        if (newChange === undefined) {
+            return;
         }
+        setMetadataEditChanges((prevChanges) => ({
+            ...prevChanges,
+            [filename]: newChange
+        }));
+    };
+
+    const handleMetadataMergeChange = async (newChange: MetadataMergeChange | undefined) => {
+        if (!newChange) {
+            return;
+        }
+        setMetadataMergeChanges((prevChanges) => ({
+            changes: prevChanges ? [...prevChanges.changes, newChange] : [newChange]
+        }));
     };
 
     const postRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest) => {
@@ -31,12 +41,37 @@ const NameChangePreview = () => {
         );
     }
 
-    const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataChanges) => {
+    const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataEditChanges) => {
         await postMetadataWrite(metadataChanges);
         await postRenameChangeRequest(nameChangeRequest);
     }
 
-    const handleSubmit = async () => {
+    const postMetadataMergeChangeRequest = async (mergeChanges: MetadataMergeChanges) => {
+        console.log("Posting metadata merge change request with:", mergeChanges);
+        return await postJson(
+            `${ffmpegLink}/mkv/merge`,
+            mergeChanges,
+        );
+    }
+
+    const handleMergeSubmit = async () => {
+        pageDispatch({ type: "CLEAR_ERROR" });
+        if (!mediaLink || !ffmpegLink) {
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
+            return;
+        }
+        setIsSpinner(true);
+        const response = await postMetadataMergeChangeRequest(metadataMergeChanges);
+        if (response?.error) {
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
+        } else {
+            // dispatch({ type: "CLEAR_NAME_CHANGES" });
+            console.log("Merge successful:", response);
+        }
+        setIsSpinner(false);
+    };
+
+    const handleEditSubmit = async () => {
         pageDispatch({ type: "CLEAR_ERROR" });
         if (!mediaLink || !ffmpegLink) {
             pageDispatch({ type: "SET_ERROR", payload: no_api_error });
@@ -47,8 +82,8 @@ const NameChangePreview = () => {
         );
         setIsSpinner(true);
         const response = await (
-            metadataChanges ?
-                postMetadataRenameChangeRequest(nameChangeRequest, metadataChanges) :
+            metadataEditChanges ?
+                postMetadataRenameChangeRequest(nameChangeRequest, metadataEditChanges) :
                 postRenameChangeRequest(nameChangeRequest)
         );
         if (response?.error) {
@@ -72,18 +107,27 @@ const NameChangePreview = () => {
                         <NameChangeTable
                             nameChanges={state.nameChanges}
                             mediaType={state.mediaType}
-                            onEdit={state.mediaType === VIDEOS ? handleMetadataChange : () => { }}
+                            onEdit={state.mediaType === VIDEOS ? handleMetadataEditChange : () => { }}
+                            onMerge={state.mediaType === VIDEOS ? handleMetadataMergeChange : () => { }}
                         />
                         <div className="flex gap-4 w-full justify-end mt-2">
                             {
                                 isSpinner ? (
                                     <Spinner />
                                 ) : (
-                                    <SubmitButton
-                                        onClick={handleSubmit}
-                                        label="Submit!"
-                                        buttonStyle="w-fit"
-                                    />
+                                    <>
+                                        <SubmitButton
+                                            onClick={handleMergeSubmit}
+                                            label="Submit Merges!"
+                                            buttonStyle="w-fit"
+                                        />
+                                        <SubmitButton
+                                            onClick={handleEditSubmit}
+                                            label="Submit Edits!"
+                                            buttonStyle="w-fit"
+                                        />
+                                    </>
+
                                 )
                             }
                         </div>

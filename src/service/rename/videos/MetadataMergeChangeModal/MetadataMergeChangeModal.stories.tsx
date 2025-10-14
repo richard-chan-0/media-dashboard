@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import MetadataChangeModal from "./MetadataChangeModal";
+import MetadataMergeChangeModal from "./MetadataMergeChangeModal";
 import { useState } from "react";
-import { RenameProvider } from "../../../../service/rename/RenameProvider";
+import { RenameProvider } from "../../RenameProvider";
 
 
 const meta = {
-    component: MetadataChangeModal,
+    component: MetadataMergeChangeModal,
     title: "Name Change Modal",
     tags: ["autodocs"],
     render: (args) => {
@@ -19,18 +19,18 @@ const meta = {
                     Open Modal
                 </button>
                 <RenameProvider>
-                    <MetadataChangeModal
+                    <MetadataMergeChangeModal
                         isOpen={isOpen}
                         onClose={() => setIsOpen(false)}
                         currentName={args.currentName}
                         suggestedName={args.suggestedName}
-                        onEdit={() => { }}
+                        onMerge={() => { }}
                     />
                 </RenameProvider>
             </>
         )
     }
-} satisfies Meta<typeof MetadataChangeModal>;
+} satisfies Meta<typeof MetadataMergeChangeModal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -40,7 +40,7 @@ export const Default: Story = {
         currentName: "example.txt",
         isOpen: true,
         onClose: () => { },
-        onEdit: () => { },
+        onMerge: () => { },
         suggestedName: "newname.txt",
     }
 };

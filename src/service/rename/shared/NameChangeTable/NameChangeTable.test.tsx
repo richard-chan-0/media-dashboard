@@ -16,6 +16,7 @@ describe('NameChangeTable', () => {
     };
 
     const mockOnEdit = vi.fn();
+    const mockOnMerge = vi.fn();
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -27,6 +28,7 @@ describe('NameChangeTable', () => {
                 <NameChangeTable
                     nameChanges={mockNameChanges}
                     onEdit={mockOnEdit}
+                    onMerge={mockOnMerge}
                 />
             </RenameProvider>
         );
@@ -44,6 +46,7 @@ describe('NameChangeTable', () => {
                     mediaType={VIDEOS}
                     nameChanges={mockNameChanges}
                     onEdit={mockOnEdit}
+                    onMerge={mockOnMerge}
                 />
             </RenameProvider>
         );
