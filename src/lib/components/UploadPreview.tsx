@@ -1,6 +1,5 @@
-import { TrashSolid } from "iconoir-react";
-import theme from "../theme";
 import { truncateString } from "../utilities";
+import TrashButton from "./TrashButton/TrashButton";
 
 export type UploadPreviewProps = {
     files: string[];
@@ -16,13 +15,7 @@ const UploadPreview = ({ files, deleteFile }: UploadPreviewProps) => {
                     files.map((file: string) => (
                         <li key={file} className="flex justify-between">
                             <span title={file}>{truncateString(file, 40)}</span>
-                            <button
-                                className={theme.deleteIconColor}
-                                onClick={() => { deleteFile(file) }}
-                            >
-                                <TrashSolid />
-                            </button>
-
+                            <TrashButton onClick={() => { deleteFile(file) }} />
                         </li>
                     ))
                 }

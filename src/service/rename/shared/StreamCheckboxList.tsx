@@ -34,7 +34,7 @@ const StreamCheckboxList = ({
     const displayedStreams = showAll ? streams : streams.slice(0, DISPLAY_LIMIT);
 
     return (
-        <fieldset className="flex flex-wrap gap-2 items-center">
+        <fieldset className="flex flex-wrap justify-evenly">
             <legend className="text-sm">{label}</legend>
             {displayedStreams.map((option: Stream) => {
                 const optionVal = createVal(option);

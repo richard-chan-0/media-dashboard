@@ -1,24 +1,22 @@
-import theme from "../../../../lib/theme";
 import { useEffect, useState } from "react";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../../shared/Modal/Modal";
-import { CloseButton, Spinner } from "../../../../lib/components";
+import { CloseButton, Spinner, SubmitButton } from "../../../../lib/components";
 import { get } from "../../../../lib/api/api";
 import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamCheckboxList } from "../../shared";
-import { Streams, MetadataChange, Stream } from "../../../../lib/types";
+import { Streams, Stream, MetadataMergeChange } from "../../../../lib/types";
 
 type MetadataMergeChangeModalProps = {
     isOpen: boolean;
     onClose: () => void;
     currentName: string;
-    suggestedName: string;
-    onMerge: (filename: string, newChange: MetadataChange | undefined) => void;
+    onMerge: (newChange: MetadataMergeChange | undefined) => void;
 };
 
-const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: MetadataMergeChangeModalProps) => {
-    const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
+const MetadataMergeChangeModal = ({ isOpen, onClose, currentName, onMerge }: MetadataMergeChangeModalProps) => {
+    const [filename, setFilename] = useState(removePathFromFilePath(currentName));
     const [streams, setStreams] = useState<Streams | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
@@ -27,7 +25,7 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: M
 
     useEffect(() => {
         if (isOpen) {
-            setFilename(removePathFromFilePath(suggestedName));
+            setFilename(removePathFromFilePath(currentName));
             fetchStreams();
         }
     }, [isOpen]);
@@ -48,7 +46,7 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: M
         }
     };
 
-    const handleEditSubmit = () => {
+    const handleMergeSubmit = () => {
         const additionalSubtitles = checkedSubtitles.map((number) => {
             return streams?.subtitle.find((s) => s.stream_number.toString() === number)?.merge_track_number.toString()
         }).filter((track) => track !== undefined);
@@ -56,18 +54,19 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: M
             return streams?.audio.find((a) => a.stream_number.toString() === number)?.merge_track_number.toString()
         }).filter((track) => track !== undefined);
 
-        const newChange: MetadataChange = {
-            newFilename: filename,
-            title: undefined,
-            defaultSubtitle: undefined,
-            defaultAudio: undefined,
-            audiosToKeep: additionalAudios || undefined,
-            subtitlesToKeep: additionalSubtitles || undefined,
+        if (additionalSubtitles.length === 0 && additionalAudios.length === 0) {
+            onClose();
+            return;
+        }
+
+        const newChange: MetadataMergeChange = {
+            filename: filename,
+            output_filename: `temp-${filename}`,
+            audio_tracks: `[${additionalAudios.join(",")}]`,
+            subtitle_tracks: `[${additionalSubtitles.join(",")}]`,
         };
 
-        console.log("Submitting metadata change:", newChange);
-
-        // onEdit(currentName, isMetadataChange(newChange) ? newChange : undefined);
+        onMerge(newChange);
         onClose();
     };
 
@@ -77,18 +76,33 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: M
         return `${mainIdentifier}${secondaryIdentifier}`;
     };
 
+    const printSelectedStream = (checkedStreams: string[], type: "audio" | "subtitle") => {
+        if (checkedStreams.length === 0 || !streams) {
+            return "[ ]";
+        }
+
+        return `[ ${checkedStreams.map((num) => {
+            const stream = streams[type].find((s) => s.stream_number.toString() === num);
+            return stream ? createStreamVal(stream) : num;
+        }).join(", ")} ]`;
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="flex flex-col gap-2 text-blue-900 font-medium text-left">
                 <div className="flex justify-between items-center">
                     <div className="text-lg">
-                        {removePathFromFilePath(suggestedName)}
+                        {removePathFromFilePath(currentName)}
                     </div>
                     <CloseButton onClose={onClose} />
                 </div>
                 {isLoading && <Spinner />}
                 {!isLoading && streams && (
                     <div className="w-full flex flex-col gap-4">
+                        <section>
+                            <div>Audio Order: {printSelectedStream(checkedAudios, "audio")}</div>
+                            <div>Subtitle Order: {printSelectedStream(checkedSubtitles, "subtitle")}</div>
+                        </section>
                         <StreamCheckboxList
                             label="Select Audios to Keep"
                             checkedStreams={checkedAudios}
@@ -105,13 +119,13 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, suggestedName, onMerge }: M
                         />
                     </div>
                 )}
-
-                <button
-                    onClick={handleEditSubmit}
-                    className={`${theme.buttonColor} ${theme.buttonFormat} w-1/5 self-center`}
-                >
-                    Update
-                </button>
+                <footer className="flex justify-center mt-4">
+                    <SubmitButton
+                        onClick={handleMergeSubmit}
+                        label="Update"
+                        buttonStyle="w-1/5"
+                    />
+                </footer>
             </div>
         </Modal>
     );

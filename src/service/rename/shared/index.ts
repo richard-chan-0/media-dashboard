@@ -4,4 +4,4 @@ export { default as Modal } from "./Modal/Modal";
 export { default as TableCell } from "./TableCell";
 export { default as StageButton } from "./StageButton";
 export { default as NameChangeTable } from "./NameChangeTable/NameChangeTable";
-export { default as ConfirmationModal } from "./ConfirmationModal/ConfirmationModal";
+export { default as ConfirmationModal } from "../../../lib/components/ConfirmationModal/ConfirmationModal";

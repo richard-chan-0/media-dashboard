@@ -45,7 +45,7 @@ describe("NameChangePreview", () => {
     it("renders the table and submit button when there are name changes", () => {
         renderWithProvider(<NameChangePreview />);
         expect(screen.getByText("Rename Files")).toBeInTheDocument();
-        expect(screen.getByText("Submit!")).toBeInTheDocument();
+        expect(screen.getByText("Submit Edits!")).toBeInTheDocument();
         expect(screen.getByText("a.mp4")).toBeInTheDocument();
         expect(screen.getByText("b.mp4")).toBeInTheDocument();
     });
@@ -63,7 +63,7 @@ describe("NameChangePreview", () => {
         expect(screen.getByText("No files to rename.")).toBeInTheDocument();
     });
 
-    it("calls handleSubmit and processes success path", async () => {
+    it("calls handleEditSubmit and processes success path", async () => {
         vi.spyOn(api, "postJson").mockResolvedValue({}); // Mock successful API response
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
@@ -74,14 +74,14 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview />);
-        fireEvent.click(screen.getByText("Submit!"));
+        fireEvent.click(screen.getByText("Submit Edits!"));
 
         await waitFor(() => {
             expect(dispatch).toHaveBeenCalledWith({ type: "CLEAR_NAME_CHANGES" });
         });
     });
 
-    it("handles API error response", async () => {
+    it("handles API error response for edits", async () => {
         const errorMsg = "API error";
         vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
         const dispatch = vi.fn();
@@ -93,7 +93,42 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview />);
-        fireEvent.click(screen.getByText("Submit!"));
+        fireEvent.click(screen.getByText("Submit Edits!"));
+
+        await waitFor(() => {
+            expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
+        });
+    });
+
+    it("calls handleMergeSubmit and processes success path", async () => {
+        vi.spyOn(api, "postJson").mockResolvedValue({}); // Mock successful API response
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch: vi.fn(),
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview />);
+        fireEvent.click(screen.getByText("Submit Merges!"));
+
+        await waitFor(() => {
+            expect(pageDispatch).not.toHaveBeenCalledWith({ type: "SET_ERROR", payload: expect.anything() });
+        });
+    });
+
+    it("handles API error response for merges", async () => {
+        const errorMsg = "Merge API error";
+        vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch: vi.fn(),
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview />);
+        fireEvent.click(screen.getByText("Submit Merges!"));
 
         await waitFor(() => {
             expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
@@ -111,11 +146,31 @@ describe("NameChangePreview", () => {
         });
 
         renderWithProvider(<NameChangePreview />);
-        fireEvent.click(screen.getByText("Submit!"));
+        fireEvent.click(screen.getByText("Submit Edits!"));
 
         await waitFor(() => {
             expect(postJsonMock).toHaveBeenCalledWith(
                 "http://localhost/api/rename/process",
+                expect.anything()
+            );
+        });
+    });
+
+    it("posts metadata merge changes correctly", async () => {
+        const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
+        const pageDispatch = vi.fn();
+        useRenameMock.mockReturnValueOnce({
+            state: mockState,
+            dispatch: vi.fn(),
+            pageDispatch,
+        });
+
+        renderWithProvider(<NameChangePreview />);
+        fireEvent.click(screen.getByText("Submit Merges!"));
+
+        await waitFor(() => {
+            expect(postJsonMock).toHaveBeenCalledWith(
+                "http://localhost/ffmpeg/mkv/merge",
                 expect.anything()
             );
         });
