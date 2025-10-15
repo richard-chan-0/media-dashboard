@@ -1,20 +1,13 @@
-export type PageState = {
-    error: string;
-    previewFiles: string[];
-};
-
-export type PageAction =
-    | { type: "SET_PREVIEWS"; payload: string[] }
-    | { type: "SET_ERROR"; payload: string }
-    | { type: "RESET" }
-    | { type: "CLEAR_ERROR" };
-
+import { PageState, PageAction } from "../types";
 export const initialState: PageState = {
     error: "",
     previewFiles: [],
-}
+};
 
-export const pageReducer = (state: PageState, action: PageAction): PageState => {
+export const pageReducer = (
+    state: PageState,
+    action: PageAction,
+): PageState => {
     switch (action.type) {
         case "SET_PREVIEWS":
             return { ...state, previewFiles: action.payload };
@@ -33,4 +26,4 @@ export const pageReducer = (state: PageState, action: PageAction): PageState => 
         default:
             return state;
     }
-}
+};

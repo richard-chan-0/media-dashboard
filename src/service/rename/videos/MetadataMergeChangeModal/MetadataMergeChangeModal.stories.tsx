@@ -23,7 +23,6 @@ const meta = {
                         isOpen={isOpen}
                         onClose={() => setIsOpen(false)}
                         currentName={args.currentName}
-                        suggestedName={args.suggestedName}
                         onMerge={() => { }}
                     />
                 </RenameProvider>
@@ -40,7 +39,6 @@ export const Default: Story = {
         currentName: "example.txt",
         isOpen: true,
         onClose: () => { },
-        onMerge: () => { },
-        suggestedName: "newname.txt",
+        onMerge: () => { }
     }
 };

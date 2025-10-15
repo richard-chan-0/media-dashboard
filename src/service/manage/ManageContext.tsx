@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { PageState, PageAction } from "../../lib/reducers/pageReducer";
+import { PageState, PageAction } from "../../lib/types";
 
 export type ManageContextType = {
     pageState: PageState;

@@ -1,20 +1,31 @@
 import FormContainer from "../../../../lib/components/FormContainer";
 import { NameChangeTable } from "../../shared";
-import { NameChangeApiRequest, postJson, processNameChangeToApiRequest } from "../../../../lib/api/api";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import { mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
 import { useRename } from "../../../../lib/hooks/usePageContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
-import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges } from "../../../../lib/types";
+import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges, RenameState } from "../../../../lib/types";
+import { postMetadataMerge } from "../../../../lib/api/metadata";
+import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
+import { createNameChangeApiRequest } from "../../../../lib/api/factory";
+import { postRenameChangeRequest } from "../../../../lib/api/rename";
 import { postMetadataWrite } from "../../../../lib/api/metadata";
-
+import { removePathFromFilePath } from "../../../../lib/utilities";
 
 const NameChangePreview = () => {
     const { state, dispatch, pageDispatch } = useRename();
     const [isSpinner, setIsSpinner] = useState(false);
-    const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>();
+    const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>({});
     const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
+
+    const deleteFile = useDeleteFile();
+
+    useEffect(() => {
+        setMetadataEditChanges({});
+        setMetadataMergeChanges({ changes: [] });
+    }, [state]);
+
     const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
         if (newChange === undefined) {
             return;
@@ -29,30 +40,15 @@ const NameChangePreview = () => {
         if (!newChange) {
             return;
         }
-        setMetadataMergeChanges((prevChanges) => ({
-            changes: prevChanges ? [...prevChanges.changes, newChange] : [newChange]
-        }));
+        const existingChange = metadataMergeChanges.changes.findIndex(change => change.filename === newChange.filename);
+        if (existingChange !== -1) {
+            metadataMergeChanges.changes.splice(existingChange, 1);
+        }
+        const newChanges = {
+            changes: [...metadataMergeChanges.changes, newChange]
+        }
+        setMetadataMergeChanges(newChanges);
     };
-
-    const postRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest) => {
-        return await postJson(
-            `${mediaLink}/rename/process`,
-            nameChangeRequest,
-        );
-    }
-
-    const postMetadataRenameChangeRequest = async (nameChangeRequest: NameChangeApiRequest, metadataChanges: MetadataEditChanges) => {
-        await postMetadataWrite(metadataChanges);
-        await postRenameChangeRequest(nameChangeRequest);
-    }
-
-    const postMetadataMergeChangeRequest = async (mergeChanges: MetadataMergeChanges) => {
-        console.log("Posting metadata merge change request with:", mergeChanges);
-        return await postJson(
-            `${ffmpegLink}/mkv/merge`,
-            mergeChanges,
-        );
-    }
 
     const handleMergeSubmit = async () => {
         pageDispatch({ type: "CLEAR_ERROR" });
@@ -61,14 +57,29 @@ const NameChangePreview = () => {
             return;
         }
         setIsSpinner(true);
-        const response = await postMetadataMergeChangeRequest(metadataMergeChanges);
-        if (response?.error) {
-            pageDispatch({ type: "SET_ERROR", payload: response.error });
-        } else {
-            // dispatch({ type: "CLEAR_NAME_CHANGES" });
-            console.log("Merge successful:", response);
-        }
+        await postMetadataMerge(metadataMergeChanges);
+
+        for (const change of metadataMergeChanges.changes) {
+            await deleteFile(change.filename);
+        };
+        const updatedChanges = state.nameChanges.changes.filter(change => {
+            return !metadataMergeChanges.changes.find(mergeChange => mergeChange.filename === removePathFromFilePath(change.input));
+        });
+        const updatedNameChanges = { changes: updatedChanges };
+        dispatch({ type: "SET_NAME_CHANGES", payload: updatedNameChanges });
         setIsSpinner(false);
+    };
+
+    const postEditSubmit = async (
+        metadataEditChanges: MetadataEditChanges,
+        state: RenameState,
+    ) => {
+        const nameChangeRequest = createNameChangeApiRequest(state.nameChanges);
+        if (metadataEditChanges) {
+            await postMetadataWrite(metadataEditChanges);
+        }
+
+        return await postRenameChangeRequest(nameChangeRequest);
     };
 
     const handleEditSubmit = async () => {
@@ -77,15 +88,8 @@ const NameChangePreview = () => {
             pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
-        const nameChangeRequest = processNameChangeToApiRequest(
-            state.nameChanges,
-        );
         setIsSpinner(true);
-        const response = await (
-            metadataEditChanges ?
-                postMetadataRenameChangeRequest(nameChangeRequest, metadataEditChanges) :
-                postRenameChangeRequest(nameChangeRequest)
-        );
+        const response = await postEditSubmit(metadataEditChanges, state);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {

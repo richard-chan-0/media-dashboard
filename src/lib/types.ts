@@ -59,3 +59,39 @@ export interface MetadataMergeChange {
     audio_tracks: string;
     subtitle_tracks: string;
 }
+
+export interface NameChangeApiRequest {
+    changes: {
+        old_path: string;
+        new_path: string;
+    }[];
+}
+
+export interface RenameState {
+    nameChanges: NameChanges;
+    mediaType: string;
+}
+
+export type RenameAction =
+    | { type: "SET_NAME_CHANGES"; payload: NameChanges }
+    | { type: "CLEAR_NAME_CHANGES" }
+    | { type: "RESET" }
+    | { type: "SET_MEDIA_TYPE"; payload: string };
+
+export interface PageState {
+    error: string;
+    previewFiles: string[];
+}
+
+export type PageAction =
+    | { type: "SET_PREVIEWS"; payload: string[] }
+    | { type: "SET_ERROR"; payload: string }
+    | { type: "RESET" }
+    | { type: "CLEAR_ERROR" };
+
+export interface RenameContextType {
+    state: RenameState;
+    dispatch: React.Dispatch<RenameAction>;
+    pageState: PageState;
+    pageDispatch: React.Dispatch<PageAction>;
+}

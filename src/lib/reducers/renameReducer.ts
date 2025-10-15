@@ -1,22 +1,14 @@
-import { NameChanges } from "../types";
+import { RenameState, RenameAction } from "../types";
 
 export const initialState: RenameState = {
     nameChanges: { changes: [] },
     mediaType: "",
 };
 
-export type RenameState = {
-    nameChanges: NameChanges;
-    mediaType: string;
-};
-
-export type RenameAction =
-    | { type: "SET_NAME_CHANGES"; payload: NameChanges }
-    | { type: "CLEAR_NAME_CHANGES" }
-    | { type: "RESET" }
-    | { type: "SET_MEDIA_TYPE"; payload: string };
-
-export const renameReducer = (state: RenameState, action: RenameAction): RenameState => {
+export const renameReducer = (
+    state: RenameState,
+    action: RenameAction,
+): RenameState => {
     switch (action.type) {
         case "SET_NAME_CHANGES":
             return { ...state, nameChanges: action.payload };
@@ -29,4 +21,4 @@ export const renameReducer = (state: RenameState, action: RenameAction): RenameS
         default:
             return state;
     }
-}
+};

@@ -52,12 +52,10 @@ const NameChangeTable = ({ nameChanges, mediaType, onEdit, onMerge }: NameChange
         onEdit(filename, newChange);
     }
     const onTableMerge = (newChange: MetadataMergeChange | undefined) => {
-        console.log("onTableMerge called with:", newChange);
         if (newChange !== undefined && wasMergeAdded.includes(newChange.filename) === false) {
             setWasMergeAddedList((prev) => [...prev, newChange.filename]);
-            onMerge(newChange);
         }
-
+        onMerge(newChange);
     }
 
     const onEditModalClose = () => {

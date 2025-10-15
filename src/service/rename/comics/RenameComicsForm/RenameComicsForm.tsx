@@ -6,7 +6,7 @@ import {
     mediaLink,
     no_api_error,
 } from "../../../../lib/constants";
-import { processApiResponseToNameChange } from "../../../../lib/api/api";
+import { createNameChanges } from "../../../../lib/api/factory";
 import { ProgressBar, FormInput, UploadPreview } from "../../../../lib/components";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../../lib/reducers/uploadReducer";
@@ -55,7 +55,7 @@ const RenameComicsForm = () => {
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            const processedResponse = processApiResponseToNameChange(response);
+            const processedResponse = createNameChanges(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
             // stageDispatcher("next");
         }

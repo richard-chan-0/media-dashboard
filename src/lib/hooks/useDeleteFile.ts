@@ -1,8 +1,7 @@
 import { postForm } from "../api/api";
 import { mediaLink, no_api_error } from "../constants";
 import { removePathFromFilePath } from "../utilities";
-import { PageAction } from "../../lib/reducers/pageReducer";
-import { RenameAction } from "../../lib/reducers/renameReducer";
+import { PageAction, RenameAction } from "../types";
 import { useRename } from "./usePageContext";
 
 export const useDeleteFile = () => {
