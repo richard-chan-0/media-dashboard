@@ -1,7 +1,6 @@
 import { postJson } from "./api";
 import { ffmpegLink } from "../constants";
 import { MetadataEditChanges, MetadataMergeChanges } from "../types";
-import { removePathFromFilePath } from "../utilities";
 
 interface MetadataUtilityWriteChange {
     video_title?: string;
@@ -10,16 +9,6 @@ interface MetadataUtilityWriteChange {
 }
 interface MetadataUtilityWriteRequest {
     [key: string]: MetadataUtilityWriteChange;
-}
-
-interface MetadataUtilityMergeChange {
-    filename: string;
-    output_filename?: string;
-    audio_tracks?: string;
-    subtitle_tracks?: string;
-}
-interface MetadataUtiliityMergeRequest {
-    [key: string]: MetadataUtilityMergeChange;
 }
 
 export const postMetadataWrite = async (
@@ -42,21 +31,8 @@ export const postMetadataWrite = async (
 
 export const postMetadataMerge = async (
     metadataChangeRequest: MetadataMergeChanges,
-): Promise<MetadataUtiliityMergeRequest> => {
-    const mergeRequest = Object.entries(metadataChangeRequest).reduce(
-        (acc, [filename, change]) => {
-            acc[filename] = {
-                filename: removePathFromFilePath(filename),
-                output_filename: change.newFilename,
-                audio_tracks: `[${change.audiosToKeep?.join(",")}]`,
-                subtitle_tracks: `[${change.subtitlesToKeep?.join(",")}]`,
-            };
-            return acc;
-        },
-        {} as MetadataUtiliityMergeRequest,
-    );
+): Promise<MetadataMergeChanges> => {
+    await postJson(`${ffmpegLink}/mkv/merge`, metadataChangeRequest);
 
-    await postJson(`${ffmpegLink}/mkv/merge`, mergeRequest);
-
-    return mergeRequest;
+    return metadataChangeRequest;
 };

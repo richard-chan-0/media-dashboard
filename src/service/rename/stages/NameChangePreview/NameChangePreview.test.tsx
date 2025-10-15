@@ -51,9 +51,9 @@ describe("NameChangePreview", () => {
     });
 
     it("shows 'No files to rename.' when there are no name changes", () => {
-        useRenameMock.mockReturnValueOnce({
+        useRenameMock.mockReturnValue({
             state: {
-                ...mockState,
+                mediaType: VIDEOS,
                 nameChanges: { changes: [] },
             },
             dispatch: vi.fn(),
@@ -67,7 +67,7 @@ describe("NameChangePreview", () => {
         vi.spyOn(api, "postJson").mockResolvedValue({}); // Mock successful API response
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
-        useRenameMock.mockReturnValueOnce({
+        useRenameMock.mockReturnValue({
             state: mockState,
             dispatch,
             pageDispatch,
@@ -86,7 +86,7 @@ describe("NameChangePreview", () => {
         vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
         const dispatch = vi.fn();
         const pageDispatch = vi.fn();
-        useRenameMock.mockReturnValueOnce({
+        useRenameMock.mockReturnValue({
             state: mockState,
             dispatch,
             pageDispatch,

@@ -1,5 +1,4 @@
 import { useReducer, useRef, useState } from "react";
-import { postForm } from "../../../lib/api/api";
 import {
     inputSeasonMessage,
     inputStartEpisodeMessage,
@@ -14,6 +13,7 @@ import { useRename } from "../../../lib/hooks/usePageContext";
 import { uploadReducer } from "../../../lib/reducers/uploadReducer";
 import FileUploader from "../../../lib/components/FileUploader";
 import theme from "../../../lib/theme";
+import { postRenameVideosRequest } from "../../../lib/api/rename";
 
 const RenameVideosForm = () => {
     const [seasonNumber, setSeasonNumber] = useState("");
@@ -46,18 +46,16 @@ const RenameVideosForm = () => {
         episodeFiles.forEach((file) => formData.append("files", file));
         uploadDispatcher({ type: "START_UPLOAD" });
         abortControllerRef.current = new AbortController();
-        const response = await postForm(
-            `${mediaLink}/rename/videos`,
+        const response = await postRenameVideosRequest(
             formData,
             uploadDispatcher,
-            abortControllerRef.current.signal
+            abortControllerRef,
         );
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
             const processedResponse = createNameChanges(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
-            // stageDispatcher("next");
             setSeasonNumber("");
             setStartNumber("");
             setEpisodeFiles([]);

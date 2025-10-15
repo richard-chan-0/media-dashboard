@@ -3,7 +3,7 @@ import { NameChangeTable } from "../../shared";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import { mediaLink, no_api_error, VIDEOS, ffmpegLink } from "../../../../lib/constants";
 import { useRename } from "../../../../lib/hooks/usePageContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges, RenameState } from "../../../../lib/types";
 import { postMetadataMerge } from "../../../../lib/api/metadata";
@@ -11,7 +11,7 @@ import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
 import { createNameChangeApiRequest } from "../../../../lib/api/factory";
 import { postRenameChangeRequest } from "../../../../lib/api/rename";
 import { postMetadataWrite } from "../../../../lib/api/metadata";
-
+import { removePathFromFilePath } from "../../../../lib/utilities";
 
 const NameChangePreview = () => {
     const { state, dispatch, pageDispatch } = useRename();
@@ -20,6 +20,12 @@ const NameChangePreview = () => {
     const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
 
     const deleteFile = useDeleteFile();
+
+    useEffect(() => {
+        setMetadataEditChanges({});
+        setMetadataMergeChanges({ changes: [] });
+    }, [state]);
+
     const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
         if (newChange === undefined) {
             return;
@@ -34,9 +40,14 @@ const NameChangePreview = () => {
         if (!newChange) {
             return;
         }
-        setMetadataMergeChanges((prevChanges) => ({
-            changes: prevChanges ? [...prevChanges.changes, newChange] : [newChange]
-        }));
+        const existingChange = metadataMergeChanges.changes.findIndex(change => change.filename === newChange.filename);
+        if (existingChange !== -1) {
+            metadataMergeChanges.changes.splice(existingChange, 1);
+        }
+        const newChanges = {
+            changes: [...metadataMergeChanges.changes, newChange]
+        }
+        setMetadataMergeChanges(newChanges);
     };
 
     const handleMergeSubmit = async () => {
@@ -51,6 +62,11 @@ const NameChangePreview = () => {
         for (const change of metadataMergeChanges.changes) {
             await deleteFile(change.filename);
         };
+        const updatedChanges = state.nameChanges.changes.filter(change => {
+            return !metadataMergeChanges.changes.find(mergeChange => mergeChange.filename === removePathFromFilePath(change.input));
+        });
+        const updatedNameChanges = { changes: updatedChanges };
+        dispatch({ type: "SET_NAME_CHANGES", payload: updatedNameChanges });
         setIsSpinner(false);
     };
 
