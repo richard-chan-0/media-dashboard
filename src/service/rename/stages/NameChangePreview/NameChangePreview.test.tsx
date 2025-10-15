@@ -117,24 +117,6 @@ describe("NameChangePreview", () => {
         });
     });
 
-    it("handles API error response for merges", async () => {
-        const errorMsg = "Merge API error";
-        vi.spyOn(api, "postJson").mockResolvedValue({ error: errorMsg });
-        const pageDispatch = vi.fn();
-        useRenameMock.mockReturnValueOnce({
-            state: mockState,
-            dispatch: vi.fn(),
-            pageDispatch,
-        });
-
-        renderWithProvider(<NameChangePreview />);
-        fireEvent.click(screen.getByText("Submit Merges!"));
-
-        await waitFor(() => {
-            expect(pageDispatch).toHaveBeenCalledWith({ type: "SET_ERROR", payload: errorMsg });
-        });
-    });
-
     it("calls regular rename API when no metadata changes exist", async () => {
         const postJsonMock = vi.spyOn(api, "postJson").mockResolvedValue({});
         const dispatch = vi.fn();

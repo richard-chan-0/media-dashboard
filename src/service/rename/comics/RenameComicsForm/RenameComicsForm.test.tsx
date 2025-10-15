@@ -16,7 +16,9 @@ const initialContext = { state: { nameChanges: { changes: [] }, mediaType: COMIC
 
 vi.mock("../../../../lib/api/api", () => ({
     postForm: vi.fn(),
-    processApiResponseToNameChange: vi.fn((resp) => resp),
+}));
+vi.mock("../../../../lib/api/factory", () => ({
+    createNameChanges: vi.fn(),
 }));
 vi.mock("../../../../lib/constants", () => ({
     inputStartVolumeMessage: "Enter start volume",
@@ -139,9 +141,9 @@ describe("RenameComicsForm", () => {
 
     it("submits form and resets state on success", async () => {
         const { postForm } = await import("../../../../lib/api/api");
-        const { processApiResponseToNameChange } = await import("../../../../lib/api/api");
+        const { createNameChanges } = await import("../../../../lib/api/factory");
         (postForm as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({ success: true });
-        (processApiResponseToNameChange as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ changes: ["foo"] });
+        (createNameChanges as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ changes: ["foo"] });
 
         render(
             <RenameContext.Provider value={initialContext}>

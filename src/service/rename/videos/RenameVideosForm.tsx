@@ -6,7 +6,7 @@ import {
     mediaLink,
     no_api_error,
 } from "../../../lib/constants";
-import { processApiResponseToNameChange } from "../../../lib/api/api";
+import { createNameChanges } from "../../../lib/api/factory";
 import UploadPreview from "../../../lib/components/UploadPreview";
 import FormInput from "../../../lib/components/FormInput";
 import { ProgressBar } from "../../../lib/components";
@@ -55,7 +55,7 @@ const RenameVideosForm = () => {
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
-            const processedResponse = processApiResponseToNameChange(response);
+            const processedResponse = createNameChanges(response);
             dispatch({ type: "SET_NAME_CHANGES", payload: processedResponse });
             // stageDispatcher("next");
             setSeasonNumber("");
