@@ -8,6 +8,7 @@ import { useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges } from "../../../../lib/types";
 import { postMetadataWrite } from "../../../../lib/api/metadata";
+import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
 
 
 const NameChangePreview = () => {
@@ -15,6 +16,8 @@ const NameChangePreview = () => {
     const [isSpinner, setIsSpinner] = useState(false);
     const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>();
     const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
+
+    const deleteFile = useDeleteFile();
     const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
         if (newChange === undefined) {
             return;
@@ -48,10 +51,13 @@ const NameChangePreview = () => {
 
     const postMetadataMergeChangeRequest = async (mergeChanges: MetadataMergeChanges) => {
         console.log("Posting metadata merge change request with:", mergeChanges);
-        return await postJson(
+        await postJson(
             `${ffmpegLink}/mkv/merge`,
             mergeChanges,
         );
+        for (const change of mergeChanges.changes) {
+            await deleteFile(change.filename);
+        };
     }
 
     const handleMergeSubmit = async () => {
