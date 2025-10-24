@@ -3,7 +3,7 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import NameChangePreview from "./NameChangePreview";
 import * as api from "../../../../lib/api/api";
 import * as usePageContext from "../../../../lib/hooks/usePageContext";
-import { COMICS, VIDEOS } from "../../../../lib/constants";
+import { COMICS, VIDEOS, TASK_EDIT, TASK_MERGE } from "../../../../lib/constants";
 import '@testing-library/jest-dom';
 import { renderWithProvider } from "../../../../lib/test/renameRenderer";
 
@@ -43,8 +43,8 @@ describe("NameChangePreview", () => {
     });
 
     it("renders the table and submit button when there are name changes", () => {
-        renderWithProvider(<NameChangePreview />);
-        expect(screen.getByText("Rename Files")).toBeInTheDocument();
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
+        expect(screen.getByText("Onboard Files")).toBeInTheDocument();
         expect(screen.getByText("Submit Edits!")).toBeInTheDocument();
         expect(screen.getByText("a.mp4")).toBeInTheDocument();
         expect(screen.getByText("b.mp4")).toBeInTheDocument();
@@ -58,8 +58,9 @@ describe("NameChangePreview", () => {
             },
             dispatch: vi.fn(),
             pageDispatch: vi.fn(),
+            pageState: mockPageState,
         });
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
         expect(screen.getByText("No files to rename.")).toBeInTheDocument();
     });
 
@@ -71,9 +72,10 @@ describe("NameChangePreview", () => {
             state: mockState,
             dispatch,
             pageDispatch,
+            pageState: mockPageState,
         });
 
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
         fireEvent.click(screen.getByText("Submit Edits!"));
 
         await waitFor(() => {
@@ -90,9 +92,10 @@ describe("NameChangePreview", () => {
             state: mockState,
             dispatch,
             pageDispatch,
+            pageState: mockPageState,
         });
 
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
         fireEvent.click(screen.getByText("Submit Edits!"));
 
         await waitFor(() => {
@@ -107,9 +110,10 @@ describe("NameChangePreview", () => {
             state: mockState,
             dispatch: vi.fn(),
             pageDispatch,
+            pageState: mockPageState,
         });
 
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_MERGE} />);
         fireEvent.click(screen.getByText("Submit Merges!"));
 
         await waitFor(() => {
@@ -125,9 +129,10 @@ describe("NameChangePreview", () => {
             state: mockState,
             dispatch,
             pageDispatch,
+            pageState: mockPageState,
         });
 
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
         fireEvent.click(screen.getByText("Submit Edits!"));
 
         await waitFor(() => {
@@ -145,9 +150,10 @@ describe("NameChangePreview", () => {
             state: mockState,
             dispatch: vi.fn(),
             pageDispatch,
+            pageState: mockPageState,
         });
 
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_MERGE} />);
         fireEvent.click(screen.getByText("Submit Merges!"));
 
         await waitFor(() => {
@@ -166,8 +172,9 @@ describe("NameChangePreview", () => {
             },
             dispatch: vi.fn(),
             pageDispatch: vi.fn(),
+            pageState: mockPageState,
         });
-        renderWithProvider(<NameChangePreview />);
+        renderWithProvider(<NameChangePreview changeType={TASK_EDIT} />);
         // No right button for comics
         expect(screen.queryByText("Skip")).not.toBeInTheDocument();
         expect(screen.queryByText("Next")).not.toBeInTheDocument();

@@ -5,7 +5,7 @@ import { get } from "../lib/api/api";
 import { useRename } from "../lib/hooks/usePageContext";
 import { RenameProvider } from "../service/rename/RenameProvider";
 import PreviewFiles from "../lib/components/PreviewFiles";
-import { NameChangePreview } from "../service/rename/stages"
+import NameChangePreview from "../service/rename/layout/NameChangePreview/NameChangePreview"
 import RenamePanel from "../service/rename/shared/RenamePanel/RenamePanel";
 
 
