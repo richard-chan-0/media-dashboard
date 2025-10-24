@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FormPage from "../lib/components/FormPage";
-import { mediaLink, TASK_RENAME, VIDEOS, TASK_MERGE } from "../lib/constants";
+import { mediaLink, TASK_RENAME, VIDEOS, TASK_METADATA, TASK_EDIT, TASK_MERGE } from "../lib/constants";
 import { get } from "../lib/api/api";
 import { useRename } from "../lib/hooks/usePageContext";
 import { RenameProvider } from "../service/rename/RenameProvider";
@@ -17,14 +17,15 @@ type PreviewFile = {
 const RenamePage = () => {
     const [mediaType, setMediaType] = useState<string>(VIDEOS);
     const { state, dispatch, pageState, pageDispatch } = useRename();
-    const [changeType, setChangeType] = useState<typeof TASK_RENAME | typeof TASK_MERGE>(TASK_RENAME);
+    const [changeType, setChangeType] = useState<typeof TASK_RENAME | typeof TASK_METADATA>(TASK_RENAME);
+    const [editType, setEditType] = useState<typeof TASK_EDIT | typeof TASK_MERGE>(TASK_EDIT);
 
     const getTaskLayout = () => {
         switch (changeType) {
-            case TASK_MERGE:
+            case TASK_METADATA:
                 return <PreviewFiles />
             case TASK_RENAME:
-                return <NameChangePreview />;
+                return <NameChangePreview changeType={editType} />;
             default:
                 return <></>;
         }
@@ -53,10 +54,10 @@ const RenamePage = () => {
         dispatch({ type: "SET_MEDIA_TYPE", payload: mediaType });
     }, [dispatch, mediaType]);
 
-    const handleSetTask = useCallback(
-        (v: typeof TASK_RENAME | typeof TASK_MERGE) => setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_MERGE),
-        []
-    );
+    const handleSetTask = (v: typeof TASK_RENAME | typeof TASK_METADATA) =>
+        setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_METADATA);
+
+    const handleEditType = (v: typeof TASK_EDIT | typeof TASK_MERGE) => setEditType(v === TASK_EDIT ? TASK_EDIT : TASK_MERGE);
 
     return (
         <FormPage
@@ -68,8 +69,10 @@ const RenamePage = () => {
                 <RenamePanel
                     renameMedia={mediaType}
                     setRenameMedia={setMediaType}
-                    task={changeType === TASK_RENAME ? TASK_RENAME : TASK_MERGE}
+                    task={changeType === TASK_RENAME ? TASK_RENAME : TASK_METADATA}
                     setTask={handleSetTask}
+                    editType={editType}
+                    setEditType={handleEditType}
                 />
                 <section className="flex mt-4 justify-center flex-1">
                     {getTaskLayout()}
