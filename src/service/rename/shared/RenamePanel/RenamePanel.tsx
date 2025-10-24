@@ -68,7 +68,7 @@ const RenamePanel = ({ setRenameMedia, renameMedia, task, setTask, editType, set
                 />
             </div >
             {isVideo && videoTask()}
-            {isVideo && editTypeToggle()}
+            {isVideo && task === TASK_RENAME && editTypeToggle()}
             <RenameUploadStage
                 mediaType={renameMedia}
             />

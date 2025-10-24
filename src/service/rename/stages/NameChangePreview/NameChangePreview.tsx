@@ -3,7 +3,7 @@ import { NameChangeTable } from "../../shared";
 import SubmitButton from "../../../../lib/components/SubmitButton";
 import { mediaLink, no_api_error, VIDEOS, ffmpegLink, TASK_MERGE, TASK_EDIT } from "../../../../lib/constants";
 import { useRename } from "../../../../lib/hooks/usePageContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges, RenameState } from "../../../../lib/types";
 import { postMetadataMerge } from "../../../../lib/api/metadata";
@@ -42,12 +42,16 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         setWasAdded([]);
     }, [state, changeType]);
 
+    /**
+     * Handles adding or updating a metadata edit change for a specific file
+     * Sets the first change as the bulk template
+     */
     const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
         if (newChange === undefined) {
             return;
         }
 
-        if (Object.keys(metadataEditChanges).length == 0) {
+        if (Object.keys(metadataEditChanges).length === 0) {
             setBulkTemplate(newChange);
         }
 
@@ -61,12 +65,16 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         }));
     };
 
-    const handleMetadataMergeChange = async (newChange: MetadataMergeChange | undefined) => {
+    /**
+     * Handles adding or updating a metadata merge change for a specific file
+     * Replaces existing merge change if one exists for the same file
+     */
+    const handleMetadataMergeChange = (newChange: MetadataMergeChange | undefined) => {
         if (!newChange) {
             return;
         }
 
-        if (metadataMergeChanges.changes.length == 0) {
+        if (metadataMergeChanges.changes.length === 0) {
             setBulkTemplate(newChange);
         }
 
@@ -74,30 +82,42 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
             setWasAdded((prev) => [...prev, newChange.filename]);
         }
 
-        const existingChange = metadataMergeChanges.changes.findIndex(change => change.filename === newChange.filename);
-        if (existingChange !== -1) {
-            metadataMergeChanges.changes.splice(existingChange, 1);
-        }
+        const existingChangeIndex = metadataMergeChanges.changes.findIndex(
+            change => change.filename === newChange.filename
+        );
+
+        const filteredChanges = existingChangeIndex !== -1
+            ? metadataMergeChanges.changes.filter((_, idx) => idx !== existingChangeIndex)
+            : metadataMergeChanges.changes;
+
         const newChanges = {
-            changes: [...metadataMergeChanges.changes, newChange]
-        }
+            changes: [...filteredChanges, newChange]
+        };
         setMetadataMergeChanges(newChanges);
     };
 
-    const handleMergeSubmit = async () => {
+    /**
+     * Submits merge changes to the API and removes merged files from the list
+     * @param changesToSubmit - Optional merge changes to submit, defaults to state
+     */
+    const handleMergeSubmit = async (changesToSubmit?: MetadataMergeChanges) => {
         pageDispatch({ type: "CLEAR_ERROR" });
         if (!mediaLink || !ffmpegLink) {
             pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
         setIsSpinner(true);
-        await postMetadataMerge(metadataMergeChanges);
 
-        for (const change of metadataMergeChanges.changes) {
+        // Use provided changes or fall back to state
+        const mergeChanges = changesToSubmit || metadataMergeChanges;
+
+        await postMetadataMerge(mergeChanges);
+
+        for (const change of mergeChanges.changes) {
             await deleteFile(change.filename);
         };
         const updatedChanges = state.nameChanges.changes.filter(change => {
-            return !metadataMergeChanges.changes.find(mergeChange => mergeChange.filename === removePathFromFilePath(change.input));
+            return !mergeChanges.changes.find(mergeChange => mergeChange.filename === removePathFromFilePath(change.input));
         });
         const updatedNameChanges = { changes: updatedChanges };
         dispatch({ type: "SET_NAME_CHANGES", payload: updatedNameChanges });
@@ -116,14 +136,21 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         return await postRenameChangeRequest(nameChangeRequest);
     };
 
-    const handleEditSubmit = async () => {
+    /**
+     * Submits edit changes to the API and processes file renaming
+     * @param changesToSubmit - Optional edit changes to submit, defaults to state
+     */
+    const handleEditSubmit = async (changesToSubmit?: MetadataEditChanges) => {
         pageDispatch({ type: "CLEAR_ERROR" });
         if (!mediaLink || !ffmpegLink) {
             pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
         setIsSpinner(true);
-        const response = await postEditSubmit(metadataEditChanges, state);
+
+        const editChanges = changesToSubmit || metadataEditChanges;
+
+        const response = await postEditSubmit(editChanges, state);
         if (response?.error) {
             pageDispatch({ type: "SET_ERROR", payload: response.error });
         } else {
@@ -132,6 +159,10 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         setIsSpinner(false);
     };
 
+    /**
+     * Applies the bulk edit template to all files and submits the changes
+     * Uses the first edit as a template for metadata fields
+     */
     const handleBulkEdit = async () => {
         if (!bulkTemplate || !('newFilename' in bulkTemplate)) {
             return;
@@ -154,11 +185,13 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
 
         setMetadataEditChanges(newMetadataEditChanges);
 
-        // Wait for state to update, then submit
-        await new Promise(resolve => setTimeout(resolve, 0));
-        await handleEditSubmit();
+        await handleEditSubmit(newMetadataEditChanges);
     };
 
+    /**
+     * Applies the bulk merge template to all files and submits the changes
+     * Uses the first merge as a template for audio/subtitle tracks
+     */
     const handleBulkMerge = async () => {
         if (!bulkTemplate || !('audio_tracks' in bulkTemplate)) {
             return;
@@ -167,7 +200,6 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         const template = bulkTemplate as MetadataMergeChange;
         const newMergeChanges: MetadataMergeChange[] = [...metadataMergeChanges.changes];
 
-        // Apply template to all files that haven't been merged yet
         state.nameChanges.changes.forEach((change) => {
             const filename = removePathFromFilePath(change.input);
             const existingChange = newMergeChanges.find(c => c.filename === filename);
@@ -175,18 +207,18 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
             if (!existingChange) {
                 newMergeChanges.push({
                     filename: filename,
-                    output_filename: `merge-${filename}`,
+                    output_filename: `temp-${filename}`,
                     audio_tracks: template.audio_tracks,
                     subtitle_tracks: template.subtitle_tracks
                 });
             }
         });
 
-        setMetadataMergeChanges({ changes: newMergeChanges });
+        const newMetadataMergeChanges = { changes: newMergeChanges };
 
-        // Wait for state to update, then submit
-        await new Promise(resolve => setTimeout(resolve, 0));
-        await handleMergeSubmit();
+        setMetadataMergeChanges(newMetadataMergeChanges);
+
+        await handleMergeSubmit(newMetadataMergeChanges);
     };
 
     const handleBulk = () => {
@@ -209,11 +241,16 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         setIsModalOpen(false);
     };
 
+    const isBulkEnabled = useMemo(() => {
+        const hasOneEdit = metadataEditChanges && Object.keys(metadataEditChanges).length === 1;
+        const hasOneMerge = metadataMergeChanges.changes?.length === 1;
+        return hasOneEdit || hasOneMerge;
+    }, [metadataEditChanges, metadataMergeChanges]);
+
     const footerButtons = () => {
-        const onClickHandler = changeType == TASK_MERGE ? handleMergeSubmit : handleEditSubmit;
-        const buttonLabel = changeType == TASK_MERGE ? "Submit Merges!" : "Sumbit Edits!";
-        const bulkLabel = changeType == TASK_MERGE ? "Submit Bulk Merges!" : "Submit Bulk Edits!";
-        const isBulkEnabled = (metadataEditChanges && Object.keys(metadataEditChanges).length == 1) || (metadataMergeChanges.changes && metadataMergeChanges.changes.length == 1)
+        const onClickHandler = () => changeType === TASK_MERGE ? handleMergeSubmit() : handleEditSubmit();
+        const buttonLabel = changeType === TASK_MERGE ? "Submit Merges!" : "Submit Edits!";
+        const bulkLabel = changeType === TASK_MERGE ? "Submit Bulk Merges!" : "Submit Bulk Edits!";
         return (
             <>
                 <SubmitButton

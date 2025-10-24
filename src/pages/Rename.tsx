@@ -47,17 +47,16 @@ const RenamePage = () => {
             }
         };
         fetch(mediaLink);
-    }, [state]);
+    }, [state, pageDispatch]);
 
     useEffect(() => {
         dispatch({ type: "SET_NAME_CHANGES", payload: { changes: [] } });
         dispatch({ type: "SET_MEDIA_TYPE", payload: mediaType });
     }, [dispatch, mediaType]);
 
-    const handleSetTask = (v: typeof TASK_RENAME | typeof TASK_METADATA) =>
-        setChangeType(v === TASK_RENAME ? TASK_RENAME : TASK_METADATA);
+    const handleSetTask = (v: typeof TASK_RENAME | typeof TASK_METADATA) => setChangeType(v);
 
-    const handleEditType = (v: typeof TASK_EDIT | typeof TASK_MERGE) => setEditType(v === TASK_EDIT ? TASK_EDIT : TASK_MERGE);
+    const handleEditType = (v: typeof TASK_EDIT | typeof TASK_MERGE) => setEditType(v);
 
     return (
         <FormPage
@@ -69,7 +68,7 @@ const RenamePage = () => {
                 <RenamePanel
                     renameMedia={mediaType}
                     setRenameMedia={setMediaType}
-                    task={changeType === TASK_RENAME ? TASK_RENAME : TASK_METADATA}
+                    task={changeType}
                     setTask={handleSetTask}
                     editType={editType}
                     setEditType={handleEditType}
