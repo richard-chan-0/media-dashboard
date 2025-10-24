@@ -24,5 +24,7 @@ export const CANCELLED_ERROR = "ERR_CANCELED";
 
 export const VIDEOS = "videos";
 export const COMICS = "comics";
-export const TASK_MERGE = "merge";
+export const TASK_METADATA = "metadata";
 export const TASK_RENAME = "rename";
+export const TASK_EDIT = "edit";
+export const TASK_MERGE = "merge";

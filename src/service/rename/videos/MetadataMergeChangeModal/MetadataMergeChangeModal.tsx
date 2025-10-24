@@ -90,8 +90,8 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, currentName, onMerge }: Met
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="flex flex-col gap-2 text-blue-900 font-medium text-left">
-                <div className="flex justify-between items-center">
-                    <div className="text-lg">
+                <div className="flex w-full justify-between items-center">
+                    <div className="text-lg flex wrap-anywhere ">
                         {removePathFromFilePath(currentName)}
                     </div>
                     <CloseButton onClose={onClose} />

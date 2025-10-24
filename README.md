@@ -10,6 +10,16 @@ A modern web interface for managing and transforming media files for your media 
 - **Stream Selection**: Set default audio and subtitle tracks for video files.
 - **API Integration**: Communicates with the Media Utility API and Ffmpeg API for all backend operations.
 
+## Architecture Overview
+
+The application is built with a modular and scalable architecture:
+
+- **React Context**: Used for state management, ensuring a clean separation of concerns and easy state sharing across components.
+- **Component-Based Design**: The `src/lib/components` directory contains reusable UI components, while `src/service` encapsulates feature-specific logic.
+- **API Layer**: The `src/lib/api` folder centralizes API calls, ensuring a single source of truth for backend communication.
+- **Storybook**: Provides a visual testing environment for UI components.
+- **Vitest**: Ensures robust unit testing with a focus on React components and hooks.
+
 ## Getting Started
 
 ### Prerequisites
@@ -61,9 +71,25 @@ A modern web interface for managing and transforming media files for your media 
 
 ## Deployment
 
-`docker buildx build --platform linux/amd64 -t <account>/media-dashboard .`
+### Docker Deployment
 
-`docker push <account>/media-dashboard:latest`
+1. Build the Docker image:
+
+    ```sh
+    docker buildx build --platform linux/amd64 -t <account>/media-dashboard .
+    ```
+
+2. Push the image to a container registry:
+
+    ```sh
+    docker push <account>/media-dashboard:latest
+    ```
+
+3. Run the container:
+
+    ```sh
+    docker run -p 80:80 <account>/media-dashboard:latest
+    ```
 
 ## Technologies
 
