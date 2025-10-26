@@ -5,16 +5,14 @@ import { mediaLink, no_api_error, VIDEOS, ffmpegLink, TASK_MERGE, TASK_EDIT } fr
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useEffect, useState, useMemo } from "react";
 import Spinner from "../../../../lib/components/Spinner";
-import { MetadataEditChanges, MetadataEditChange, MetadataMergeChange, MetadataMergeChanges, RenameState } from "../../../../lib/types";
+import { MetadataMergeChange, MetadataMergeChanges } from "../../../../lib/types";
 import { postMetadataMerge } from "../../../../lib/api/metadata";
 import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
-import { createNameChangeApiRequest } from "../../../../lib/api/factory";
-import { postRenameChangeRequest } from "../../../../lib/api/rename";
-import { postMetadataWrite } from "../../../../lib/api/metadata";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/MetadataEditChangeModal";
 import MetadataMergeChangeModal from "../../videos/MetadataMergeChangeModal/MetadataMergeChangeModal";
 import NameChangeModal from "../../shared/NameChangeModal/NameChangeModal";
+import { useMetadataEditWorkflow } from "../../shared/hooks/useMetadataEditWorkflow";
 
 interface NameChangePreviewProps {
     changeType: typeof TASK_MERGE | typeof TASK_EDIT
@@ -22,48 +20,50 @@ interface NameChangePreviewProps {
 
 const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
-    const [isSpinner, setIsSpinner] = useState(false);
-    const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>({});
+
+    // Use the metadata edit workflow hook
+    const {
+        isSpinner: isEditSpinner,
+        isModalOpen: isEditModalOpen,
+        currentName: editCurrentName,
+        suggestedName: editSuggestedName,
+        wasAdded: editWasAdded,
+        isBulkEnabled: isEditBulkEnabled,
+        handleMetadataEditChange,
+        handleEditSubmit,
+        handleBulkEdit: handleBulkEditWorkflow,
+        handleClick: handleEditClick,
+        handleModalClose: handleEditModalClose,
+        resetState: resetEditState,
+    } = useMetadataEditWorkflow({
+        getBulkEditItems: () =>
+            state.nameChanges.changes.map((change) => ({
+                filename: change.input,
+                outputFilename: change.output,
+            })),
+        includeRename: true, // Update metadata AND rename files
+    });
+
+    // Merge-specific state (not covered by the hook)
+    const [isMergeSpinner, setIsMergeSpinner] = useState(false);
     const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
-    const [bulkTemplate, setBulkTemplate] = useState<MetadataEditChange | MetadataMergeChange | null>(null);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentName, setCurrentName] = useState("");
-    const [suggestedName, setSuggestedName] = useState("");
-
-    const [wasAdded, setWasAdded] = useState<string[]>([]);
+    const [mergeBulkTemplate, setMergeBulkTemplate] = useState<MetadataMergeChange | null>(null);
+    const [isMergeModalOpen, setIsMergeModalOpen] = useState(false);
+    const [mergeCurrentName, setMergeCurrentName] = useState("");
+    const [mergeWasAdded, setMergeWasAdded] = useState<string[]>([]);
 
     const deleteFile = useDeleteFile();
 
+    // Determine which state to use based on changeType
+    const isSpinner = changeType === TASK_EDIT ? isEditSpinner : isMergeSpinner;
+    const wasAdded = changeType === TASK_EDIT ? editWasAdded : mergeWasAdded;
+
     useEffect(() => {
-        setMetadataEditChanges({});
+        resetEditState();
         setMetadataMergeChanges({ changes: [] });
-        setBulkTemplate(null);
-        setWasAdded([]);
-    }, [state, changeType]);
-
-    /**
-     * Handles adding or updating a metadata edit change for a specific file
-     * Sets the first change as the bulk template
-     */
-    const handleMetadataEditChange = (filename: string, newChange: MetadataEditChange | undefined) => {
-        if (newChange === undefined) {
-            return;
-        }
-
-        if (Object.keys(metadataEditChanges).length === 0) {
-            setBulkTemplate(newChange);
-        }
-
-        if (!wasAdded.includes(filename)) {
-            setWasAdded((prev) => [...prev, filename]);
-        }
-
-        setMetadataEditChanges((prevChanges) => ({
-            ...prevChanges,
-            [filename]: newChange
-        }));
-    };
+        setMergeBulkTemplate(null);
+        setMergeWasAdded([]);
+    }, [state, changeType, resetEditState]);
 
     /**
      * Handles adding or updating a metadata merge change for a specific file
@@ -75,11 +75,11 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         }
 
         if (metadataMergeChanges.changes.length === 0) {
-            setBulkTemplate(newChange);
+            setMergeBulkTemplate(newChange);
         }
 
-        if (!wasAdded.includes(newChange.filename)) {
-            setWasAdded((prev) => [...prev, newChange.filename]);
+        if (!mergeWasAdded.includes(newChange.filename)) {
+            setMergeWasAdded((prev) => [...prev, newChange.filename]);
         }
 
         const existingChangeIndex = metadataMergeChanges.changes.findIndex(
@@ -106,7 +106,7 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
             pageDispatch({ type: "SET_ERROR", payload: no_api_error });
             return;
         }
-        setIsSpinner(true);
+        setIsMergeSpinner(true);
 
         // Use provided changes or fall back to state
         const mergeChanges = changesToSubmit || metadataMergeChanges;
@@ -121,83 +121,20 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         });
         const updatedNameChanges = { changes: updatedChanges };
         dispatch({ type: "SET_NAME_CHANGES", payload: updatedNameChanges });
-        setIsSpinner(false);
+        setIsMergeSpinner(false);
     };
 
-    const postEditSubmit = async (
-        metadataEditChanges: MetadataEditChanges,
-        state: RenameState,
-    ) => {
-        const nameChangeRequest = createNameChangeApiRequest(state.nameChanges);
-        if (metadataEditChanges) {
-            await postMetadataWrite(metadataEditChanges);
-        }
-
-        return await postRenameChangeRequest(nameChangeRequest);
-    };
-
-    /**
-     * Submits edit changes to the API and processes file renaming
-     * @param changesToSubmit - Optional edit changes to submit, defaults to state
-     */
-    const handleEditSubmit = async (changesToSubmit?: MetadataEditChanges) => {
-        pageDispatch({ type: "CLEAR_ERROR" });
-        if (!mediaLink || !ffmpegLink) {
-            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
-            return;
-        }
-        setIsSpinner(true);
-
-        const editChanges = changesToSubmit || metadataEditChanges;
-
-        const response = await postEditSubmit(editChanges, state);
-        if (response?.error) {
-            pageDispatch({ type: "SET_ERROR", payload: response.error });
-        } else {
-            dispatch({ type: "CLEAR_NAME_CHANGES" });
-        }
-        setIsSpinner(false);
-    };
-
-    /**
-     * Applies the bulk edit template to all files and submits the changes
-     * Uses the first edit as a template for metadata fields
-     */
-    const handleBulkEdit = async () => {
-        if (!bulkTemplate || !('newFilename' in bulkTemplate)) {
-            return;
-        }
-
-        const template = bulkTemplate as MetadataEditChange;
-        const newMetadataEditChanges: MetadataEditChanges = { ...metadataEditChanges };
-
-        state.nameChanges.changes.forEach((change) => {
-            const filename = change.input;
-            if (!newMetadataEditChanges[filename]) {
-                newMetadataEditChanges[filename] = {
-                    newFilename: change.output,
-                    title: "",
-                    defaultSubtitle: template.defaultSubtitle,
-                    defaultAudio: template.defaultAudio
-                };
-            }
-        });
-
-        setMetadataEditChanges(newMetadataEditChanges);
-
-        await handleEditSubmit(newMetadataEditChanges);
-    };
 
     /**
      * Applies the bulk merge template to all files and submits the changes
      * Uses the first merge as a template for audio/subtitle tracks
      */
     const handleBulkMerge = async () => {
-        if (!bulkTemplate || !('audio_tracks' in bulkTemplate)) {
+        if (!mergeBulkTemplate) {
             return;
         }
 
-        const template = bulkTemplate as MetadataMergeChange;
+        const template = mergeBulkTemplate;
         const newMergeChanges: MetadataMergeChange[] = [...metadataMergeChanges.changes];
 
         state.nameChanges.changes.forEach((change) => {
@@ -223,29 +160,34 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
 
     const handleBulk = () => {
         if (changeType === TASK_EDIT) {
-            handleBulkEdit();
+            handleBulkEditWorkflow();
         } else {
             handleBulkMerge();
         }
     }
 
-    // Handler for opening modal from table (works for both edit and merge)
+    /**
+     * Wrapper for handleClick that routes to edit or merge modal based on changeType
+     */
     const handleClick = (current: string, suggestion: string) => {
-        setCurrentName(current);
-        setSuggestedName(suggestion);
-        setIsModalOpen(true);
+        if (changeType === TASK_EDIT) {
+            handleEditClick(current, suggestion);
+        } else {
+            setMergeCurrentName(current);
+            setIsMergeModalOpen(true);
+        }
     };
 
-    // Modal close handler
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
-
+    /**
+     * Determines if bulk button should be enabled based on changeType
+     */
     const isBulkEnabled = useMemo(() => {
-        const hasOneEdit = metadataEditChanges && Object.keys(metadataEditChanges).length === 1;
-        const hasOneMerge = metadataMergeChanges.changes?.length === 1;
-        return hasOneEdit || hasOneMerge;
-    }, [metadataEditChanges, metadataMergeChanges]);
+        if (changeType === TASK_EDIT) {
+            return isEditBulkEnabled;
+        } else {
+            return metadataMergeChanges.changes?.length === 1;
+        }
+    }, [changeType, isEditBulkEnabled, metadataMergeChanges]);
 
     const footerButtons = () => {
         const onClickHandler = () => changeType === TASK_MERGE ? handleMergeSubmit() : handleEditSubmit();
@@ -296,24 +238,24 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                         {changeType === TASK_EDIT ? (
                             state.mediaType === VIDEOS ? (
                                 <MetadataEditChangeModal
-                                    isOpen={isModalOpen}
-                                    onClose={handleModalClose}
-                                    currentName={currentName}
-                                    suggestedName={suggestedName}
+                                    isOpen={isEditModalOpen}
+                                    onClose={handleEditModalClose}
+                                    currentName={editCurrentName}
+                                    suggestedName={editSuggestedName}
                                     onEdit={handleMetadataEditChange}
                                 />
                             ) : (
                                 <NameChangeModal
-                                    isOpen={isModalOpen}
-                                    onClose={handleModalClose}
-                                    initialName={suggestedName}
+                                    isOpen={isEditModalOpen}
+                                    onClose={handleEditModalClose}
+                                    initialName={editSuggestedName}
                                 />
                             )
                         ) : (
                             <MetadataMergeChangeModal
-                                isOpen={isModalOpen}
-                                onClose={handleModalClose}
-                                currentName={currentName}
+                                isOpen={isMergeModalOpen}
+                                onClose={() => setIsMergeModalOpen(false)}
+                                currentName={mergeCurrentName}
                                 onMerge={handleMetadataMergeChange}
                             />
                         )}

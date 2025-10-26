@@ -4,9 +4,9 @@ import { mediaLink, TASK_RENAME, VIDEOS, TASK_METADATA, TASK_EDIT, TASK_MERGE } 
 import { get } from "../lib/api/api";
 import { useRename } from "../lib/hooks/usePageContext";
 import { RenameProvider } from "../service/rename/RenameProvider";
-import PreviewFiles from "../lib/components/PreviewFiles";
-import { NameChangePreview } from "../service/rename/stages"
+import NameChangePreview from "../service/rename/layout/NameChangePreview/NameChangePreview"
 import RenamePanel from "../service/rename/shared/RenamePanel/RenamePanel";
+import MetadataUpdatePreview from "../service/rename/layout/MetadataUpdatePreview/MetadataUpdatePreview";
 
 
 type PreviewFile = {
@@ -23,7 +23,7 @@ const RenamePage = () => {
     const getTaskLayout = () => {
         switch (changeType) {
             case TASK_METADATA:
-                return <PreviewFiles />
+                return <MetadataUpdatePreview />
             case TASK_RENAME:
                 return <NameChangePreview changeType={editType} />;
             default:

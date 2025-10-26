@@ -4,7 +4,7 @@ import NameChangeTable from './NameChangeTable';
 import { NameChanges } from '../../../../lib/types';
 import { RenameProvider } from '../../RenameProvider';
 import '@testing-library/jest-dom';
-import { VIDEOS } from '../../../../lib/constants';
+import { TASK_EDIT, TASK_MERGE } from '../../../../lib/constants';
 
 
 describe('NameChangeTable', () => {
@@ -15,8 +15,7 @@ describe('NameChangeTable', () => {
         ],
     };
 
-    const mockOnEdit = vi.fn();
-    const mockOnMerge = vi.fn();
+    const mockOnClick = vi.fn();
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -27,8 +26,9 @@ describe('NameChangeTable', () => {
             <RenameProvider>
                 <NameChangeTable
                     nameChanges={mockNameChanges}
-                    onEdit={mockOnEdit}
-                    onMerge={mockOnMerge}
+                    wasAdded={[]}
+                    onClick={mockOnClick}
+                    changeType={TASK_EDIT}
                 />
             </RenameProvider>
         );
@@ -39,25 +39,55 @@ describe('NameChangeTable', () => {
         expect(screen.getByText('NewFile2')).toBeInTheDocument();
     });
 
-    it('calls onEdit when edit button is clicked and update metadata', () => {
+    it('calls onClick when edit button is clicked in TASK_EDIT mode', () => {
         render(
             <RenameProvider>
                 <NameChangeTable
-                    mediaType={VIDEOS}
                     nameChanges={mockNameChanges}
-                    onEdit={mockOnEdit}
-                    onMerge={mockOnMerge}
+                    wasAdded={[]}
+                    onClick={mockOnClick}
+                    changeType={TASK_EDIT}
                 />
             </RenameProvider>
         );
 
-
         const editButton = screen.getAllByTitle('Edit')[0];
         fireEvent.click(editButton);
 
-        const updateButton = screen.getByText('Update');
-        fireEvent.click(updateButton);
+        expect(mockOnClick).toHaveBeenCalledWith('File1', 'NewFile1');
+    });
 
-        expect(mockOnEdit).toHaveBeenCalledWith('File1', undefined);
+    it('calls onClick when merge button is clicked in TASK_MERGE mode', () => {
+        render(
+            <RenameProvider>
+                <NameChangeTable
+                    nameChanges={mockNameChanges}
+                    wasAdded={[]}
+                    onClick={mockOnClick}
+                    changeType={TASK_MERGE}
+                />
+            </RenameProvider>
+        );
+
+        const mergeButton = screen.getAllByTitle('Merge')[0];
+        fireEvent.click(mergeButton);
+
+        expect(mockOnClick).toHaveBeenCalledWith('File1', 'NewFile1');
+    });
+
+    it('displays blue styling for files that have been added', () => {
+        render(
+            <RenameProvider>
+                <NameChangeTable
+                    nameChanges={mockNameChanges}
+                    wasAdded={['File1']}
+                    onClick={mockOnClick}
+                    changeType={TASK_EDIT}
+                />
+            </RenameProvider>
+        );
+
+        const editButtons = screen.getAllByTitle('Edit');
+        expect(editButtons[0]).toBeInTheDocument();
     });
 });

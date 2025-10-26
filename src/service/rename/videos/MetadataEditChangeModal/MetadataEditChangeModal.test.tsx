@@ -48,7 +48,6 @@ describe('NameChangeModal', () => {
 
     it('renders modal when open', () => {
         renderWithProvider(<MetadataEditChangeModal {...defaultProps} />);
-        screen.debug();
         expect(screen.getByTestId('modal')).toBeInTheDocument();
         expect(screen.getByLabelText(/New Filename/)).toBeInTheDocument();
         expect(screen.getByDisplayValue('newname.txt')).toBeInTheDocument();

@@ -57,17 +57,25 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
         );
     };
 
+    const handleOnClose = () => {
+        setFilename("");
+        setFileTitle("");
+        setStreams(null);
+        setDefaultSubtitle("");
+        setDefaultAudio("");
+        onClose();
+    }
+
     const handleEditSubmit = () => {
 
         const newChange: MetadataEditChange = {
-            newFilename: filename,
             title: fileTitle || undefined,
             defaultSubtitle: defaultSubtitle || undefined,
             defaultAudio: defaultAudio || undefined,
         };
 
         onEdit(currentName, isMetadataChange(newChange) ? newChange : undefined);
-        onClose();
+        handleOnClose();
     };
 
     const createStreamVal = (option: Stream) => {
@@ -77,15 +85,15 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={handleOnClose}>
             <div className="flex flex-col gap-2 text-blue-900 font-medium text-left">
                 <div className="flex justify-between items-center">
                     <div className="text-lg">
                         {removePathFromFilePath(suggestedName)}
                     </div>
-                    <CloseButton onClose={onClose} />
+                    <CloseButton onClose={handleOnClose} />
                 </div>
-                <div className="flex items-center gap-2 w-full">
+                {currentName !== suggestedName && (<div className="flex items-center gap-2 w-full">
                     <label className="w-fit" htmlFor="name">
                         New Filename <span className="text-red-500">*</span>
                     </label>
@@ -96,7 +104,7 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
                         onChange={(e) => setFilename(e.target.value)}
                         className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1"
                     />
-                </div>
+                </div>)}
                 <div className="flex items-center gap-2 w-full">
                     <label className="w-fit " htmlFor="title">
                         Title:

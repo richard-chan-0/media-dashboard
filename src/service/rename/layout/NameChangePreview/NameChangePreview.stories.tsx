@@ -4,6 +4,7 @@ import { RenameProvider } from "../../RenameProvider";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { NameChanges, RenameAction } from "../../../../lib/types";
 import { useEffect } from "react";
+import { TASK_EDIT } from "../../../../lib/constants";
 
 type TestNameChangePreviewProps = {
     nameChanges: NameChanges;
@@ -20,7 +21,7 @@ const TestNameChangePreview = (args: TestNameChangePreviewProps) => {
         dispatch(set_name_change_action);
     }, [dispatch, args.nameChanges]);
     return (
-        <NameChangePreview />
+        <NameChangePreview changeType={TASK_EDIT} />
     )
 }
 

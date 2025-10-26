@@ -43,7 +43,6 @@ export interface MetadataEditChanges {
 }
 
 export interface MetadataEditChange {
-    newFilename: string;
     title?: string;
     defaultSubtitle?: string;
     defaultAudio?: string;

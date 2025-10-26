@@ -8,6 +8,7 @@
     "preinstall": "npx only-allow pnpm",
     "dev": "vite --host",
     "test": "pnpm vitest --config vite.config.ts",
+    "test:unit": "pnpm vitest --config vite.config.ts --exclude '**/*.stories.tsx'",
     "test:storybook": "pnpm vitest --workspace --project storybook",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

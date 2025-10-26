@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import SlidingToggleButton from "../../../../lib/components/SlidingToggleButton/SlidingToggleButton";
 import { COMICS, VIDEOS, TASK_METADATA, TASK_RENAME, TASK_EDIT, TASK_MERGE } from "../../../../lib/constants";
 import { BookStack, DesignPencil, Keyframes, VideoCamera, Combine, EditPencil } from "iconoir-react";
-import { RenameUploadStage } from "../../stages";
+import RenameUploadStage from "../../layout/RenameUpload";
 
 
 interface RenamePanelProps extends React.HTMLAttributes<HTMLDivElement> {
