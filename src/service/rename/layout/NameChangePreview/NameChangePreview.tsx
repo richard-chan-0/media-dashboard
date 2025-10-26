@@ -41,6 +41,7 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                 filename: change.input,
                 outputFilename: change.output,
             })),
+        includeRename: true, // Update metadata AND rename files
     });
 
     // Merge-specific state (not covered by the hook)

@@ -5,7 +5,7 @@ import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useEffect } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/MetadataEditChangeModal";
-import MetadataFileTable from "./MetadataFileTable";
+import MetadataFileTable from "../../videos/MetadataFileTable";
 import { useMetadataEditWorkflow } from "../../shared/hooks/useMetadataEditWorkflow";
 
 const MetadataUpdatePreview = () => {
@@ -26,17 +26,17 @@ const MetadataUpdatePreview = () => {
         resetState,
     } = useMetadataEditWorkflow({
         getBulkEditItems: () =>
-            pageState.previewFiles.map((filename) => ({
-                filename,
-                outputFilename: filename,
-            }))
+            state.nameChanges.changes.map((filename) => ({
+                filename: filename.input,
+                outputFilename: filename.output,
+            })),
+        includeRename: false, // Only update metadata, don't rename files
     });
 
     useEffect(() => {
         resetState();
     }, [pageState.previewFiles, resetState]);
 
-    // Wrapper to handle single parameter for this component
     const handleClick = (filename: string) => {
         baseHandleClick(filename, filename);
     };
@@ -70,7 +70,7 @@ const MetadataUpdatePreview = () => {
                 hasFiles && (
                     <>
                         <MetadataFileTable
-                            files={pageState.previewFiles}
+                            files={state.nameChanges.changes.map(change => change.input)}
                             wasAdded={wasAdded}
                             onClick={handleClick}
                         />
@@ -82,7 +82,6 @@ const MetadataUpdatePreview = () => {
                             }
                         </footer>
 
-                        {/* Modal */}
                         {state.mediaType === VIDEOS && (
                             <MetadataEditChangeModal
                                 isOpen={isModalOpen}

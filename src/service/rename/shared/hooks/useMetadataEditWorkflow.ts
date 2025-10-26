@@ -1,7 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { mediaLink, no_api_error, ffmpegLink } from "../../../../lib/constants";
-import { MetadataEditChanges, MetadataEditChange, RenameState } from "../../../../lib/types";
+import {
+    MetadataEditChanges,
+    MetadataEditChange,
+    RenameState,
+} from "../../../../lib/types";
 import { createNameChangeApiRequest } from "../../../../lib/api/factory";
 import { postRenameChangeRequest } from "../../../../lib/api/rename";
 import { postMetadataWrite } from "../../../../lib/api/metadata";
@@ -23,20 +27,33 @@ type UseMetadataEditWorkflowOptions = {
      * Can be used to clear state or perform cleanup
      */
     onSubmitSuccess?: () => void;
+
+    /**
+     * Whether to include rename operation after metadata write
+     * - true: Calls postRenameChangeRequest after metadata write (NameChangePreview workflow)
+     * - false: Only writes metadata without renaming (MetadataUpdatePreview workflow)
+     * @default true
+     */
+    includeRename?: boolean;
 };
 
 /**
  * Custom hook that encapsulates the metadata edit workflow logic
  * Handles state management, submit logic, and bulk editing
  */
-export const useMetadataEditWorkflow = (options: UseMetadataEditWorkflowOptions) => {
+export const useMetadataEditWorkflow = (
+    options: UseMetadataEditWorkflowOptions,
+) => {
     const { state, dispatch, pageDispatch } = useRename();
-    const { getBulkEditItems, onSubmitSuccess } = options;
+    const { getBulkEditItems, onSubmitSuccess, includeRename = true } = options;
 
     // State management
     const [isSpinner, setIsSpinner] = useState(false);
-    const [metadataEditChanges, setMetadataEditChanges] = useState<MetadataEditChanges>({});
-    const [bulkTemplate, setBulkTemplate] = useState<MetadataEditChange | null>(null);
+    const [metadataEditChanges, setMetadataEditChanges] =
+        useState<MetadataEditChanges>({});
+    const [bulkTemplate, setBulkTemplate] = useState<MetadataEditChange | null>(
+        null,
+    );
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentName, setCurrentName] = useState("");
     const [suggestedName, setSuggestedName] = useState("");
@@ -55,63 +72,84 @@ export const useMetadataEditWorkflow = (options: UseMetadataEditWorkflowOptions)
      * Handles adding or updating a metadata edit change for a specific file
      * Sets the first change as the bulk template
      */
-    const handleMetadataEditChange = useCallback((filename: string, newChange: MetadataEditChange | undefined) => {
-        if (newChange === undefined) {
-            return;
-        }
+    const handleMetadataEditChange = useCallback(
+        (filename: string, newChange: MetadataEditChange | undefined) => {
+            if (newChange === undefined) {
+                return;
+            }
 
-        if (Object.keys(metadataEditChanges).length === 0) {
-            setBulkTemplate(newChange);
-        }
+            if (Object.keys(metadataEditChanges).length === 0) {
+                setBulkTemplate(newChange);
+            }
 
-        if (!wasAdded.includes(filename)) {
-            setWasAdded((prev) => [...prev, filename]);
-        }
+            if (!wasAdded.includes(filename)) {
+                setWasAdded((prev) => [...prev, filename]);
+            }
 
-        setMetadataEditChanges((prevChanges) => ({
-            ...prevChanges,
-            [filename]: newChange
-        }));
-    }, [metadataEditChanges, wasAdded]);
+            setMetadataEditChanges((prevChanges) => ({
+                ...prevChanges,
+                [filename]: newChange,
+            }));
+        },
+        [metadataEditChanges, wasAdded],
+    );
 
     /**
      * Posts edit changes to the API
+     * Optionally includes rename operation based on includeRename flag
      */
-    const postEditSubmit = useCallback(async (
-        metadataEditChanges: MetadataEditChanges,
-        state: RenameState,
-    ) => {
-        const nameChangeRequest = createNameChangeApiRequest(state.nameChanges);
-        if (metadataEditChanges) {
-            await postMetadataWrite(metadataEditChanges);
-        }
+    const postEditSubmit = useCallback(
+        async (
+            metadataEditChanges: MetadataEditChanges,
+            state: RenameState,
+        ) => {
+            if (metadataEditChanges) {
+                await postMetadataWrite(metadataEditChanges);
+            }
 
-        return await postRenameChangeRequest(nameChangeRequest);
-    }, []);
+            if (includeRename) {
+                const nameChangeRequest = createNameChangeApiRequest(
+                    state.nameChanges,
+                );
+                return await postRenameChangeRequest(nameChangeRequest);
+            }
+        },
+        [includeRename],
+    );
 
     /**
      * Submits edit changes to the API and processes file renaming
      * @param changesToSubmit - Optional edit changes to submit, defaults to state
      */
-    const handleEditSubmit = useCallback(async (changesToSubmit?: MetadataEditChanges) => {
-        pageDispatch({ type: "CLEAR_ERROR" });
-        if (!mediaLink || !ffmpegLink) {
-            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
-            return;
-        }
-        setIsSpinner(true);
+    const handleEditSubmit = useCallback(
+        async (changesToSubmit?: MetadataEditChanges) => {
+            pageDispatch({ type: "CLEAR_ERROR" });
+            if (!mediaLink || !ffmpegLink) {
+                pageDispatch({ type: "SET_ERROR", payload: no_api_error });
+                return;
+            }
+            setIsSpinner(true);
 
-        const editChanges = changesToSubmit || metadataEditChanges;
+            const editChanges = changesToSubmit || metadataEditChanges;
 
-        const response = await postEditSubmit(editChanges, state);
-        if (response?.error) {
-            pageDispatch({ type: "SET_ERROR", payload: response.error });
-        } else {
-            dispatch({ type: "CLEAR_NAME_CHANGES" });
-            onSubmitSuccess?.();
-        }
-        setIsSpinner(false);
-    }, [metadataEditChanges, state, dispatch, pageDispatch, postEditSubmit, onSubmitSuccess]);
+            const response = await postEditSubmit(editChanges, state);
+            if (response?.error) {
+                pageDispatch({ type: "SET_ERROR", payload: response.error });
+            } else {
+                dispatch({ type: "CLEAR_NAME_CHANGES" });
+                onSubmitSuccess?.();
+            }
+            setIsSpinner(false);
+        },
+        [
+            metadataEditChanges,
+            state,
+            dispatch,
+            pageDispatch,
+            postEditSubmit,
+            onSubmitSuccess,
+        ],
+    );
 
     /**
      * Applies the bulk edit template to all items and submits the changes
@@ -122,16 +160,16 @@ export const useMetadataEditWorkflow = (options: UseMetadataEditWorkflowOptions)
             return;
         }
 
-        const newMetadataEditChanges: MetadataEditChanges = { ...metadataEditChanges };
+        const newMetadataEditChanges: MetadataEditChanges = {
+            ...metadataEditChanges,
+        };
         const items = getBulkEditItems();
 
         items.forEach((item) => {
             if (!newMetadataEditChanges[item.filename]) {
                 newMetadataEditChanges[item.filename] = {
-                    newFilename: item.outputFilename,
-                    title: "",
                     defaultSubtitle: bulkTemplate.defaultSubtitle,
-                    defaultAudio: bulkTemplate.defaultAudio
+                    defaultAudio: bulkTemplate.defaultAudio,
                 };
             }
         });
@@ -155,6 +193,9 @@ export const useMetadataEditWorkflow = (options: UseMetadataEditWorkflowOptions)
      */
     const handleModalClose = useCallback(() => {
         setIsModalOpen(false);
+        setCurrentName("");
+        setSuggestedName("");
+        resetState();
     }, []);
 
     /**
@@ -162,7 +203,9 @@ export const useMetadataEditWorkflow = (options: UseMetadataEditWorkflowOptions)
      * Enabled when exactly one file has been edited
      */
     const isBulkEnabled = useMemo(() => {
-        return metadataEditChanges && Object.keys(metadataEditChanges).length === 1;
+        return (
+            metadataEditChanges && Object.keys(metadataEditChanges).length === 1
+        );
     }, [metadataEditChanges]);
 
     return {

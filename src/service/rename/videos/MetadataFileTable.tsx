@@ -1,6 +1,6 @@
-import theme from "../../../../lib/theme";
-import { truncateString } from "../../../../lib/utilities";
-import { TableCell } from "../../shared";
+import theme from "../../../lib/theme";
+import { removePathFromFilePath, truncateString } from "../../../lib/utilities";
+import { TableCell } from "../shared";
 import { EditPencil } from "iconoir-react";
 
 type MetadataFileTableProps = {
@@ -21,7 +21,6 @@ const MetadataFileTable = ({
     if (!files || files.length === 0) {
         return <></>;
     }
-
     return (
         <div className="text-white flex justify-center text-center">
             <table className="w-full">
@@ -33,13 +32,14 @@ const MetadataFileTable = ({
                 </thead>
                 <tbody>
                     {files.map((filename) => {
+                        const label = removePathFromFilePath(filename);
                         const isAdded = wasAdded.includes(filename);
                         const iconStyle = isAdded ? "text-blue-400" : "hover:text-green-400";
 
                         return (
                             <tr key={filename}>
                                 <TableCell>
-                                    <span title={filename}>{truncateString(filename, 50)}</span>
+                                    <span title={label}>{truncateString(label, 50)}</span>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-1 justify-center">
