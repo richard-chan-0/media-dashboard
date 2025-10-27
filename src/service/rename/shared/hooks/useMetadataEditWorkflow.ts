@@ -47,7 +47,6 @@ export const useMetadataEditWorkflow = (
 ) => {
     const { getBulkEditItems, onSubmitSuccess, includeRename = true } = options;
 
-    // Core metadata edit state
     const {
         metadataEditChanges,
         setMetadataEditChanges,
@@ -56,7 +55,6 @@ export const useMetadataEditWorkflow = (
         resetState: resetMetadataState,
     } = useMetadataEditState();
 
-    // Modal state
     const {
         isModalOpen,
         currentName,
@@ -65,14 +63,12 @@ export const useMetadataEditWorkflow = (
         handleModalClose: baseHandleModalClose,
     } = useModalState();
 
-    // Submission logic
     const { isSpinner, handleEditSubmit } = useMetadataSubmit({
         metadataEditChanges,
         includeRename,
         onSubmitSuccess,
     });
 
-    // Bulk edit logic
     const {
         bulkTemplate,
         setFirstAsTemplate,
@@ -104,17 +100,10 @@ export const useMetadataEditWorkflow = (
         [baseHandleMetadataEditChange, setFirstAsTemplate],
     );
 
-    /**
-     * Enhanced modal close handler that also resets state
-     */
     const handleModalClose = useCallback(() => {
         baseHandleModalClose();
-        resetMetadataState();
-    }, [baseHandleModalClose, resetMetadataState]);
+    }, [baseHandleModalClose]);
 
-    /**
-     * Resets all state to initial values
-     */
     const resetState = useCallback(() => {
         resetMetadataState();
         resetBulkTemplate();

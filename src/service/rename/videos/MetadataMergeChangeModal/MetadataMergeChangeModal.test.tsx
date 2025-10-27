@@ -58,7 +58,53 @@ describe('MetadataMergeChangeModal', () => {
         isOpen: true,
         onClose: vi.fn(),
         onMerge: vi.fn(),
-        currentName: 'oldname.txt'
+        currentName: 'oldname.txt',
+        suggestedName: 'newname.txt',
+        streams: {
+            audio: [
+                {
+                    stream_number: 1,
+                    language: 'en',
+                    title: 'English Audio',
+                    merge_track_number: 101,
+                    is_default: "false",
+                    is_forced: "false",
+                    absolute_track_number: 1
+                },
+                {
+                    stream_number: 2,
+                    language: 'es',
+                    title: 'Spanish Audio',
+                    merge_track_number: 102,
+                    is_default: "false",
+                    is_forced: "false",
+                    absolute_track_number: 2
+                }
+            ],
+            subtitle: [
+                {
+                    stream_number: 1,
+                    language: 'en',
+                    title: 'English Subtitle',
+                    merge_track_number: 201,
+                    is_default: "false",
+                    is_forced: "false",
+                    absolute_track_number: 3
+                },
+                {
+                    stream_number: 2,
+                    language: 'es',
+                    title: 'Spanish Subtitle',
+                    merge_track_number: 202,
+                    is_default: "false",
+                    is_forced: "false",
+                    absolute_track_number: 4
+                }
+            ],
+            attachment: [],
+
+        },
+        isLoadingStreams: false
     };
 
     beforeEach(() => {
@@ -97,10 +143,8 @@ describe('MetadataMergeChangeModal', () => {
         fireEvent.click(subtitleCheckbox);
         expect(screen.getByText('Subtitle Order: [ en - English Subtitle ]')).toBeInTheDocument();
     });
-
     it('calls onMerge with correct data on submit', async () => {
         renderWithProvider(<MetadataMergeChangeModal {...defaultProps} />);
-        expect(await screen.findByTestId('spinner-icon')).not.toBeInTheDocument();
         const audioCheckbox = await screen.findByLabelText('en - English Audio');
         fireEvent.click(audioCheckbox);
         const subtitleCheckbox = await screen.findByLabelText('en - English Subtitle');
