@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { useRename } from "../../../../lib/hooks/usePageContext";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../../shared/Modal/Modal";
 import { CloseButton, Spinner, SubmitButton } from "../../../../lib/components";
-import { get } from "../../../../lib/api/api";
-import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamCheckboxList } from "../../shared";
 import { Streams, Stream, MetadataMergeChange } from "../../../../lib/types";
 
@@ -13,38 +10,20 @@ type MetadataMergeChangeModalProps = {
     onClose: () => void;
     currentName: string;
     onMerge: (newChange: MetadataMergeChange | undefined) => void;
+    streams: Streams | null;
+    isLoadingStreams: boolean;
 };
 
-const MetadataMergeChangeModal = ({ isOpen, onClose, currentName, onMerge }: MetadataMergeChangeModalProps) => {
+const MetadataMergeChangeModal = ({ isOpen, onClose, currentName, onMerge, streams, isLoadingStreams }: MetadataMergeChangeModalProps) => {
     const [filename, setFilename] = useState(removePathFromFilePath(currentName));
-    const [streams, setStreams] = useState<Streams | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [checkedSubtitles, setCheckedSubtitles] = useState<string[]>([]);
     const [checkedAudios, setCheckedAudios] = useState<string[]>([]);
-    const { pageDispatch } = useRename();
 
     useEffect(() => {
         if (isOpen) {
             setFilename(removePathFromFilePath(currentName));
-            fetchStreams();
         }
-    }, [isOpen]);
-
-    const fetchStreams = async () => {
-        if (!ffmpegLink) {
-            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
-            return;
-        }
-        setIsLoading(true);
-        const response = await get(`${ffmpegLink}/read`);
-        setIsLoading(false);
-        if (response?.error) {
-            pageDispatch({ type: "SET_ERROR", payload: response.error });
-        } else {
-            setStreams(response);
-            pageDispatch({ type: "CLEAR_ERROR" });
-        }
-    };
+    }, [isOpen, currentName]);
 
     const handleMergeSubmit = () => {
         const additionalSubtitles = checkedSubtitles.map((number) => {
@@ -96,8 +75,8 @@ const MetadataMergeChangeModal = ({ isOpen, onClose, currentName, onMerge }: Met
                     </div>
                     <CloseButton onClose={onClose} />
                 </div>
-                {isLoading && <Spinner />}
-                {!isLoading && streams && (
+                {isLoadingStreams && <Spinner />}
+                {!isLoadingStreams && streams && (
                     <div className="w-full flex flex-col gap-4">
                         <section>
                             <div>Audio Order: {printSelectedStream(checkedAudios, "audio")}</div>

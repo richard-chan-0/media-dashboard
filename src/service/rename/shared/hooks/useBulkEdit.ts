@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { MetadataEditChanges, MetadataEditChange } from "../../../../lib/types";
+import { useRename } from "../../../../lib/hooks/usePageContext";
 
 type BulkEditItem = {
     filename: string;
@@ -37,9 +38,17 @@ type UseBulkEditOptions = {
  * @returns Object containing bulk edit state and handlers
  */
 export const useBulkEdit = (options: UseBulkEditOptions) => {
-    const { getBulkEditItems, metadataEditChanges, setMetadataEditChanges, handleSubmit } = options;
+    const { state } = useRename();
+    const {
+        getBulkEditItems,
+        metadataEditChanges,
+        setMetadataEditChanges,
+        handleSubmit,
+    } = options;
 
-    const [bulkTemplate, setBulkTemplate] = useState<MetadataEditChange | null>(null);
+    const [bulkTemplate, setBulkTemplate] = useState<MetadataEditChange | null>(
+        null,
+    );
 
     /**
      * Sets the first metadata edit as the bulk template
@@ -47,11 +56,14 @@ export const useBulkEdit = (options: UseBulkEditOptions) => {
      *
      * @param change - The metadata change to use as template
      */
-    const setFirstAsTemplate = useCallback((change: MetadataEditChange) => {
-        if (Object.keys(metadataEditChanges).length === 0) {
-            setBulkTemplate(change);
-        }
-    }, [metadataEditChanges]);
+    const setFirstAsTemplate = useCallback(
+        (change: MetadataEditChange) => {
+            if (Object.keys(metadataEditChanges).length === 0) {
+                setBulkTemplate(change);
+            }
+        },
+        [metadataEditChanges],
+    );
 
     /**
      * Resets the bulk template
@@ -86,14 +98,24 @@ export const useBulkEdit = (options: UseBulkEditOptions) => {
         setMetadataEditChanges(newMetadataEditChanges);
 
         await handleSubmit(newMetadataEditChanges);
-    }, [bulkTemplate, metadataEditChanges, getBulkEditItems, setMetadataEditChanges, handleSubmit]);
+    }, [
+        bulkTemplate,
+        metadataEditChanges,
+        getBulkEditItems,
+        setMetadataEditChanges,
+        handleSubmit,
+    ]);
 
     /**
      * Determines if bulk edit button should be enabled
      * Enabled when exactly one file has been edited
      */
     const isBulkEnabled = useMemo(() => {
-        return metadataEditChanges && Object.keys(metadataEditChanges).length === 1;
+        return (
+            state.nameChanges.changes.length > 1 &&
+            metadataEditChanges &&
+            Object.keys(metadataEditChanges).length === 1
+        );
     }, [metadataEditChanges]);
 
     return {

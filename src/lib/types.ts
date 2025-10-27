@@ -24,6 +24,7 @@ export type MediaUtiliityApiResponse = {
 
 export type Stream = {
     is_default: string;
+    is_forced: string;
     language: string;
     stream_number: number;
     title: string;
@@ -36,6 +37,10 @@ export type Streams = {
     audio: Stream[];
     subtitle: Stream[];
     is_mkv?: boolean;
+};
+
+export type FileStreamsMap = {
+    [filename: string]: Streams;
 };
 
 export interface MetadataEditChanges {

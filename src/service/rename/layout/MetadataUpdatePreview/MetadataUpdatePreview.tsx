@@ -1,15 +1,21 @@
 import FormContainer from "../../../../lib/components/FormContainer";
 import SubmitButton from "../../../../lib/components/SubmitButton";
-import { VIDEOS } from "../../../../lib/constants";
+import { VIDEOS, ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { useRename } from "../../../../lib/hooks/usePageContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../../../../lib/components/Spinner";
 import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/MetadataEditChangeModal";
 import MetadataFileTable from "../../videos/MetadataFileTable";
 import { useMetadataEditWorkflow } from "../../shared/hooks/useMetadataEditWorkflow";
+import { FileStreamsMap } from "../../../../lib/types";
+import { get } from "../../../../lib/api/api";
+import { removePathFromFilePath } from "../../../../lib/utilities";
 
 const MetadataUpdatePreview = () => {
-    const { state, pageState } = useRename();
+    const { state, pageState, pageDispatch } = useRename();
+
+    const [fileStreamsMap, setFileStreamsMap] = useState<FileStreamsMap>({});
+    const [isLoadingStreams, setIsLoadingStreams] = useState(false);
 
     const {
         isSpinner,
@@ -30,11 +36,34 @@ const MetadataUpdatePreview = () => {
                 filename: filename.input,
                 outputFilename: filename.output,
             })),
-        includeRename: false, // Only update metadata, don't rename files
+        includeRename: false
     });
+
+    /**
+     * Fetches stream information for all files from the API
+     * The API returns a map of filename -> streams
+     */
+    const fetchAllStreams = async () => {
+        if (!ffmpegLink) {
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
+            return;
+        }
+        setIsLoadingStreams(true);
+        const response = await get(`${ffmpegLink}/read`);
+        setIsLoadingStreams(false);
+        if (response?.error) {
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
+        } else {
+            setFileStreamsMap(response);
+            pageDispatch({ type: "CLEAR_ERROR" });
+        }
+    };
 
     useEffect(() => {
         resetState();
+        if (pageState.previewFiles && pageState.previewFiles.length > 0 && state.mediaType === VIDEOS) {
+            fetchAllStreams();
+        }
     }, [pageState.previewFiles, resetState]);
 
     const handleClick = (filename: string) => {
@@ -42,6 +71,9 @@ const MetadataUpdatePreview = () => {
     };
 
     const footerButtons = () => {
+        if (state.nameChanges.changes.length === 0) {
+            return <></>;
+        }
         return (
             <>
                 <SubmitButton
@@ -81,16 +113,6 @@ const MetadataUpdatePreview = () => {
                                     : footerButtons()
                             }
                         </footer>
-
-                        {state.mediaType === VIDEOS && (
-                            <MetadataEditChangeModal
-                                isOpen={isModalOpen}
-                                onClose={handleModalClose}
-                                currentName={currentName}
-                                suggestedName={suggestedName}
-                                onEdit={handleMetadataEditChange}
-                            />
-                        )}
                     </>
                 )
             }
@@ -103,6 +125,17 @@ const MetadataUpdatePreview = () => {
                     </div>
                 )
             }
+            {state.mediaType === VIDEOS && (
+                <MetadataEditChangeModal
+                    isOpen={isModalOpen}
+                    onClose={handleModalClose}
+                    currentName={currentName}
+                    suggestedName={suggestedName}
+                    onEdit={handleMetadataEditChange}
+                    streams={fileStreamsMap[removePathFromFilePath(currentName)] || null}
+                    isLoadingStreams={isLoadingStreams}
+                />
+            )}
         </FormContainer>
     );
 };

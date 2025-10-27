@@ -5,7 +5,7 @@ import { mediaLink, no_api_error, VIDEOS, ffmpegLink, TASK_MERGE, TASK_EDIT } fr
 import { useRename } from "../../../../lib/hooks/usePageContext";
 import { useEffect, useState, useMemo } from "react";
 import Spinner from "../../../../lib/components/Spinner";
-import { MetadataMergeChange, MetadataMergeChanges } from "../../../../lib/types";
+import { MetadataMergeChange, MetadataMergeChanges, FileStreamsMap } from "../../../../lib/types";
 import { postMetadataMerge } from "../../../../lib/api/metadata";
 import { useDeleteFile } from "../../../../lib/hooks/useDeleteFile";
 import { removePathFromFilePath } from "../../../../lib/utilities";
@@ -13,6 +13,7 @@ import MetadataEditChangeModal from "../../videos/MetadataEditChangeModal/Metada
 import MetadataMergeChangeModal from "../../videos/MetadataMergeChangeModal/MetadataMergeChangeModal";
 import NameChangeModal from "../../shared/NameChangeModal/NameChangeModal";
 import { useMetadataEditWorkflow } from "../../shared/hooks/useMetadataEditWorkflow";
+import { get } from "../../../../lib/api/api";
 
 interface NameChangePreviewProps {
     changeType: typeof TASK_MERGE | typeof TASK_EDIT
@@ -21,7 +22,6 @@ interface NameChangePreviewProps {
 const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
     const { state, dispatch, pageDispatch } = useRename();
 
-    // Use the metadata edit workflow hook
     const {
         isSpinner: isEditSpinner,
         isModalOpen: isEditModalOpen,
@@ -41,10 +41,9 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                 filename: change.input,
                 outputFilename: change.output,
             })),
-        includeRename: true, // Update metadata AND rename files
+        includeRename: true,
     });
 
-    // Merge-specific state (not covered by the hook)
     const [isMergeSpinner, setIsMergeSpinner] = useState(false);
     const [metadataMergeChanges, setMetadataMergeChanges] = useState<MetadataMergeChanges>({ changes: [] });
     const [mergeBulkTemplate, setMergeBulkTemplate] = useState<MetadataMergeChange | null>(null);
@@ -52,7 +51,30 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
     const [mergeCurrentName, setMergeCurrentName] = useState("");
     const [mergeWasAdded, setMergeWasAdded] = useState<string[]>([]);
 
+    const [fileStreamsMap, setFileStreamsMap] = useState<FileStreamsMap>({});
+    const [isLoadingStreams, setIsLoadingStreams] = useState(false);
+
     const deleteFile = useDeleteFile();
+
+    /**
+     * Fetches stream information for all files from the API
+     * The API returns a map of filename -> streams
+     */
+    const fetchAllStreams = async () => {
+        if (!ffmpegLink) {
+            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
+            return;
+        }
+        setIsLoadingStreams(true);
+        const response = await get(`${ffmpegLink}/read`);
+        setIsLoadingStreams(false);
+        if (response?.error) {
+            pageDispatch({ type: "SET_ERROR", payload: response.error });
+        } else {
+            setFileStreamsMap(response);
+            pageDispatch({ type: "CLEAR_ERROR" });
+        }
+    };
 
     // Determine which state to use based on changeType
     const isSpinner = changeType === TASK_EDIT ? isEditSpinner : isMergeSpinner;
@@ -63,6 +85,10 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         setMetadataMergeChanges({ changes: [] });
         setMergeBulkTemplate(null);
         setMergeWasAdded([]);
+        // Fetch streams when files are loaded
+        if (state.nameChanges.changes.length > 0 && state.mediaType === VIDEOS) {
+            fetchAllStreams();
+        }
     }, [state, changeType, resetEditState]);
 
     /**
@@ -108,7 +134,6 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
         }
         setIsMergeSpinner(true);
 
-        // Use provided changes or fall back to state
         const mergeChanges = changesToSubmit || metadataMergeChanges;
 
         await postMetadataMerge(mergeChanges);
@@ -234,7 +259,6 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                             }
                         </footer>
 
-                        {/* Modal - show based on changeType */}
                         {changeType === TASK_EDIT ? (
                             state.mediaType === VIDEOS ? (
                                 <MetadataEditChangeModal
@@ -243,6 +267,8 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                                     currentName={editCurrentName}
                                     suggestedName={editSuggestedName}
                                     onEdit={handleMetadataEditChange}
+                                    streams={fileStreamsMap[removePathFromFilePath(editCurrentName)] || null}
+                                    isLoadingStreams={isLoadingStreams}
                                 />
                             ) : (
                                 <NameChangeModal
@@ -257,6 +283,8 @@ const NameChangePreview = ({ changeType }: NameChangePreviewProps) => {
                                 onClose={() => setIsMergeModalOpen(false)}
                                 currentName={mergeCurrentName}
                                 onMerge={handleMetadataMergeChange}
+                                streams={fileStreamsMap[removePathFromFilePath(mergeCurrentName)] || null}
+                                isLoadingStreams={isLoadingStreams}
                             />
                         )}
                     </>

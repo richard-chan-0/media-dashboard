@@ -1,11 +1,8 @@
 import theme from "../../../../lib/theme";
 import { useEffect, useState } from "react";
-import { useRename } from "../../../../lib/hooks/usePageContext";
 import { removePathFromFilePath } from "../../../../lib/utilities";
 import Modal from "../../shared/Modal/Modal";
 import { CloseButton, Spinner } from "../../../../lib/components";
-import { get } from "../../../../lib/api/api";
-import { ffmpegLink, no_api_error } from "../../../../lib/constants";
 import { StreamSelect } from "../../shared";
 import { Streams, MetadataEditChange, Stream } from "../../../../lib/types";
 
@@ -15,39 +12,21 @@ type MetadataEditChangeModalProps = {
     currentName: string;
     suggestedName: string;
     onEdit: (filename: string, newChange: MetadataEditChange | undefined) => void;
+    streams: Streams | null;
+    isLoadingStreams: boolean;
 };
 
-const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEdit }: MetadataEditChangeModalProps) => {
+const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, onEdit, streams, isLoadingStreams }: MetadataEditChangeModalProps) => {
     const [filename, setFilename] = useState(removePathFromFilePath(suggestedName));
     const [fileTitle, setFileTitle] = useState("");
-    const [streams, setStreams] = useState<Streams | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [defaultSubtitle, setDefaultSubtitle] = useState("");
     const [defaultAudio, setDefaultAudio] = useState("");
-    const { pageDispatch } = useRename();
 
     useEffect(() => {
         if (isOpen) {
             setFilename(removePathFromFilePath(suggestedName));
-            fetchStreams();
         }
-    }, [isOpen]);
-
-    const fetchStreams = async () => {
-        if (!ffmpegLink) {
-            pageDispatch({ type: "SET_ERROR", payload: no_api_error });
-            return;
-        }
-        setIsLoading(true);
-        const response = await get(`${ffmpegLink}/read`);
-        setIsLoading(false);
-        if (response?.error) {
-            pageDispatch({ type: "SET_ERROR", payload: response.error });
-        } else {
-            setStreams(response);
-            pageDispatch({ type: "CLEAR_ERROR" });
-        }
-    };
+    }, [isOpen, suggestedName]);
 
     const isMetadataChange = (change: MetadataEditChange) => {
         return (
@@ -60,7 +39,6 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
     const handleOnClose = () => {
         setFilename("");
         setFileTitle("");
-        setStreams(null);
         setDefaultSubtitle("");
         setDefaultAudio("");
         onClose();
@@ -81,7 +59,8 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
     const createStreamVal = (option: Stream) => {
         const mainIdentifier = option.language && option.language !== "no language" ? option.language : option.merge_track_number;
         const secondaryIdentifier = option.title ? ` - ${option.title}` : "";
-        return `${mainIdentifier}${secondaryIdentifier}`;
+        const thirdIdentifier = option.is_forced ? " (forced)" : "";
+        return `${mainIdentifier}${secondaryIdentifier}${thirdIdentifier}`;
     };
 
     return (
@@ -117,8 +96,8 @@ const MetadataEditChangeModal = ({ isOpen, onClose, currentName, suggestedName, 
                         className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     />
                 </div>
-                {isLoading && <Spinner />}
-                {!isLoading && streams && (
+                {isLoadingStreams && <Spinner />}
+                {!isLoadingStreams && streams && (
                     <div className="w-full flex flex-col gap-4">
                         <StreamSelect
                             label="Select Default Audio"
